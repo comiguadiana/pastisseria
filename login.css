@@ -1,0 +1,151 @@
+/* login.css — Pàgina de login */
+
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+}
+
+/* ── Decoració esquerra ── */
+.login-deco {
+  background-image: url('assets/img/login_pixel_bg.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  image-rendering: pixelated;
+  border-right: 6px solid var(--chocolate);
+}
+
+/* ── Formulari ── */
+.login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--cream);
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+}
+
+.login-logo {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--rose);
+  margin-bottom: 1.5rem;
+  transition: transform var(--t-base) var(--ease-bounce);
+}
+
+.login-logo:hover { transform: scale(1.05); }
+
+.login-emoji {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--chocolate);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--choco-light);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.login-google-btn {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  transition: all var(--t-base) var(--ease-bounce);
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--gray-400);
+  font-size: 0.85rem;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gray-200);
+}
+
+.login-guest-text {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.login-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 2rem 0 1.5rem;
+  text-align: left;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.login-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--chocolate);
+}
+
+.login-feature-icon {
+  font-size: 1.2rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.login-privacy {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-deco {
+    min-height: 200px;
+    border-right: none;
+    border-bottom: 6px solid var(--chocolate);
+  }
+
+  .login-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+}

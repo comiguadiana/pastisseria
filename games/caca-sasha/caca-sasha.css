@@ -1,0 +1,67 @@
+/* caca-sasha.css */
+
+.caca-sasha-body {
+  background: linear-gradient(135deg, #0D0520 0%, #1A0A3A 30%, #2D1B69 60%, #1A2A1A 100%);
+  min-height: 100vh;
+}
+
+.game-page { padding: 1rem 0 3rem; }
+
+.combo-display {
+  text-align: center;
+  margin: 0.5rem 0;
+  animation: bounce-in 0.3s var(--ease-bounce);
+}
+
+#combo-text {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(240,192,64,0.8);
+  animation: pulse-scale 0.5s ease-in-out;
+}
+
+.cs-board-wrap {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(93,187,99,0.3), var(--shadow-xl);
+  margin: 1rem 0;
+  border: 2px solid rgba(93,187,99,0.3);
+}
+
+.cs-canvas {
+  display: block;
+  background: linear-gradient(180deg, #0D0520 0%, #1A0A3A 40%, #2D1B69 100%);
+  cursor: crosshair;
+  touch-action: none;
+  border-radius: var(--radius-xl);
+}
+
+.cs-overlay {
+  position: absolute; inset: 0;
+  background: rgba(13,5,32,0.92);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-xl);
+}
+
+.cs-overlay-content { text-align: center; padding: 2rem; }
+
+.cs-sasha-end {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin: 0 auto 1rem;
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+.cs-overlay-title { font-family: var(--font-display); font-size: 2.5rem; color: #B8F0D8; margin-bottom: 0.5rem; }
+.cs-overlay-score { font-family: var(--font-display); font-size: 1.75rem; color: var(--gold); margin-bottom: 0.5rem; }
+.cs-overlay-msg   { color: rgba(184,240,216,0.8); font-size: 1rem; }
+
+.cs-instructions {
+  display: flex; gap: 1rem; justify-content: center; align-items: center;
+  flex-wrap: wrap; font-size: 0.85rem; color: rgba(184,240,216,0.7); font-weight: 600;
+}

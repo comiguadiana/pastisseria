@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caça la Sasha! · Pastisseria Guadiana</title>
+  <meta name="description" content="Llança pastissos a la Sasha, la serp alienígena mascota del Carrer Guadiana!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="caca-sasha.css" />
+</head>
+<body class="caca-sasha-body">
+
+  <nav class="navbar" style="background:rgba(45,27,105,0.85);border-color:rgba(93,187,99,0.3)">
+    <a href="../../index.html" class="navbar-brand" style="color:#B8F0D8">🐍 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link" style="color:#B8F0D8">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem;color:#B8F0D8"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+
+    <div class="container">
+      <div class="game-hud" style="background:rgba(45,27,105,0.9)">
+        <div class="hud-item">
+          <span class="hud-label">Pastissos 🎯</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Millor</span>
+          <span class="hud-value" id="best">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Temps</span>
+          <span class="hud-value" id="timer">60</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Nivell</span>
+          <span class="hud-value" id="level">1</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-restart" style="border-color:rgba(184,240,216,0.5);color:#B8F0D8">↺</button>
+      </div>
+
+      <!-- Combostreak -->
+      <div class="combo-display hidden" id="combo-display">
+        <span id="combo-text">COMBO x3!</span>
+      </div>
+
+      <div class="cs-board-wrap">
+        <canvas id="cs-canvas" class="cs-canvas"></canvas>
+        <div class="cs-overlay hidden" id="cs-overlay">
+          <div class="cs-overlay-content animate-bounce-in">
+            <img src="../../assets/img/sasha.png" id="sasha-result-img" class="cs-sasha-end" alt="Sasha" />
+            <h2 id="cs-title" class="cs-overlay-title">Temps!</h2>
+            <p id="cs-score-text" class="cs-overlay-score">0 pastissos encertats</p>
+            <p id="cs-msg" class="cs-overlay-msg"></p>
+            <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap">
+              <button class="btn btn-primary btn-lg" id="btn-play-again">Tornar a intentar-ho!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-lg" style="border-color:rgba(184,240,216,0.5);color:#B8F0D8">← Mapa</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cs-instructions">
+        <span>🖱️ Clica (o toca) per llançar pastissos a la Sasha</span>
+        <span>•</span>
+        <span>Encadena aciertos per a punts de combo!</span>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="card" style="background:rgba(45,27,105,0.6);border:1px solid rgba(93,187,99,0.3)">
+        <div class="card-header" style="background:rgba(45,27,105,0.4);border-color:rgba(93,187,99,0.2)">
+          <h3 style="color:#B8F0D8">🏆 Rànquing Caça la Sasha!</h3>
+        </div>
+        <div class="card-body" id="ranking-container">
+          <div class="flex-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script type="module" src="caca-sasha.js"></script>
+</body>
+</html>

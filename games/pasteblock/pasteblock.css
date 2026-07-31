@@ -1,0 +1,81 @@
+/* pasteblock.css */
+
+.game-page {
+  padding: 1rem 0 3rem;
+  min-height: calc(100vh - 60px);
+}
+
+/* ── Tauler ── */
+.pb-board-wrap {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.pb-canvas {
+  display: block;
+  background: var(--cream-dark);
+  cursor: pointer;
+  touch-action: none;
+  border-radius: var(--radius-xl);
+}
+
+/* ── Overlay final ── */
+.pb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(92,51,23,0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-xl);
+}
+
+.pb-overlay-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.pb-overlay-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.pb-overlay-score {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--gold);
+  margin-bottom: 0.25rem;
+}
+
+.pb-overlay-msg {
+  color: rgba(255,248,240,0.8);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Instruccions ── */
+.pb-instructions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pb-instruction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--choco-light);
+  font-weight: 600;
+  background: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}

@@ -1,0 +1,439 @@
+/* =============================================
+   BASE.CSS — Festes de Sants · Carrer Guadiana
+   Sistema de disseny: Pastisseria Guadiana
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* ── Variables ── */
+:root {
+  /* Paleta Pastisseria */
+  --cream:        #FFF8F0;
+  --cream-dark:   #F5E6D3;
+  --pink-light:   #FFD6E5;
+  --pink:         #FF8FAB;
+  --pink-dark:    #E05480;
+  --rose:         #C94070;
+  --chocolate:    #5C3317;
+  --choco-light:  #8B5E3C;
+  --caramel:      #D4A017;
+  --gold:         #F0C040;
+  --vanilla:      #FFFDE7;
+  --mint:         #B8F0D8;
+  --mint-dark:    #4CAF80;
+  --berry:        #9B59B6;
+  --berry-light:  #CE93D8;
+
+  /* Sasha colors */
+  --sasha-green:  #5DBB63;
+  --sasha-purple: #8E44AD;
+
+  /* Neutrals */
+  --white:        #FFFFFF;
+  --gray-50:      #FAFAFA;
+  --gray-100:     #F5F5F5;
+  --gray-200:     #EEEEEE;
+  --gray-400:     #BDBDBD;
+  --gray-600:     #757575;
+  --gray-800:     #424242;
+  --black:        #1A1A1A;
+
+  /* Tipografia Retro */
+  --font-display: 'Press Start 2P', cursive;
+  --font-body:    'VT323', monospace;
+  --font-ui:      'VT323', monospace;
+
+  /* Mides (Retro blocks) */
+  --radius-sm:    0px;
+  --radius-md:    0px;
+  --radius-lg:    0px;
+  --radius-xl:    0px;
+  --radius-full:  0px;
+
+  /* Ombres Sòlides (Retro) */
+  --shadow-sm:    3px 3px 0px rgba(92,51,23,1);
+  --shadow-md:    5px 5px 0px rgba(92,51,23,1);
+  --shadow-lg:    8px 8px 0px rgba(92,51,23,1);
+  --shadow-xl:    12px 12px 0px rgba(92,51,23,1);
+  --shadow-pink:  4px 4px 0px var(--rose);
+  --shadow-choco: 4px 4px 0px var(--black);
+
+  /* Transicions */
+  --ease-bounce:  ease-out;
+  --ease-smooth:  linear;
+  --t-fast:       100ms;
+  --t-base:       150ms;
+  --t-slow:       200ms;
+
+  /* Z-index */
+  --z-base:       1;
+  --z-dropdown:   100;
+  --z-modal:      500;
+  --z-toast:      900;
+  --z-top:        1000;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--cream);
+  color: var(--chocolate);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* ── Tipografia ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.5;
+  color: var(--chocolate);
+  text-transform: uppercase;
+}
+
+h1 { font-size: clamp(1.2rem, 3.5vw, 2.2rem); }
+h2 { font-size: clamp(1rem, 2.5vw, 1.6rem); }
+h3 { font-size: clamp(0.8rem, 2vw, 1.2rem); }
+h4 { font-size: clamp(0.7rem, 1.5vw, 1rem); }
+
+p {
+  font-family: var(--font-ui);
+  font-size: 1.4rem;
+  color: var(--chocolate);
+}
+
+/* ── Fons amb textura retro ── */
+.bg-cream {
+  background-color: var(--cream);
+  background-image: radial-gradient(var(--cream-dark) 2px, transparent 2px);
+  background-size: 16px 16px;
+}
+
+.bg-pink {
+  background: linear-gradient(135deg, var(--pink-light) 0%, var(--pink) 100%);
+}
+
+.bg-chocolate {
+  background: linear-gradient(135deg, var(--chocolate) 0%, var(--choco-light) 100%);
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-dropdown);
+  background: var(--cream);
+  border-bottom: 4px solid var(--chocolate);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--chocolate);
+  transition: transform var(--t-base) var(--ease-bounce);
+  text-transform: uppercase;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.navbar-brand img {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--chocolate);
+  padding: 0.4rem 0.9rem;
+  transition: all var(--t-base) var(--ease-smooth);
+}
+
+.nav-link:hover, .nav-link.active {
+  background: var(--chocolate);
+  color: var(--gold);
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar-avatar {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--chocolate);
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+/* ── Footer ── */
+.footer {
+  background: var(--chocolate);
+  color: rgba(255,248,240,0.8);
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  margin-top: auto;
+}
+
+.footer a {
+  color: var(--gold);
+}
+
+/* ── Contenidors ── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.container-sm {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.container-lg {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── Seccions ── */
+.section {
+  padding: 4rem 0;
+}
+
+.section-sm {
+  padding: 2rem 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--choco-light);
+  margin-bottom: 3rem;
+}
+
+/* ── Utilitats ── */
+.text-center { text-align: center; }
+.text-pink   { color: var(--pink-dark); }
+.text-choco  { color: var(--chocolate); }
+.text-gold   { color: var(--caramel); }
+.text-white  { color: var(--white); }
+
+.flex        { display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-col    { display: flex; flex-direction: column; }
+.gap-1       { gap: 0.5rem; }
+.gap-2       { gap: 1rem; }
+.gap-3       { gap: 1.5rem; }
+.gap-4       { gap: 2rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.hidden { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+/* ── Animacions globals ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes slide-in-down {
+  from { transform: translateY(-30px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes bounce-in {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-float        { animation: float 3s ease-in-out infinite; }
+.animate-wiggle       { animation: wiggle 1s ease-in-out infinite; }
+.animate-pulse-scale  { animation: pulse-scale 2s ease-in-out infinite; }
+.animate-slide-up     { animation: slide-in-up var(--t-slow) var(--ease-smooth) both; }
+.animate-slide-down   { animation: slide-in-down var(--t-slow) var(--ease-smooth) both; }
+.animate-fade-in      { animation: fade-in var(--t-slow) var(--ease-smooth) both; }
+.animate-bounce-in    { animation: bounce-in 0.5s var(--ease-bounce) both; }
+
+/* ── Toast / Notificacions ── */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--white);
+  border-left: 4px solid var(--pink);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--chocolate);
+  animation: slide-in-up 0.3s var(--ease-bounce) both;
+  pointer-events: all;
+  max-width: 320px;
+}
+
+.toast.success { border-color: var(--mint-dark); }
+.toast.error   { border-color: var(--rose); }
+.toast.info    { border-color: var(--caramel); }
+
+/* ── Loading spinner ── */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--pink-light);
+  border-top-color: var(--pink-dark);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,248,240,0.9);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  .nav-link {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .section {
+    padding: 2.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-nav .nav-link span {
+    display: none;
+  }
+}

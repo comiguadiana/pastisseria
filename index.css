@@ -1,0 +1,292 @@
+/* index.css — Landing page de la Pastisseria Guadiana */
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(92,51,23,0.72) 0%,
+    rgba(201,64,112,0.45) 50%,
+    rgba(92,51,23,0.55) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,248,240,0.15);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,248,240,0.4);
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 7rem);
+  color: var(--white);
+  text-shadow: 0 4px 20px rgba(92,51,23,0.5);
+  line-height: 1.0;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: rgba(255,248,240,0.9);
+  margin-bottom: 2.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.hero-actions .btn-outline {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+}
+
+.hero-actions .btn-outline:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: white;
+}
+
+.hero-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-xl);
+  padding: 1rem 2rem;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--gold);
+}
+
+.hero-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255,248,240,0.75);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.25);
+}
+
+/* Pastissos flotants */
+.floating-pastries {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.float-pastry {
+  position: absolute;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+  opacity: 0.85;
+}
+
+.fp1 {
+  width: clamp(60px, 8vw, 120px);
+  top: 15%;
+  left: 5%;
+  animation: float 4s ease-in-out infinite;
+}
+
+.fp2 {
+  width: clamp(70px, 10vw, 140px);
+  top: 20%;
+  right: 6%;
+  animation: float 5s ease-in-out infinite 0.5s;
+}
+
+.fp3 {
+  width: clamp(50px, 7vw, 100px);
+  bottom: 25%;
+  left: 8%;
+  animation: float 3.5s ease-in-out infinite 1s;
+}
+
+.fp4 {
+  width: clamp(55px, 8vw, 110px);
+  bottom: 20%;
+  right: 7%;
+  animation: float 4.5s ease-in-out infinite 0.75s;
+}
+
+/* ── Grid de jocs ── */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+
+/* Badges dinàmics */
+.badge-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--gray-200);
+  color: var(--gray-600);
+  transition: all 0.3s;
+}
+
+.badge-game.unlocked {
+  background: var(--mint);
+  color: var(--mint-dark);
+}
+
+/* ── Sasha section ── */
+.sasha-section {
+  background: linear-gradient(135deg, #2D1B69 0%, #5DBB63 50%, #1A0A3A 100%);
+}
+
+.sasha-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3rem;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+}
+
+.sasha-img-wrap {
+  flex-shrink: 0;
+}
+
+.sasha-big-img {
+  width: clamp(150px, 20vw, 260px);
+  height: clamp(150px, 20vw, 260px);
+  object-fit: contain;
+  filter: drop-shadow(0 16px 32px rgba(93,187,99,0.5));
+}
+
+.sasha-badge {
+  display: inline-block;
+  background: rgba(93,187,99,0.25);
+  color: #B8F0D8;
+  border: 1px solid rgba(184,240,216,0.4);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.sasha-title {
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 1rem;
+}
+
+.sasha-desc {
+  color: rgba(255,248,240,0.85);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Fame CTA ── */
+.fame-cta-section {
+  background: linear-gradient(135deg, var(--rose) 0%, var(--chocolate) 60%, var(--berry) 100%);
+}
+
+.fame-cta-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  display: inline-block;
+  min-width: 320px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero { min-height: 100svh; }
+
+  .hero-stats {
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .sasha-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .sasha-img-wrap { margin: 0 auto; }
+
+  .floating-pastries { display: none; }
+}

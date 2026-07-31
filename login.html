@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entra · Pastisseria Guadiana</title>
+  <meta name="description" content="Inicia sessió a la Pastisseria Guadiana amb el teu compte de Google per jugar i guardar les teves puntuacions." />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body class="bg-cream">
+
+  <div class="login-page">
+
+    <!-- Decoració esquerra -->
+    <div class="login-deco" aria-hidden="true">
+      <!-- Fons establert per CSS -->
+    </div>
+
+    <!-- Formulari central -->
+    <main class="login-main">
+      <div class="login-card animate-bounce-in">
+
+        <a href="index.html" class="login-logo">
+          🎂 Pastisseria Guadiana
+        </a>
+
+        <div class="login-emoji">🔑</div>
+        <h1 class="login-title">Entra a jugar!</h1>
+        <p class="login-subtitle">
+          Inicia sessió amb Google per guardar les teves puntuacions
+          i competir al rànquing!
+        </p>
+
+        <button class="btn btn-google btn-lg login-google-btn" id="btn-google-login">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          Continua amb Google
+        </button>
+
+        <div class="login-divider">
+          <span>o</span>
+        </div>
+
+        <p class="login-guest-text">
+          Vols veure la web sense jugar?
+        </p>
+        <a href="index.html" class="btn btn-ghost btn-sm">
+          Tornar a l'inici
+        </a>
+
+        <div class="login-features">
+          <div class="login-feature">
+            <span class="login-feature-icon">🏆</span>
+            <span>Rànquings en temps real</span>
+          </div>
+          <div class="login-feature">
+            <span class="login-feature-icon">🎭</span>
+            <span>Avatar personalitzat</span>
+          </div>
+          <div class="login-feature">
+            <span class="login-feature-icon">🗺️</span>
+            <span>Progressió al mapa</span>
+          </div>
+        </div>
+
+        <p class="login-privacy">
+          Només fem servir el teu nom i email. Mai compartim dades amb tercers.
+        </p>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <p style="font-family:var(--font-display);color:var(--rose);font-size:1.2rem">Entrant...</p>
+  </div>
+
+  <script type="module" src="login.js"></script>
+</body>
+</html>

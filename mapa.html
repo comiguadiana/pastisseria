@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa del Carrer · Pastisseria Guadiana</title>
+  <meta name="description" content="Mapa arcade del Carrer Guadiana. Avança per la calle jugant als minijocs i desbloqueig noves parades!" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="mapa.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="mapa.html"     class="nav-link active">🗺️ <span>Mapa</span></a>
+      <a href="../fama.html"  class="nav-link">🏆 <span>Fama</span></a>
+      <a href="../registro.html" class="nav-link">👤 <span>Perfil</span></a>
+    </div>
+    <div class="navbar-user">
+      <a href="../login.html" class="btn btn-primary btn-sm hidden" id="nav-login-btn">Entrar 🎂</a>
+      <div id="nav-user-area" class="flex flex-center gap-1 hidden">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+        <button class="btn btn-ghost btn-sm" id="nav-logout-btn">Sortir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Capçalera del mapa -->
+  <div class="map-header">
+    <div class="container">
+      <h1 class="map-title">🗺️ Carrer Guadiana</h1>
+      <p class="map-subtitle">Avança pel carrer jugant als minijocs. Cada joc desbloqueja el següent!</p>
+    </div>
+  </div>
+
+  <!-- Mapa arcade -->
+  <main class="map-container">
+    <div class="map-scroll-area" id="map-scroll">
+
+      <!-- Fons del mapa -->
+      <div class="map-world" id="map-world">
+
+        <!-- Capa de Boira de Guerra (Fog of War) -->
+        <svg class="fog-overlay" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;">
+          <defs>
+            <mask id="fogMask">
+              <rect width="100%" height="100%" fill="white" />
+              <!-- Aquí inserim cercles negres des de JS per "il·luminar" zones -->
+              <g id="fog-holes"></g>
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(0,0,0,0.85)" mask="url(#fogMask)" />
+        </svg>
+
+        <!-- Camí del mapa (Vertical, de baix a dalt) -->
+        <svg class="map-path-svg" viewBox="0 0 768 2800" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+          <path class="map-path-track"
+            d="M 384,200 
+               L 384,400 L 250,500
+               L 250,700 L 500,800
+               L 500,1000 L 250,1100
+               L 250,1300 L 500,1400
+               L 500,1600 L 250,1700
+               L 250,1900 L 500,2000
+               L 500,2200 L 384,2450"
+            fill="none" />
+        </svg>
+
+        <!-- ══ PARADES ══ -->
+
+        <!-- 1. La Portalada (PasteBlock) -->
+        <div class="map-stop stop-1 unlocked" id="stop-pasteblock"
+             data-game="pasteblock" data-index="0"
+             style="left:384px; top:200px; transform: translate(-50%, -50%);"
+             onclick="goToGame('pasteblock')">
+          <div class="stop-node">🧩</div>
+          <div class="stop-label">
+            <div class="stop-name">La Portalada</div>
+            <div class="stop-desc">PasteBlock</div>
+            <div class="stop-score" id="score-pasteblock">–</div>
+          </div>
+        </div>
+
+        <!-- 2. Pastís Caigut -->
+        <div class="map-stop stop-2" id="stop-pastis-caigut"
+             data-game="pastis-caigut" data-index="1"
+             style="left:250px; top:500px; transform: translate(-50%, -50%);"
+             onclick="goToGame('pastis-caigut')">
+          <div class="stop-node">🧺</div>
+          <div class="stop-label">
+            <div class="stop-name">El Mercat</div>
+            <div class="stop-desc">Pastís Caigut</div>
+            <div class="stop-score" id="score-pastis-caigut">–</div>
+          </div>
+        </div>
+
+        <!-- 3. Llança l'Ensaïmada -->
+        <div class="map-stop stop-3" id="stop-llanca"
+             data-game="llanca-ensaimada" data-index="2"
+             style="left:500px; top:800px; transform: translate(-50%, -50%);"
+             onclick="goToGame('llanca-ensaimada')">
+          <div class="stop-node">🎯</div>
+          <div class="stop-label">
+            <div class="stop-name">El Donut</div>
+            <div class="stop-desc">Llança Ensaïmada</div>
+            <div class="stop-score" id="score-llanca-ensaimada">–</div>
+          </div>
+        </div>
+
+        <!-- 4. Memòria Pastissera -->
+        <div class="map-stop stop-4" id="stop-memoria"
+             data-game="memoria-pastissera" data-index="3"
+             style="left:250px; top:1100px; transform: translate(-50%, -50%);"
+             onclick="goToGame('memoria-pastissera')">
+          <div class="stop-node">🧠</div>
+          <div class="stop-label">
+            <div class="stop-name">La Vitrina</div>
+            <div class="stop-desc">Memòria</div>
+            <div class="stop-score" id="score-memoria-pastissera">–</div>
+          </div>
+        </div>
+
+        <!-- 5. Pastís Perfecte -->
+        <div class="map-stop stop-5" id="stop-pastis-perfecte"
+             data-game="pastis-perfecte" data-index="4"
+             style="left:500px; top:1400px; transform: translate(-50%, -50%);"
+             onclick="goToGame('pastis-perfecte')">
+          <div class="stop-node">🍰</div>
+          <div class="stop-label">
+            <div class="stop-name">El Taller</div>
+            <div class="stop-desc">Pastís Perfecte</div>
+            <div class="stop-score" id="score-pastis-perfecte">–</div>
+          </div>
+        </div>
+
+        <!-- 6. Caça la Sasha -->
+        <div class="map-stop stop-6" id="stop-sasha"
+             data-game="caca-sasha" data-index="5"
+             style="left:250px; top:1700px; transform: translate(-50%, -50%);"
+             onclick="goToGame('caca-sasha')">
+          <div class="stop-node">🐍</div>
+          <div class="stop-label">
+            <div class="stop-name">El Bar</div>
+            <div class="stop-desc">Caça Sasha</div>
+            <div class="stop-score" id="score-caca-sasha">–</div>
+          </div>
+        </div>
+
+        <!-- 7. Fusió Pastissera -->
+        <div class="map-stop stop-7" id="stop-fusio-pastissera"
+             data-game="fusio-pastissera" data-index="6"
+             style="left:500px; top:2000px; transform: translate(-50%, -50%);"
+             onclick="goToGame('fusio-pastissera')">
+          <div class="stop-node">🎂</div>
+          <div class="stop-label">
+            <div class="stop-name">El Pot</div>
+            <div class="stop-desc">Fusió Suika</div>
+            <div class="stop-score" id="score-fusio-pastissera">–</div>
+          </div>
+        </div>
+
+        <!-- 8. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-8 stop-end" id="stop-fama"
+             data-game="" data-index="7"
+             style="left:384px; top:2450px; transform: translate(-50%, -50%);"
+             onclick="window.location.href='../fama.html'">
+          <div class="stop-node stop-special">🏆</div>
+          <div class="stop-label">
+            <div class="stop-name">Fama</div>
+            <div class="stop-desc">Rànquing Final</div>
+          </div>
+        </div>
+
+        <!-- Avatar del jugador (es mou pel mapa) -->
+        <div class="map-player" id="map-player">
+          <img id="player-avatar-img" src="" alt="Tu" class="player-avatar" />
+          <div class="player-name" id="player-name-label">Tu</div>
+        </div>
+
+      </div><!-- /map-world -->
+    </div><!-- /map-scroll-area -->
+
+    <!-- Llegenda / instruccions -->
+    <div class="map-legend">
+      <div class="legend-item">
+        <div class="legend-node unlocked">✓</div>
+        <span>Completat</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-node current">●</div>
+        <span>Disponible</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-node locked">🔒</div>
+        <span>Bloquejat</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de joc bloquejat -->
+  <div class="modal-overlay hidden" id="locked-modal">
+    <div class="modal animate-bounce-in">
+      <div class="modal-header">
+        <h2 class="modal-title">🔒 Joc Bloquejat</h2>
+        <button class="modal-close" onclick="document.getElementById('locked-modal').classList.add('hidden')">✕</button>
+      </div>
+      <div class="modal-body text-center">
+        <div style="font-size:4rem;margin-bottom:1rem">🔒</div>
+        <p id="locked-modal-msg">Primer has de completar el joc anterior!</p>
+      </div>
+      <div class="modal-footer" style="justify-content:center">
+        <button class="btn btn-primary" onclick="document.getElementById('locked-modal').classList.add('hidden')">
+          Entès!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script type="module" src="mapa.js"></script>
+</body>
+</html>

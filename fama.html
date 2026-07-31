@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saló de la Fama · Pastisseria Guadiana</title>
+  <meta name="description" content="Els millors jugadors de tots els minijocs de la Pastisseria Guadiana. Rànquing general i per joc." />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="fama.css" />
+</head>
+<body>
+
+  <nav class="navbar" style="background:rgba(92,51,23,0.9);border-color:rgba(212,160,23,0.3)">
+    <a href="index.html" class="navbar-brand" style="color:var(--gold)">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="mapa.html"  class="nav-link" style="color:rgba(255,248,240,0.8)">🗺️ <span>Mapa</span></a>
+      <a href="fama.html"  class="nav-link active" style="color:var(--gold)">🏆 <span>Fama</span></a>
+    </div>
+    <div class="navbar-user">
+      <a href="login.html" class="btn btn-secondary btn-sm hidden" id="nav-login-btn">Entrar</a>
+      <div id="nav-user-area" class="flex flex-center gap-1 hidden">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem;color:var(--cream)"></span>
+        <button class="btn btn-ghost btn-sm" id="nav-logout-btn" style="color:var(--cream)">Sortir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero del saló de la fama -->
+  <header class="fame-hero">
+    <div class="fame-hero-bg" aria-hidden="true">
+      <div class="fame-star" style="top:10%;left:5%;animation-delay:0s">⭐</div>
+      <div class="fame-star" style="top:20%;right:8%;animation-delay:0.5s">🌟</div>
+      <div class="fame-star" style="top:60%;left:3%;animation-delay:1s">✨</div>
+      <div class="fame-star" style="bottom:20%;right:5%;animation-delay:1.5s">⭐</div>
+    </div>
+    <div class="container text-center">
+      <div class="fame-trophy">🏆</div>
+      <h1 class="fame-title">Saló de la Fama</h1>
+      <p class="fame-subtitle">
+        Els millors pastissers del Carrer Guadiana!<br/>
+        Puntuació total de tots els minijocs combinats.
+      </p>
+    </div>
+  </header>
+
+  <main class="fame-main">
+    <div class="container">
+
+      <!-- Top 3 podium -->
+      <div class="podium-section">
+        <div class="podium" id="podium">
+          <div class="podium-loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabuladors de rankings -->
+      <div class="ranking-tabs">
+        <button class="tab-btn active" data-tab="general">🏆 General</button>
+        <button class="tab-btn" data-tab="pasteblock">🧩 PasteBlock</button>
+        <button class="tab-btn" data-tab="pastis-caigut">🧺 Pastís Caigut</button>
+        <button class="tab-btn" data-tab="llanca-ensaimada">🎯 Llança</button>
+        <button class="tab-btn" data-tab="memoria-pastissera">🧠 Memòria</button>
+        <button class="tab-btn" data-tab="pastis-perfecte">🍰 Perfecte</button>
+        <button class="tab-btn" data-tab="caca-sasha">🐍 Sasha</button>
+        <button class="tab-btn" data-tab="fusio-pastissera">🎂 Fusió</button>
+      </div>
+
+      <div class="ranking-content">
+        <div class="card">
+          <div class="card-header" id="ranking-title-bar">
+            <h3>🏆 Rànquing General</h3>
+          </div>
+          <div class="card-body" id="ranking-body">
+            <div class="flex-center"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- CTA tornar al joc -->
+  <section style="background:var(--cream-dark);padding:3rem 0;text-align:center">
+    <div class="container">
+      <h2 style="margin-bottom:0.5rem">Millora la teva puntuació!</h2>
+      <p style="color:var(--choco-light);margin-bottom:1.5rem">Torna al mapa i juga per pujar al rànquing.</p>
+      <a href="mapa.html" class="btn btn-primary btn-xl">🗺️ Tornar al Mapa</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>🎂 Pastisseria Guadiana · <strong>Festes de Sants 2026</strong> · Carrer Guadiana, Barcelona</p>
+    <p style="margin-top:0.5rem;opacity:0.6">Comissió de Festes del Carrer Guadiana ❤️</p>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script type="module" src="fama.js"></script>
+</body>
+</html>

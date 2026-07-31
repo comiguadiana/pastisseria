@@ -1,0 +1,119 @@
+/* registro.css */
+
+.profile-page {
+  padding: 2rem 0 4rem;
+}
+
+/* ── Capçalera de perfil ── */
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, var(--chocolate) 0%, var(--rose) 100%);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  color: var(--white);
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.profile-avatar-big {
+  width: 110px;
+  height: 110px;
+  border-radius: var(--radius-full);
+  border: 5px solid rgba(255,255,255,0.5);
+  background: var(--white);
+  object-fit: cover;
+  box-shadow: var(--shadow-xl);
+}
+
+.profile-avatar-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: var(--gold);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  border: 2px solid var(--white);
+}
+
+.profile-name {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.profile-email {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-stats-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-stat-val {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--gold);
+}
+
+.profile-stat-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Seed controls ── */
+.seed-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* ── Scores per joc ── */
+.my-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.my-score-card {
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  border: 2px solid var(--cream-dark);
+  transition: all var(--t-base) var(--ease-smooth);
+}
+
+.my-score-card:hover {
+  border-color: var(--pink);
+  transform: translateY(-2px);
+}
+
+.my-score-emoji { font-size: 2rem; margin-bottom: 0.25rem; }
+.my-score-game  { font-size: 0.85rem; font-weight: 700; color: var(--choco-light); margin-bottom: 0.5rem; }
+.my-score-val   { font-family: var(--font-display); font-size: 1.4rem; color: var(--rose); }
+.my-score-none  { color: var(--gray-400); font-size: 0.85rem; }

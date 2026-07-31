@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Llança l'Ensaïmada · Pastisseria Guadiana</title>
+  <meta name="description" content="Llança ensaïmades al donut gegant de la contraportada!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="llanca-ensaimada.css" />
+</head>
+<body class="bg-cream">
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav"><a href="../../mapa.html" class="nav-link">← Mapa</a></div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+      <div class="game-hud">
+        <div class="hud-item"><span class="hud-label">Punts</span><span class="hud-value" id="score">0</span></div>
+        <div class="hud-item"><span class="hud-label">Millor</span><span class="hud-value" id="best">0</span></div>
+        <div class="hud-item"><span class="hud-label">Llançaments</span><span class="hud-value" id="throws">10</span></div>
+        <div class="hud-item"><span class="hud-label">Ratio</span><span class="hud-value" id="ratio">0%</span></div>
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺</button>
+      </div>
+
+      <div class="le-board-wrap">
+        <canvas id="le-canvas" class="le-canvas"></canvas>
+        <div class="le-overlay hidden" id="le-overlay">
+          <div class="le-overlay-content animate-bounce-in">
+            <div id="le-emoji" style="font-size:4rem">🎯</div>
+            <h2 id="le-title" class="le-overlay-title">Fi del joc!</h2>
+            <p id="le-score" class="le-overlay-score">0 punts</p>
+            <p id="le-msg" style="color:rgba(255,248,240,0.8);margin-bottom:1rem"></p>
+            <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+              <button class="btn btn-primary btn-lg" id="btn-play-again">Tornar a jugar!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="le-instructions">
+        <span>🖱️ Clica i arrossega per apuntar • Deixa anar per llançar</span>
+        <span>•</span>
+        <span>🍩 Encerta el forat del donut per punts bonus!</span>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Llança l'Ensaïmada</h3></div>
+        <div class="card-body" id="ranking-container"><div class="flex-center"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+  </main>
+  <div id="toast-container"></div>
+  <script type="module" src="llanca-ensaimada.js"></script>
+</body>
+</html>

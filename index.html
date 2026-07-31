@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastisseria Guadiana · Festes de Sants 2026</title>
+  <meta name="description" content="Benvinguts a la Pastisseria Guadiana! Juga als minijocs de les Festes de Sants del Carrer Guadiana de Barcelona. Cruasants, ensaïmades i molta diversió!" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+      🎂 <span>Pastisseria Guadiana</span>
+    </a>
+    <div class="navbar-nav">
+      <a href="mapa.html"  class="nav-link">🗺️ <span>Mapa</span></a>
+      <a href="fama.html"  class="nav-link">🏆 <span>Fama</span></a>
+      <a href="registro.html" class="nav-link" id="nav-profile-link">👤 <span>Perfil</span></a>
+    </div>
+    <div class="navbar-user">
+      <a href="login.html" class="btn btn-primary btn-sm" id="nav-login-btn">
+        Entrar 🎂
+      </a>
+      <div id="nav-user-area" class="flex flex-center gap-1 hidden">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+        <button class="btn btn-ghost btn-sm" id="nav-logout-btn">Sortir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="assets/img/login_pixel_bg.png" alt="Portalada de pastís del Carrer Guadiana" class="hero-img" style="image-rendering: pixelated;" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="container hero-content animate-slide-up">
+      <h1 class="hero-title">Pastisseria<br/>Guadiana</h1>
+      <p class="hero-subtitle">
+        Les Festes de Sants 2026 · Carrer Guadiana<br/>
+        Pastissos, jocs i molta diversió!
+      </p>
+      <div class="hero-actions">
+        <a href="mapa.html" class="btn btn-primary btn-xl" id="btn-jugar">
+          🗺️ Entrar al Carrer!
+        </a>
+      </div>
+      <div class="hero-stats" id="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="stat-players">–</span>
+          <span class="hero-stat-label">Jugadors</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">6</span>
+          <span class="hero-stat-label">Minijocs</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">∞</span>
+          <span class="hero-stat-label">Diversió</span>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- CTA Saló de la Fama -->
+  <section class="section fame-cta-section">
+    <div class="container text-center">
+      <div class="fame-cta-card animate-float">
+        <div style="font-size:4rem;margin-bottom:1rem">🏆</div>
+        <h2 style="color:var(--white);margin-bottom:0.5rem">Saló de la Fama</h2>
+        <p style="color:rgba(255,248,240,0.85);margin-bottom:1.5rem">
+          Qui té la puntuació més alta de tots els jocs combinats?
+        </p>
+        <a href="fama.html" class="btn btn-secondary btn-lg">
+          Veure el Rànquing General 🏅
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>🎂 Pastisseria Guadiana · <strong>Festes de Sants 2026</strong> · Carrer Guadiana, Barcelona</p>
+    <p style="margin-top:0.5rem;opacity:0.6">Comissió de Festes del Carrer Guadiana · Amb molt d'amor i molt de paper maixé ❤️</p>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script type="module" src="index.js"></script>
+</body>
+</html>

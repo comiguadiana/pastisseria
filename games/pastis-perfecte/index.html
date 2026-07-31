@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastís Perfecte · Pastisseria Guadiana</title>
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="pastis-perfecte.css" />
+</head>
+<body class="bg-cream">
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav"><a href="../../mapa.html" class="nav-link">← Mapa</a></div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+      <div class="game-hud">
+        <div class="hud-item"><span class="hud-label">Punts</span><span class="hud-value" id="score">0</span></div>
+        <div class="hud-item"><span class="hud-label">Millor</span><span class="hud-value" id="best">0</span></div>
+        <div class="hud-item"><span class="hud-label">Nivell</span><span class="hud-value" id="level">1</span></div>
+        <div class="hud-item"><span class="hud-label">Temps</span><span class="hud-value" id="timer">30</span></div>
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺</button>
+      </div>
+
+      <div class="pp-container">
+        <!-- Recepta (ordre correcte) -->
+        <div class="pp-recipe-panel">
+          <h3 class="pp-panel-title">📋 Recepta</h3>
+          <p style="font-size:0.85rem;color:var(--choco-light);margin-bottom:1rem">Ordena les capes d'aquest ordre!</p>
+          <div class="pp-recipe" id="pp-recipe"></div>
+        </div>
+
+        <!-- Zona de construcció (drag & drop) -->
+        <div class="pp-build-panel">
+          <h3 class="pp-panel-title">🎂 Munta el pastís!</h3>
+          <div class="pp-cake-zone" id="pp-cake-zone">
+            <div class="pp-cake-placeholder">← Arrossega aquí les capes</div>
+          </div>
+        </div>
+
+        <!-- Ingredients disponibles -->
+        <div class="pp-ingredients-panel">
+          <h3 class="pp-panel-title">🧴 Ingredients</h3>
+          <div class="pp-ingredients" id="pp-ingredients"></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:1rem">
+        <button class="btn btn-primary btn-lg" id="btn-check">
+          Comprovar el pastís! 🎂
+        </button>
+      </div>
+
+      <div class="pp-overlay hidden" id="pp-overlay">
+        <div class="pp-overlay-content animate-bounce-in">
+          <div id="pp-emoji" style="font-size:4rem">🎂</div>
+          <h2 id="pp-title" class="pp-overlay-title">Perfecte!</h2>
+          <p id="pp-score" class="pp-overlay-score">0 punts</p>
+          <p id="pp-msg"   style="color:rgba(255,248,240,0.8);margin-bottom:1rem"></p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary btn-lg" id="btn-next">Següent nivell! 🎂</button>
+            <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Pastís Perfecte</h3></div>
+        <div class="card-body" id="ranking-container"><div class="flex-center"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+  </main>
+  <div id="toast-container"></div>
+  <script type="module" src="pastis-perfecte.js"></script>
+</body>
+</html>

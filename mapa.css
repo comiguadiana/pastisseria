@@ -1,0 +1,327 @@
+/* mapa.css — Mapa arcade del Carrer Guadiana */
+
+/* ── Capçalera ── */
+.map-header {
+  background: linear-gradient(135deg, var(--chocolate) 0%, var(--rose) 100%);
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.map-title {
+  color: var(--white);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 0.25rem;
+}
+
+.map-subtitle {
+  color: rgba(255,248,240,0.8);
+  font-size: 0.95rem;
+}
+
+/* ── Contenidor principal ── */
+.map-container {
+  padding: 2rem 1rem;
+  background: var(--cream);
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.map-scroll-area {
+  width: 100%;
+  max-width: 768px; /* amplada màxima del carrer */
+  height: calc(100vh - 200px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 6px solid var(--chocolate);
+  box-shadow: var(--shadow-xl);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink) var(--cream-dark);
+  background: var(--cream-dark);
+}
+
+.map-scroll-area::-webkit-scrollbar { width: 12px; }
+.map-scroll-area::-webkit-scrollbar-track { background: var(--chocolate); }
+.map-scroll-area::-webkit-scrollbar-thumb { background: var(--pink); border: 2px solid var(--chocolate); }
+
+/* ── Món del mapa ── */
+.map-world {
+  position: relative;
+  width: 100%;
+  height: 2800px; /* Llargada del carrer */
+  background-image: url('../assets/img/mapa/carrer_vertical.png');
+  background-size: 100% auto;
+  background-repeat: repeat-y;
+  image-rendering: pixelated;
+  overflow: hidden;
+}
+
+/* Overlay lleugera per millor contrast */
+.map-world::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,248,240,0.25);
+  z-index: 0;
+}
+
+/* ── Camí SVG ── */
+.map-path-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-path-track {
+  stroke: var(--chocolate);
+  stroke-width: 12;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-dasharray: 12 12;
+  opacity: 0.8;
+}
+
+.map-path-track-completed {
+  stroke: var(--gold);
+  stroke-width: 18;
+  opacity: 0.8;
+}
+
+.map-cross-street {
+  stroke: rgba(92,51,23,0.2);
+  stroke-width: 8;
+  stroke-dasharray: 6 4;
+}
+
+/* ── Parades ── */
+.map-stop {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: transform var(--t-base) var(--ease-bounce);
+}
+
+.map-stop:hover .stop-node { transform: scale(1.15); }
+
+/* Node circular -> Quadrat retro */
+.stop-node {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--chocolate);
+  background: var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--t-base) var(--ease-bounce);
+  position: relative;
+  image-rendering: pixelated;
+}
+
+/* Estat: bloquejat (per defecte) */
+.map-stop .stop-node {
+  filter: grayscale(0.7) brightness(0.8);
+}
+
+/* Estat: desbloquejat */
+.map-stop.unlocked .stop-node {
+  background: var(--white);
+  border-color: var(--gold);
+  filter: none;
+  box-shadow: 0 0 0 4px rgba(212,160,23,0.25), var(--shadow-md);
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+/* Estat: completat */
+.map-stop.completed .stop-node {
+  background: linear-gradient(135deg, var(--mint) 0%, var(--mint-dark) 100%);
+  border-color: var(--mint-dark);
+  filter: none;
+  box-shadow: 0 0 0 4px rgba(76,175,128,0.25), var(--shadow-md);
+}
+
+.map-stop.completed .stop-node::after {
+  content: 'OK';
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  background: var(--mint);
+  color: var(--black);
+  padding: 2px 4px;
+  font-size: 0.5rem;
+  font-family: var(--font-display);
+  border: 3px solid var(--chocolate);
+  box-shadow: 2px 2px 0px var(--chocolate);
+}
+
+/* Node especial (inici/final) */
+.stop-special {
+  width: 72px !important;
+  height: 72px !important;
+  background: linear-gradient(135deg, var(--pink-light) 0%, var(--pink) 100%) !important;
+  border-color: var(--rose) !important;
+  filter: none !important;
+  animation: pulse-scale 3s ease-in-out infinite !important;
+}
+
+/* Etiqueta del node */
+.stop-label {
+  background: var(--white);
+  border: 4px solid var(--chocolate);
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  min-width: 140px;
+  max-width: 180px;
+}
+
+.stop-name {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--chocolate);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stop-desc {
+  font-size: 0.72rem;
+  color: var(--choco-light);
+  font-weight: 600;
+}
+
+.stop-score {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--rose);
+  margin-top: 0.1rem;
+}
+
+/* ── Decoració de l'entorn ── */
+.map-deco {
+  position: absolute;
+  z-index: 2;
+}
+
+.deco-building {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid var(--cream-dark);
+  border-radius: var(--radius-md);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--choco-light);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.deco-special {
+  background: rgba(255,214,229,0.9) !important;
+  border-color: var(--pink) !important;
+  color: var(--rose) !important;
+}
+
+/* ── Avatar del jugador ── */
+.map-player {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: left 0.8s var(--ease-bounce), top 0.8s var(--ease-bounce);
+  pointer-events: none;
+}
+
+.player-avatar {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--chocolate);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  animation: float 1s ease-in-out infinite;
+  image-rendering: pixelated;
+}
+
+.player-name {
+  background: var(--rose);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  padding: 0.2rem 0.4rem;
+  border: 3px solid var(--chocolate);
+  box-shadow: 2px 2px 0px var(--chocolate);
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Llegenda ── */
+.map-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--white);
+  border: 4px solid var(--chocolate);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--chocolate);
+}
+
+.legend-node {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--chocolate);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+}
+
+.legend-node.unlocked {
+  background: var(--mint);
+  color: var(--mint-dark);
+  border: 2px solid var(--mint-dark);
+}
+.legend-node.current {
+  background: var(--gold);
+  color: var(--chocolate);
+  border: 2px solid var(--caramel);
+}
+.legend-node.locked {
+  background: var(--gray-200);
+  color: var(--gray-600);
+  border: 2px solid var(--gray-400);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .map-scroll-area {
+    height: calc(100vh - 160px);
+    border-left: none;
+    border-right: none;
+  }
+}

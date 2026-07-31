@@ -1,0 +1,114 @@
+/* pastis-perfecte.css */
+.game-page { padding: 1rem 0 3rem; }
+
+.pp-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  align-items: start;
+}
+
+.pp-panel-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--chocolate);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.pp-recipe,
+.pp-ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pp-layer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--chocolate);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  transition: all var(--t-base) var(--ease-bounce);
+  border: 2.5px solid transparent;
+  user-select: none;
+}
+
+.pp-layer:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--pink-light);
+}
+
+.pp-layer.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.pp-layer-num {
+  background: var(--chocolate);
+  color: var(--cream);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.pp-cake-zone {
+  min-height: 280px;
+  border: 3px dashed var(--pink-light);
+  border-radius: var(--radius-xl);
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 1rem;
+  gap: 0.4rem;
+  transition: all var(--t-base);
+  position: relative;
+}
+
+.pp-cake-zone.drag-over {
+  border-color: var(--pink);
+  background: var(--pink-light);
+}
+
+.pp-cake-placeholder {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.pp-overlay {
+  position: fixed; inset: 0;
+  background: rgba(92,51,23,0.88);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: var(--z-modal);
+}
+
+.pp-overlay-content { text-align: center; padding: 2rem; max-width: 400px; }
+.pp-overlay-title { font-family: var(--font-display); font-size: 2.5rem; color: var(--white); margin-bottom: 0.5rem; }
+.pp-overlay-score { font-family: var(--font-display); font-size: 1.75rem; color: var(--gold); margin-bottom: 0.5rem; }
+
+@media (max-width: 640px) {
+  .pp-container {
+    grid-template-columns: 1fr;
+  }
+}

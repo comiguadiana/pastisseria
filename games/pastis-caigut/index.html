@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastís Caigut · Pastisseria Guadiana</title>
+  <meta name="description" content="Recull els pastissos que cauen amb la cistella. Joc de la Pastisseria Guadiana!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="pastis-caigut.css" />
+</head>
+<body class="bg-cream">
+
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <div class="game-hud">
+        <div class="hud-item">
+          <span class="hud-label">Punts</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Millor</span>
+          <span class="hud-value" id="best">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Vides</span>
+          <span class="hud-value" id="lives">❤️❤️❤️</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Temps</span>
+          <span class="hud-value" id="timer">60</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺</button>
+      </div>
+
+      <div class="pc-board-wrap">
+        <canvas id="pc-canvas" class="pc-canvas"></canvas>
+        <div class="pc-overlay hidden" id="pc-overlay">
+          <div class="pc-overlay-content animate-bounce-in">
+            <div id="pc-emoji" style="font-size:4rem">🧺</div>
+            <h2 id="pc-title" class="pc-overlay-title">Fi del joc!</h2>
+            <p id="pc-score" class="pc-overlay-score">0 punts</p>
+            <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+              <button class="btn btn-primary btn-lg" id="btn-play-again">Tornar a jugar!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-instructions">
+        <span>← → Teclat o llisca el dit per moure la cistella</span>
+        <span>•</span>
+        <span>No deixis caure els pastissos!</span>
+      </div>
+
+    </div>
+
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Pastís Caigut</h3></div>
+        <div class="card-body" id="ranking-container">
+          <div class="flex-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script type="module" src="pastis-caigut.js"></script>
+</body>
+</html>

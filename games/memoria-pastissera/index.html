@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memòria Pastissera · Pastisseria Guadiana</title>
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="memoria-pastissera.css" />
+</head>
+<body class="bg-cream">
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Pastisseria Guadiana</span></a>
+    <div class="navbar-nav"><a href="../../mapa.html" class="nav-link">← Mapa</a></div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+      <div class="game-hud">
+        <div class="hud-item"><span class="hud-label">Punts</span><span class="hud-value" id="score">0</span></div>
+        <div class="hud-item"><span class="hud-label">Temps</span><span class="hud-value" id="timer">60</span></div>
+        <div class="hud-item"><span class="hud-label">Parelles</span><span class="hud-value" id="pairs">0/8</span></div>
+        <div class="hud-item"><span class="hud-label">Errors</span><span class="hud-value" id="errors">0</span></div>
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺</button>
+      </div>
+
+      <div class="mem-grid" id="mem-grid"></div>
+
+      <div class="mem-overlay hidden" id="mem-overlay">
+        <div class="mem-overlay-content animate-bounce-in">
+          <div id="mem-emoji" style="font-size:4rem">🧠</div>
+          <h2 id="mem-title" class="mem-overlay-title">Fi del joc!</h2>
+          <p id="mem-score" class="mem-overlay-score">0 punts</p>
+          <p id="mem-msg"   style="color:rgba(255,248,240,0.8);margin-bottom:1rem"></p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary btn-lg" id="btn-play-again">Tornar a jugar!</button>
+            <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Memòria Pastissera</h3></div>
+        <div class="card-body" id="ranking-container"><div class="flex-center"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+  </main>
+  <div id="toast-container"></div>
+  <script type="module" src="memoria-pastissera.js"></script>
+</body>
+</html>
