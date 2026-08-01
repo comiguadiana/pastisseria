@@ -100,24 +100,31 @@ function buildAvatarStyles() {
   
   const stylesList = AVATAR_STYLES[currentCategory] || AVATAR_STYLES.humans;
 
-  stylesList.forEach(s => {
+  for (let i = 0; i < 15; i++) {
+    const randomStyle = stylesList[Math.floor(Math.random() * stylesList.length)];
+    const randomSeed = Math.random().toString(36).substring(2, 10);
+    
     const btn = document.createElement('button');
-    btn.className = `avatar-style-btn${s.id === selectedStyle ? ' selected' : ''}`;
-    btn.title = s.label;
-    btn.dataset.style = s.id;
+    btn.className = 'avatar-style-btn';
+    btn.title = randomStyle.label;
+    
     const img = document.createElement('img');
-    img.src = getDiceBearUrl(s.id, currentSeed, 70);
-    img.alt = s.label;
+    img.src = getDiceBearUrl(randomStyle.id, randomSeed, 70);
+    img.alt = randomStyle.label;
     img.loading = 'lazy';
+    
     btn.appendChild(img);
     btn.addEventListener('click', () => {
       document.querySelectorAll('.avatar-style-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
-      selectedStyle = s.id;
+      
+      selectedStyle = randomStyle.id;
+      currentSeed = randomSeed;
+      document.getElementById('input-seed').value = currentSeed;
       updateAvatarPreview();
     });
     grid.appendChild(btn);
-  });
+  }
 }
 
 /* ── Pestanyes ── */
@@ -149,11 +156,7 @@ document.getElementById('input-name').addEventListener('input', (e) => {
 });
 
 document.getElementById('btn-random-seed').addEventListener('click', () => {
-  const adjectives = ['dolç','crujent','esponjós','cremós','frappe','torrat','caramelitzat'];
-  const nouns      = ['cruasán','donut','magdalena','pastís','sasha','tarta','galeta'];
-  currentSeed = `${adjectives[Math.floor(Math.random()*adjectives.length)]}-${nouns[Math.floor(Math.random()*nouns.length)]}-${Math.floor(Math.random()*999)}`;
-  document.getElementById('input-seed').value = currentSeed;
-  updateAvatarPreview();
+  // Regenerem la graella d'opcions sense canviar l'avatar actual
   buildAvatarStyles();
 });
 
