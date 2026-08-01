@@ -361,3 +361,19 @@
     border-right: none;
   }
 }
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .map-container {
+    padding: 0.5rem;
+    min-height: auto;
+  }
+  .map-header {
+    padding: 0.5rem 0;
+  }
+  .map-title {
+    font-size: 1.2rem;
+  }
+  .map-scroll-area {
+    height: calc(100vh - 80px);
+  }
+}

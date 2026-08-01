@@ -439,3 +439,31 @@ p {
     display: none;
   }
 }
+
+/* ── Landscape Mobile (Mòbil horitzontal) ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .navbar {
+    padding: 0.2rem 1rem;
+    border-bottom-width: 2px;
+  }
+  .navbar-brand {
+    font-size: 0.8rem;
+  }
+  .navbar-brand img {
+    width: 24px;
+    height: 24px;
+  }
+  .nav-link {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  .navbar-avatar {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+  }
+  #btn-jugar {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}

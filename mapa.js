@@ -30,7 +30,7 @@ const STOP_POSITIONS = {
   5: { left: '32.5%', top: 1700 }, // Caça Sasha
   6: { left: '65.1%', top: 2000  }, // Fusió Pastissera
   7: { left: '50%', top: 2450  }, // Fama
-  'raco-edurne': { left: '7.8%', top: 1100 }, // Easter egg
+  'raco-edurne': { left: '15%', top: 1250 }, // Easter egg
 };
 
 let currentUser = null;
