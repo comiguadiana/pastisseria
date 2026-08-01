@@ -93,6 +93,40 @@
 }
 
 /* ── Scores per joc ── */
+.avatar-style-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.avatar-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background: var(--cream);
+  border: 2px solid var(--chocolate);
+  padding: 0.3rem 0.8rem;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--chocolate);
+  border-radius: var(--radius-sm);
+  transition: all var(--t-base);
+}
+
+.tab-btn:hover {
+  background: var(--cream-dark);
+}
+
+.tab-btn.active {
+  background: var(--chocolate);
+  color: var(--gold);
+}
+
 .my-scores-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

@@ -8,16 +8,31 @@ import { getGameRanking, GAMES } from './assets/js/ranking.js';
 import { db } from './assets/js/firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const AVATAR_STYLES = [
-  { id: 'adventurer',        label: 'Aventurer' },
-  { id: 'avataaars',         label: 'Avataaars' },
-  { id: 'big-smile',         label: 'Somrient' },
-  { id: 'lorelei',           label: 'Lorelei' },
-  { id: 'micah',             label: 'Micah' },
-  { id: 'notionists',        label: 'Notion' },
-  { id: 'open-peeps',        label: 'Open Peeps' },
-  { id: 'personas',          label: 'Personas' },
-];
+const AVATAR_STYLES = {
+  humans: [
+    { id: 'adventurer',        label: 'Aventurer' },
+    { id: 'avataaars',         label: 'Avataaars' },
+    { id: 'big-smile',         label: 'Somrient' },
+    { id: 'lorelei',           label: 'Lorelei' },
+    { id: 'micah',             label: 'Micah' },
+    { id: 'notionists',        label: 'Notion' },
+    { id: 'open-peeps',        label: 'Open Peeps' },
+    { id: 'personas',          label: 'Personas' },
+    { id: 'miniavs',           label: 'Mini Avs' },
+  ],
+  creatures: [
+    { id: 'bottts',            label: 'Robots' },
+    { id: 'big-ears',          label: 'Orellut' },
+  ],
+  abstract: [
+    { id: 'pixel-art',         label: 'Píxel' },
+    { id: 'shapes',            label: 'Formes' },
+    { id: 'fun-emoji',         label: 'Emoji' },
+    { id: 'identicon',         label: 'Icona' },
+  ]
+};
+
+let currentCategory = 'humans';
 
 const GAME_INFO = [
   { id: GAMES.PASTEBLOCK,         emoji:'🧩', label:'PasteBlock' },
@@ -56,6 +71,17 @@ function populateProfile(p, user) {
   selectedStyle = p.avatarStyle || 'adventurer';
   currentSeed   = p.avatarSeed  || uid?.slice(0, 8) || 'guadiana';
 
+  // Find the category of the selected style to select the correct tab initially
+  for (const cat in AVATAR_STYLES) {
+    if (AVATAR_STYLES[cat].find(s => s.id === selectedStyle)) {
+      currentCategory = cat;
+      break;
+    }
+  }
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const activeTab = document.querySelector(`.tab-btn[data-category="${currentCategory}"]`);
+  if (activeTab) activeTab.classList.add('active');
+
   document.getElementById('input-name').value = p.displayName || '';
   document.getElementById('input-seed').value = currentSeed;
   document.getElementById('profile-name-display').textContent  = p.displayName || 'Jugador';
@@ -71,7 +97,10 @@ function populateProfile(p, user) {
 function buildAvatarStyles() {
   const grid = document.getElementById('avatar-style-grid');
   grid.innerHTML = '';
-  AVATAR_STYLES.forEach(s => {
+  
+  const stylesList = AVATAR_STYLES[currentCategory] || AVATAR_STYLES.humans;
+
+  stylesList.forEach(s => {
     const btn = document.createElement('button');
     btn.className = `avatar-style-btn${s.id === selectedStyle ? ' selected' : ''}`;
     btn.title = s.label;
@@ -90,6 +119,16 @@ function buildAvatarStyles() {
     grid.appendChild(btn);
   });
 }
+
+/* ── Pestanyes ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentCategory = e.target.dataset.category;
+    buildAvatarStyles();
+  });
+});
 
 /* ── Preview de l'avatar ── */
 function updateAvatarPreview() {
