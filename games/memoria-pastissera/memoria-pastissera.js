@@ -19,7 +19,7 @@ const CARDS = [
   { emoji:'🍪', label:'Galeta'    },
   { emoji:'🥧', label:'Tarta'     },
   { emoji:'🍰', label:'Cunya'     },
-  { emoji:'🐍', label:'Sasha'     },
+  { emoji:'<img src="../../assets/img/sasha.png" style="width:80%;height:80%;object-fit:contain">', label:'Sasha' },
 ];
 
 const GAME_TIME = 60;

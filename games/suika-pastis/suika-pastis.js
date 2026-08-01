@@ -26,6 +26,8 @@ const PASTRIES = [
 
 /* ─── Estat del joc ─── */
 let engine, render, runner;
+const sashaImg = new Image();
+sashaImg.src = '../../assets/img/sasha.png';
 let score = 0;
 let bestScore = 0;
 let gameRunning = false;
@@ -87,9 +89,14 @@ function initMatterJS() {
         ctx.save();
         ctx.translate(b.position.x, b.position.y);
         ctx.rotate(b.angle);
-        ctx.font = `${p.radius * 1.25}px serif`;
-        // Afegir una petita ombra interior/lluentor o només el text
-        ctx.fillText(p.emoji, 0, 0);
+        
+        if (p.id === 7 && sashaImg.complete) {
+          const size = p.radius * 2;
+          ctx.drawImage(sashaImg, -size/2, -size/2, size, size);
+        } else {
+          ctx.font = `${p.radius * 1.25}px serif`;
+          ctx.fillText(p.emoji, 0, 0);
+        }
         ctx.restore();
       }
     });

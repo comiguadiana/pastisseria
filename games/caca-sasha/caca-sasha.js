@@ -30,7 +30,8 @@ const SASHA_PHRASES_HIT   = ['Aïïïïïïï! 😤','M\'has donat!','🤕','Rev
 /* ── Estat ── */
 let canvas = document.getElementById('cs-canvas');
 let ctx    = canvas ? canvas.getContext('2d') : null;
-let sashaImg;
+let sashaImg = new Image();
+sashaImg.src = '../../assets/img/sasha.png';
 let score = 0, bestScore = 0, combo = 1, comboTimer = 0;
 let timeLeft = GAME_TIME;
 let gameRunning = false;
