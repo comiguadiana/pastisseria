@@ -435,6 +435,17 @@ p {
 }
 
 @media (max-width: 480px) {
+  .navbar-brand {
+    font-size: 0.75rem;
+  }
+  .navbar-brand img {
+    width: 28px;
+    height: 28px;
+  }
+  .nav-link {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
   .navbar-nav .nav-link span {
     display: none;
   }
