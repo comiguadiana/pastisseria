@@ -3,7 +3,7 @@
  */
 
 import { onAuthReady, logout, renderNavbarUser, getDiceBearUrl } from './assets/js/auth.js';
-import { getUnlockedGames, GAMES } from './assets/js/ranking.js';
+import { GAMES } from './assets/js/ranking.js';
 import { getFirestore, collection, getCountFromServer }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db } from './assets/js/firebase-config.js';
@@ -11,6 +11,7 @@ import { db } from './assets/js/firebase-config.js';
 /* ── Autenticació ── */
 onAuthReady((user, profile) => {
   renderNavbarUser(profile, user);
+  updateGameBadges(profile);
 
   // Botó "Jugar ara" — redirigeix al mapa si hi ha sessió, sinó al login
   const btnJugar = document.getElementById('btn-jugar');
@@ -26,8 +27,8 @@ document.getElementById('nav-logout-btn')?.addEventListener('click', async () =>
 });
 
 /* ── Desbloqueix de jocs ── */
-function updateGameBadges() {
-  const unlocked = getUnlockedGames();
+function updateGameBadges(profile) {
+  const unlocked = profile?.unlockedGames || ['pasteblock'];
   const badges = {
     'pasteblock':         null, // sempre desbloquejat
     'pastis-caigut':      'badge-pastis-caigut',
