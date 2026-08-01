@@ -84,6 +84,7 @@ html {
   font-size: 18px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -135,7 +136,7 @@ h4 { font-size: clamp(0.8rem, 2vw, 1.15rem); }
 
 p {
   font-family: var(--font-ui);
-  font-size: 1.6rem;
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
   color: var(--chocolate);
 }
 
@@ -164,6 +165,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
