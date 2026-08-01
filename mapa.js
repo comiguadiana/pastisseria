@@ -22,15 +22,15 @@ const GAME_URLS = {
 
 // Posicions de l'avatar per a cada parada (centrat sobre el node)
 const STOP_POSITIONS = {
-  0: { left: 384, top: 200 }, // La Portalada (PasteBlock)
-  1: { left: 250, top: 500 }, // Pastís Caigut
-  2: { left: 500, top: 800 }, // Llança Ensaïmada
-  3: { left: 250, top: 1100 }, // Memòria
-  4: { left: 500, top: 1400 }, // Pastís Perfecte
-  5: { left: 250, top: 1700 }, // Caça Sasha
-  6: { left: 500, top: 2000  }, // Fusió Pastissera
-  7: { left: 384, top: 2450  }, // Fama
-  'raco-edurne': { left: 60, top: 1100 }, // Easter egg
+  0: { left: '50%', top: 200 }, // La Portalada (PasteBlock)
+  1: { left: '32.5%', top: 500 }, // Pastís Caigut
+  2: { left: '65.1%', top: 800 }, // Llança Ensaïmada
+  3: { left: '32.5%', top: 1100 }, // Memòria
+  4: { left: '65.1%', top: 1400 }, // Pastís Perfecte
+  5: { left: '32.5%', top: 1700 }, // Caça Sasha
+  6: { left: '65.1%', top: 2000  }, // Fusió Pastissera
+  7: { left: '50%', top: 2450  }, // Fama
+  'raco-edurne': { left: '7.8%', top: 1100 }, // Easter egg
 };
 
 let currentUser = null;
@@ -71,7 +71,7 @@ function initMap(profile) {
   // Mou l'avatar a la posició actual
   const pos = STOP_POSITIONS[currentIdx] || STOP_POSITIONS[0];
   if (player) {
-    player.style.left = pos.left + 'px';
+    player.style.left = pos.left;
     player.style.top  = (pos.top - 30) + 'px'; // l'avatar queda sobre el node
     player.style.transform = 'translate(-50%, -100%)';
   }
@@ -110,10 +110,12 @@ function initMap(profile) {
     illuminatedIndices.forEach(idx => {
       const p = STOP_POSITIONS[idx];
       if (p) {
+        // En fog, necessitem px aproximats pel SVG cx. Usem parseFloat per % * 7.68
+        const pxLeft = parseFloat(p.left) * 7.68;
         // Cercle central més intens i gran
-        fogHoles.innerHTML += `<circle cx="${p.left}" cy="${p.top}" r="220" fill="black" opacity="0.95"/>`;
+        fogHoles.innerHTML += `<circle cx="${pxLeft}" cy="${p.top}" r="220" fill="black" opacity="0.95"/>`;
         // Halo exterior encara més gran
-        fogHoles.innerHTML += `<circle cx="${p.left}" cy="${p.top}" r="350" fill="black" opacity="0.6"/>`;
+        fogHoles.innerHTML += `<circle cx="${pxLeft}" cy="${p.top}" r="350" fill="black" opacity="0.6"/>`;
       }
     });
   }
