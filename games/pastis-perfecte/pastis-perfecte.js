@@ -1,9 +1,10 @@
 /**
- * pastis-perfecte.js — Puzzle de capes de pastís
- * Arrossega les capes a l'ordre correcte. Contra el temps.
+ * pastis-perfecte.js — El Taller: Munta pastissos a contrarellotge
+ * Adaptat de H3L4D0S per a la Pastisseria Guadiana
+ * Mecànica: llegir un bucle (valors + operació), calcular la seqüència de capes i muntar el pastís
  */
 
-import { requireAuth, renderNavbarUser, showToast }
+import { requireAuth, renderNavbarUser, logout, showToast }
   from '../../assets/js/auth.js';
 import { saveScore, getGameRanking, renderRankingTable,
          showNewRecordModal, unlockNextGame, GAMES }
@@ -11,264 +12,371 @@ import { saveScore, getGameRanking, renderRankingTable,
 import { db } from '../../assets/js/firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const LEVELS = [
-  {
-    name: 'Pastís de Maduixa',
-    layers: [
-      { emoji: '🟫', label: 'Base de pa de pessic', color: '#8B5E3C' },
-      { emoji: '🤍', label: 'Crema de vainilla',    color: '#FFFDE7' },
-      { emoji: '🍓', label: 'Maduixes',             color: '#E53935' },
-      { emoji: '🟫', label: 'Pa de pessic',         color: '#8B5E3C' },
-      { emoji: '🩷', label: 'Glassa de maduixa',    color: '#FF8FAB' },
-    ],
-    time: 30
-  },
-  {
-    name: 'Pastís de Xocolata',
-    layers: [
-      { emoji: '🟫', label: 'Base xocolata',        color: '#3E2723' },
-      { emoji: '🍫', label: 'Ganache xocolata',     color: '#5D4037' },
-      { emoji: '🟫', label: 'Bescuit de cacao',     color: '#4E342E' },
-      { emoji: '⬜', label: 'Crema de mantequilla', color: '#FFF9C4' },
-      { emoji: '🍫', label: 'Cobertura de xocolata',color: '#3E2723' },
-      { emoji: '✨', label: 'Decoració final',       color: '#FFD700' },
-    ],
-    time: 35
-  },
-  {
-    name: 'Pastís de Fruites',
-    layers: [
-      { emoji: '🟡', label: 'Base de pa de pessic llimona', color: '#FDD835' },
-      { emoji: '🍋', label: 'Crema de llimona',     color: '#FFEE58' },
-      { emoji: '🟡', label: 'Segon pa de pessic',   color: '#FDD835' },
-      { emoji: '🍊', label: 'Confitura de taronja', color: '#FF8F00' },
-      { emoji: '🟡', label: 'Tercer pa de pessic',  color: '#FDD835' },
-      { emoji: '🍋', label: 'Cobertura llimona',    color: '#FFEE58' },
-      { emoji: '🍇', label: 'Fruites del bosc',     color: '#9C27B0' },
-    ],
-    time: 40
-  },
-];
+/* ── Estat del joc ── */
+let currentUser = null;
+let currentProfile = null;
+let uid = null;
 
-let currentLevel = 0;
-let score = 0, bestScore = 0;
-let timeLeft = 30;
-let gameRunning = false;
-let countdownTimer = null;
-let dragSrc = null;
-let cakeZoneLayers = [];
-let uid = null, profile = null;
+let currentLevelIndex = 0;
+let targetStack   = [];
+let playerStack   = [];
+let score         = 0;
+let bestScore     = 0;
+let timeLeft      = 90;
+let timerInterval = null;
+let isPlaying     = false;
+let mistakes      = 0;
 
+/* ── Noms dels sabors en català ── */
+const FLAVOR_NAMES = {
+  1: '🍫 Xocolata',
+  2: '🍓 Maduixa',
+  3: '🍋 Llimona',
+  4: '🍦 Vainilla',
+  5: '🫐 Mirtil',
+  6: '🥭 Mango',
+};
+
+/* ── DOM refs ── */
+const domTime        = document.getElementById('time');
+const domScore       = document.getElementById('score');
+const domCardValues  = document.getElementById('card-values');
+const domCardOps     = document.getElementById('card-operations');
+const domStack       = document.getElementById('stack');
+const domCakeBuilder = document.getElementById('cake-builder');
+const flavorBtns     = document.querySelectorAll('.flavor-btn');
+const startScreen    = document.getElementById('start-screen');
+const gameOverScreen = document.getElementById('game-over-screen');
+const startBtn       = document.getElementById('start-btn');
+const restartBtn     = document.getElementById('restart-btn');
+const finalScoreEl   = document.getElementById('final-score');
+const cardEl         = document.getElementById('current-card');
+const verifyBtn      = document.getElementById('verify-btn');
+const clearBtn       = document.getElementById('clear-btn');
+const mistakesCounter = document.getElementById('mistakes-counter');
+const solutionScreen = document.getElementById('solution-screen');
+const solutionStack  = document.getElementById('solution-stack');
+const nextLevelBtn   = document.getElementById('next-level-btn');
+
+/* ── Autenticació ── */
 requireAuth('../../login.html')
-  .then(({ user, profile: p }) => {
-    uid = user.uid; profile = p;
+  .then(async ({ user, profile: p }) => {
+    uid            = user.uid;
+    currentUser    = user;
+    currentProfile = p;
     renderNavbarUser(p, user);
-    bestScore = parseInt(localStorage.getItem(`pp_best_${uid}`) || '0');
-    document.getElementById('best').textContent = bestScore.toLocaleString();
-    initLevel();
-    loadRanking();
-  }).catch(() => {});
+    await loadBestScore(uid);
+  })
+  .catch(() => {});
 
-function initLevel() {
-  const lvl = LEVELS[currentLevel % LEVELS.length];
-  timeLeft = lvl.time; gameRunning = true;
-  cakeZoneLayers = [];
-  document.getElementById('pp-overlay').classList.add('hidden');
-  document.getElementById('timer').style.color = '';
-  document.getElementById('level').textContent = currentLevel + 1;
-  clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    timeLeft--;
-    document.getElementById('timer').textContent = timeLeft;
-    if (timeLeft <= 10) document.getElementById('timer').style.color = '#FF8FAB';
-    if (timeLeft <= 0) { endLevel(false); }
-  }, 1000);
-  buildUI(lvl);
+document.getElementById('nav-logout-btn')?.addEventListener('click', async () => {
+  await logout();
+  window.location.href = '../../login.html';
+});
+
+async function loadBestScore(uid) {
+  try {
+    const ref  = doc(db, 'scores', GAMES.PASTIS_PERFECTE, 'players', uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) bestScore = snap.data().score || 0;
+  } catch(e) { /* Firebase no configurat */ }
+}
+
+/* ── Inici / Final del joc ── */
+function startGame() {
+  score             = 0;
+  timeLeft          = 90;
+  currentLevelIndex = 0;
+  isPlaying         = true;
+
   updateHUD();
-}
+  startScreen.classList.add('hidden');
+  gameOverScreen.classList.add('hidden');
+  solutionScreen.classList.add('hidden');
 
-function buildUI(lvl) {
-  // Recepta (ordre correcte)
-  const recipe = document.getElementById('pp-recipe');
-  recipe.innerHTML = '';
-  [...lvl.layers].reverse().forEach((l, i) => {
-    const el = document.createElement('div');
-    el.className = 'pp-layer';
-    el.style.borderLeft = `4px solid ${l.color}`;
-    el.innerHTML = `<span class="pp-layer-num">${lvl.layers.length - i}</span>
-      <span>${l.emoji}</span><span>${l.label}</span>`;
-    recipe.appendChild(el);
-  });
+  loadLevel(generateRandomLevel());
 
-  // Ingredients (barrejats)
-  const shuffled = [...lvl.layers].sort(() => Math.random() - 0.5);
-  const ingred = document.getElementById('pp-ingredients');
-  ingred.innerHTML = '';
-  shuffled.forEach((l, i) => {
-    const el = document.createElement('div');
-    el.className = 'pp-layer';
-    el.draggable = true;
-    el.dataset.label = l.label;
-    el.style.borderLeft = `4px solid ${l.color}`;
-    el.innerHTML = `<span>${l.emoji}</span><span>${l.label}</span>`;
-    el.addEventListener('dragstart', (e) => {
-      dragSrc = el;
-      el.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', l.label);
-    });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-    // Touch drag support (simple: click per afegir)
-    el.addEventListener('click', () => addLayerToZone(l, el));
-    ingred.appendChild(el);
-  });
-
-  // Zona de construcció
-  const zone = document.getElementById('pp-cake-zone');
-  zone.innerHTML = '<div class="pp-cake-placeholder">← Arrossega o clica les capes</div>';
-  cakeZoneLayers = [];
-
-  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    if (!dragSrc) return;
-    const label = e.dataTransfer.getData('text/plain');
-    const layer = lvl.layers.find(l => l.label === label);
-    if (!layer) return;
-    addLayerToZone(layer, dragSrc);
-    dragSrc = null;
-  });
-}
-
-function addLayerToZone(layer, srcEl) {
-  if (!gameRunning) return;
-  if (cakeZoneLayers.find(l => l.label === layer.label)) return; // ja afegit
-
-  cakeZoneLayers.unshift(layer); // afegir a dalt (les capes s'apilen de baix cap amunt)
-  srcEl.style.opacity = '0.3';
-  srcEl.style.pointerEvents = 'none';
-
-  renderCakeZone();
-}
-
-function renderCakeZone() {
-  const zone = document.getElementById('pp-cake-zone');
-  zone.innerHTML = '';
-  if (!cakeZoneLayers.length) {
-    zone.innerHTML = '<div class="pp-cake-placeholder">← Arrossega o clica les capes</div>';
-    return;
-  }
-  cakeZoneLayers.forEach((l, i) => {
-    const el = document.createElement('div');
-    el.className = 'pp-layer';
-    el.style.width = '100%';
-    el.style.borderLeft = `4px solid ${l.color}`;
-    el.innerHTML = `<span>${l.emoji}</span><span style="font-size:0.85rem">${l.label}</span>`;
-    // Click per eliminar
-    el.title = 'Clica per eliminar';
-    el.addEventListener('click', () => removeCakeLayer(i, l));
-    zone.appendChild(el);
-  });
-}
-
-function removeCakeLayer(idx, layer) {
-  cakeZoneLayers.splice(idx, 1);
-  renderCakeZone();
-  // Torna a habilitar l'ingredient
-  const ingreds = document.querySelectorAll('#pp-ingredients .pp-layer');
-  ingreds.forEach(el => {
-    if (el.dataset.label === layer.label) {
-      el.style.opacity = '';
-      el.style.pointerEvents = '';
-    }
-  });
-}
-
-/* ── Comprovar ── */
-document.getElementById('btn-check').addEventListener('click', checkCake);
-
-function checkCake() {
-  if (!gameRunning) return;
-  const lvl = LEVELS[currentLevel % LEVELS.length];
-
-  if (cakeZoneLayers.length !== lvl.layers.length) {
-    showToast(`⚠️ Falten ${lvl.layers.length - cakeZoneLayers.length} capes!`, 'info', 2000);
-    return;
-  }
-
-  // Les capes de la zona van de dalt a baix (cakeZoneLayers[0] = top)
-  // Les capes de la recepta van de baix a dalt (layers[0] = base)
-  const correct = [...cakeZoneLayers].reverse();
-  let errors = 0;
-  correct.forEach((l, i) => {
-    if (l.label !== lvl.layers[i].label) errors++;
-  });
-
-  if (errors === 0) {
-    endLevel(true);
-  } else {
-    score = Math.max(0, score - errors * 20);
-    showToast(`❌ ${errors} capes incorrectes! -${errors*20}pts`, 'error', 2000);
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
     updateHUD();
-  }
+    if (timeLeft <= 10) {
+      domTime.classList.add('danger');
+    } else {
+      domTime.classList.remove('danger');
+    }
+    if (timeLeft <= 0) endGame();
+  }, 1000);
 }
 
-function updateHUD() {
-  document.getElementById('score').textContent = score.toLocaleString();
-  document.getElementById('best').textContent  = bestScore.toLocaleString();
-}
+async function endGame() {
+  isPlaying = false;
+  clearInterval(timerInterval);
+  domTime.classList.remove('danger');
+  finalScoreEl.innerText = score;
+  gameOverScreen.classList.remove('hidden');
 
-async function endLevel(won) {
-  gameRunning = false;
-  clearInterval(countdownTimer);
-
-  if (won) {
-    const bonus = timeLeft * 10 + 200;
-    score += bonus;
-    showToast(`🎂 Perfecte! +${bonus} punts`, 'success', 2000);
-  }
-
-  const isNew = score > bestScore;
-  if (isNew) { bestScore = score; }
-
-  document.getElementById('pp-emoji').textContent = won ? '🎂' : '⏰';
-  document.getElementById('pp-title').textContent = won ? 'Pastís Perfecte!' : 'Temps esgotat!';
-  document.getElementById('pp-score').textContent = score.toLocaleString() + ' punts';
-  document.getElementById('pp-msg').textContent   = won
-    ? `Nivell ${currentLevel + 1} completat! Temps restant: ${timeLeft}s`
-    : 'Intenta-ho més ràpid!';
-  document.getElementById('btn-next').textContent = won ? 'Següent nivell! 🎂' : 'Tornar a intentar-ho!';
-  document.getElementById('pp-overlay').classList.remove('hidden');
-
-  if (uid && profile && won) {
+  if (uid && currentProfile && score > 0) {
     try {
-      const isRecord = await saveScore(GAMES.PASTIS_PERFECTE, uid, score, profile);
+      const isRecord = await saveScore(GAMES.PASTIS_PERFECTE, uid, score, currentProfile);
       if (isRecord) {
         const ranking = await getGameRanking(GAMES.PASTIS_PERFECTE, 10);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.PASTIS_PERFECTE, uid);
-        
       }
-    } catch(e) {}
+    } catch(e) { /* Firebase no configurat */ }
   }
 }
 
-async function loadRanking() {
-  try {
-    const entries = await getGameRanking(GAMES.PASTIS_PERFECTE, 10);
-    renderRankingTable(entries, 'ranking-container', uid);
-  } catch(e) {
-    document.getElementById('ranking-container').innerHTML =
-      '<p style="text-align:center;padding:1rem;color:var(--gray-400)">Configura Firebase per veure el rànquing</p>';
-  }
+function updateHUD() {
+  domScore.innerText = score;
+  domTime.innerText  = timeLeft;
+  mistakesCounter.innerText = `Errors: ${mistakes}/3`;
 }
 
-document.getElementById('btn-restart').addEventListener('click', () => { clearInterval(countdownTimer); initLevel(); });
-document.getElementById('btn-next').addEventListener('click', () => {
-  document.getElementById('pp-overlay').classList.add('hidden');
-  currentLevel++;
-  initLevel();
+/* ── Generació procedural de nivells (portat de H3L4D0S) ── */
+function generateRandomLevel() {
+  // La dificultat puja cada 3 nivells, màx nivell 3 (expert)
+  const difficulty = Math.min(3, Math.floor(currentLevelIndex / 3));
+
+  // Helpers per generar seqüències segures dins del rang 1-6
+  const getAscending = (minVal, maxVal, len) => {
+    const maxStart = maxVal - len + 1;
+    const start    = Math.floor(Math.random() * (maxStart - minVal + 1)) + minVal;
+    return Array.from({length: len}, (_, i) => start + i);
+  };
+
+  const getDescending = (minVal, maxVal, len) => {
+    const minStart = minVal + len - 1;
+    const start    = Math.floor(Math.random() * (maxVal - minStart + 1)) + minStart;
+    return Array.from({length: len}, (_, i) => start - i);
+  };
+
+  // Nivell Fàcil: bucle curt, 1 operació simple
+  const templatesEasy = [
+    () => ({ values: getAscending(1, 6, Math.floor(Math.random() * 2) + 2),  ops: ['A'] }),
+    () => ({ values: getDescending(1, 6, Math.floor(Math.random() * 2) + 2), ops: ['A'] }),
+  ];
+
+  // Nivell Mig: operacions matemàtiques simples, bucles medis
+  const templatesMed = [
+    () => ({ values: getAscending(1, 6, Math.floor(Math.random() * 2) + 3),  ops: ['A', 'A'] }),
+    () => ({ values: getAscending(1, 5, Math.floor(Math.random() * 2) + 3),  ops: ['A+1']    }),
+    () => ({ values: getDescending(2, 6, Math.floor(Math.random() * 2) + 3), ops: ['A-1']    }),
+  ];
+
+  // Nivell Difícil: A+A, mescla d'operacions
+  const templatesHard = [
+    () => ({ values: getAscending(1, 3, Math.floor(Math.random() * 2) + 2), ops: ['A', 'A+A'] }),
+    () => {
+      const c = Math.floor(Math.random() * 6) + 1;
+      return { values: getAscending(1, 6, Math.floor(Math.random() * 2) + 3), ops: ['A', c.toString()] };
+    },
+    () => ({ values: getAscending(2, 5, Math.floor(Math.random() * 2) + 2), ops: ['A-1', 'A+1'] }),
+  ];
+
+  // Nivell Expert: bucles llargs, triple operació
+  const templatesExpert = [
+    () => ({ values: getAscending(1, 3, Math.floor(Math.random() * 2) + 2),  ops: ['A', 'A+1', 'A+A'] }),
+    () => ({ values: getDescending(2, 6, Math.floor(Math.random() * 3) + 3), ops: ['A', 'A-1']         }),
+  ];
+
+  let pool = templatesEasy;
+  if (difficulty === 1) pool = templatesMed;
+  if (difficulty === 2) pool = templatesHard;
+  if (difficulty >= 3)  pool = templatesExpert;
+
+  return pool[Math.floor(Math.random() * pool.length)]();
+}
+
+function calculateTargetStack(level) {
+  let stack = [];
+  for (let i = 0; i < level.values.length; i++) {
+    const A = level.values[i];
+    for (let j = 0; j < level.ops.length; j++) {
+      const op = level.ops[j];
+      let flavor = parseOperation(op, A);
+      if (flavor > 6) flavor = 6;
+      if (flavor < 1) flavor = 1;
+      stack.push(flavor);
+    }
+  }
+  return stack;
+}
+
+function parseOperation(op, A) {
+  if (op === 'A')   return A;
+  if (op === 'A+1') return A + 1;
+  if (op === 'A-1') return A - 1;
+  if (op === 'A+A') return A + A;
+  if (!isNaN(parseInt(op))) return parseInt(op);
+  return A;
+}
+
+/* ── Càrrega d'un nivell ── */
+function loadLevel(level) {
+  playerStack = [];
+  domStack.innerHTML = '';
+  mistakes = 0;
+  updateHUD();
+
+  // Animació de sortida de la carta anterior
+  cardEl.style.transition = 'all 0.25s ease-in';
+  cardEl.style.transform  = 'translateY(100%) rotateZ(-10deg)';
+  cardEl.style.opacity    = '0';
+
+  setTimeout(() => {
+    // Generar valors A a la carta
+    domCardValues.innerHTML = '';
+    level.values.forEach(v => {
+      const div = document.createElement('div');
+      div.className = `val val-${v}`;
+      div.innerText = v;
+      domCardValues.appendChild(div);
+    });
+
+    // Generar operacions a la carta
+    domCardOps.innerHTML = '';
+    level.ops.forEach(op => {
+      const div = document.createElement('div');
+      div.className = `op-block ${(op.includes('-') || op.includes('+')) ? 'op-red' : ''}`;
+      div.innerText = op;
+      domCardOps.appendChild(div);
+    });
+
+    targetStack = calculateTargetStack(level);
+
+    // Animació d'entrada de la nova carta
+    cardEl.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    cardEl.style.transform  = 'translateY(0) rotateY(5deg)';
+    cardEl.style.opacity    = '1';
+  }, 300);
+}
+
+/* ── Afegir una capa al pastís ── */
+function addLayer(flavor) {
+  const layerEl = document.createElement('div');
+  layerEl.className = `cake-layer flavor-${flavor}`;
+
+  const label = document.createElement('span');
+  label.className   = 'layer-label';
+  label.textContent = FLAVOR_NAMES[flavor];
+  layerEl.appendChild(label);
+
+  domStack.appendChild(layerEl);
+  playerStack.push(flavor);
+}
+
+/* ── Botons de sabors ── */
+flavorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!isPlaying) return;
+    const flavor = parseInt(btn.getAttribute('data-flavor'));
+    addLayer(flavor);
+
+    // Micro-animació del botó premut
+    btn.classList.add('btn-pressed');
+    setTimeout(() => btn.classList.remove('btn-pressed'), 150);
+  });
 });
+
+// Atajos de teclat 1-6
+document.addEventListener('keydown', (e) => {
+  if (!isPlaying) return;
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= 6) addLayer(num);
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); verifyBtn.click(); }
+  if (e.key === 'Backspace' || e.key === 'Delete') clearBtn.click();
+});
+
+/* ── Netejar ── */
+clearBtn.addEventListener('click', () => {
+  if (!isPlaying) return;
+  playerStack = [];
+  domStack.innerHTML = '';
+});
+
+/* ── Verificar ── */
+verifyBtn.addEventListener('click', () => {
+  if (!isPlaying) return;
+
+  // Comparar les piles
+  let isCorrect = playerStack.length === targetStack.length;
+  if (isCorrect) {
+    for (let i = 0; i < playerStack.length; i++) {
+      if (playerStack[i] !== targetStack[i]) { isCorrect = false; break; }
+    }
+  }
+
+  if (isCorrect) {
+    levelComplete();
+  } else {
+    // Error: animació de tremolor
+    domCakeBuilder.classList.add('shake');
+    setTimeout(() => domCakeBuilder.classList.remove('shake'), 400);
+
+    mistakes++;
+    score    = Math.max(0, score - 5);
+    timeLeft = Math.max(0, timeLeft - 3);
+    updateHUD();
+
+    showToast(`❌ Error! -5pts -3s (${mistakes}/3)`, 'error', 1500);
+
+    if (mistakes >= 3) showSolution();
+  }
+});
+
+/* ── Nivell completat ── */
+function levelComplete() {
+  score    += targetStack.length * 10;
+  timeLeft += 3;
+  updateHUD();
+
+  showToast(`✅ Pastís completat! +${targetStack.length * 10}pts +3s`, 'success', 1500);
+
+  // Animació "poof" de les capes
+  Array.from(domStack.children).forEach(child => child.classList.add('poof'));
+
+  setTimeout(() => {
+    currentLevelIndex++;
+    loadLevel(generateRandomLevel());
+  }, 600);
+}
+
+/* ── Mostrar solució (3 errors) ── */
+function showSolution() {
+  isPlaying = false;
+  solutionStack.innerHTML = '';
+
+  // Mostrar les capes de la solució (de baix a dalt)
+  // Com que el stack usa column-reverse, afegim en l'ordre natural
+  [...targetStack].forEach(flavor => {
+    const layerEl = document.createElement('div');
+    layerEl.className = `cake-layer flavor-${flavor}`;
+    const label = document.createElement('span');
+    label.className   = 'layer-label';
+    label.textContent = FLAVOR_NAMES[flavor];
+    layerEl.appendChild(label);
+    solutionStack.appendChild(layerEl);
+  });
+
+  // Plat a baix
+  const plate = document.createElement('div');
+  plate.className = 'plate';
+  plate.innerHTML = '<div class="plate-inner"></div>';
+  solutionStack.appendChild(plate);
+
+  solutionScreen.classList.remove('hidden');
+}
+
+/* ── Botons d'overlay ── */
+nextLevelBtn.addEventListener('click', () => {
+  solutionScreen.classList.add('hidden');
+  isPlaying = true;
+  currentLevelIndex++;
+  loadLevel(generateRandomLevel());
+});
+
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
