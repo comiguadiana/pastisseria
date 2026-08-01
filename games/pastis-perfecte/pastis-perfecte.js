@@ -22,7 +22,7 @@ let targetStack   = [];
 let playerStack   = [];
 let score         = 0;
 let bestScore     = 0;
-let timeLeft      = 90;
+let timeLeft      = 60;
 let timerInterval = null;
 let isPlaying     = false;
 let mistakes      = 0;
@@ -85,7 +85,7 @@ async function loadBestScore(uid) {
 /* ── Inici / Final del joc ── */
 function startGame() {
   score             = 0;
-  timeLeft          = 90;
+  timeLeft          = 60;
   currentLevelIndex = 0;
   isPlaying         = true;
 
@@ -192,9 +192,9 @@ function generateRandomLevel() {
 
 function calculateTargetStack(level) {
   let stack = [];
-  for (let i = 0; i < level.values.length; i++) {
+  for (let i = level.values.length - 1; i >= 0; i--) {
     const A = level.values[i];
-    for (let j = 0; j < level.ops.length; j++) {
+    for (let j = level.ops.length - 1; j >= 0; j--) {
       const op = level.ops[j];
       let flavor = parseOperation(op, A);
       if (flavor > 6) flavor = 6;
