@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Racó de l'Edurne | Carrer Guadiana 2026</title>
+  
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="raco-edurne.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="cream-theme">
+
+  <!-- Navegació -->
+  <nav class="navbar">
+    <a href="../../mapa.html" class="navbar-brand">
+      <span class="back-arrow">←</span> Mapa
+    </a>
+    <div class="user-profile">
+      <img id="nav-avatar" src="" alt="Avatar" class="avatar-sm hidden">
+      <span id="nav-username" class="username hidden">Jugador</span>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container text-center">
+      <div class="game-header">
+        <h1>El Racó de l'Edurne</h1>
+        <p>Salva els planetes intergalàctics d'estavellar-se!</p>
+      </div>
+
+      <!-- HUD del joc -->
+      <div class="game-hud">
+        <div class="hud-item">
+          <span class="hud-label">Vides</span>
+          <span class="hud-value" id="lives">3</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Planetes Salvats</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+      </div>
+
+      <!-- Contenidor del joc principal -->
+      <div class="re-board-wrap">
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls" id="touchControls">
+          <button id="leftBtn" class="btn btn-lg">←</button>
+          <button id="rightBtn" class="btn btn-lg">→</button>
+        </div>
+
+        <div class="re-overlay" id="game-overlay">
+          <div class="re-overlay-content">
+            <h2 class="re-overlay-title" id="overlay-title">Racó de l'Edurne</h2>
+            <p class="re-overlay-msg" id="overlay-msg">Utilitza les fletxes (o els botons) per moure't.</p>
+            <div class="re-instructions mt-3">
+              <span>← Esquerra</span>
+              <span>→ Dreta</span>
+            </div>
+            <button class="btn btn-xl btn-primary mt-4" id="start-btn">JUGAR</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <script type="module" src="raco-edurne.js"></script>
+</body>
+</html>

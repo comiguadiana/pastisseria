@@ -68,6 +68,9 @@
                L 250,1900 L 500,2000
                L 500,2200 L 384,2450"
             fill="none" />
+          
+          <!-- Easter Egg Branch -->
+          <path class="map-cross-street" d="M 250,1100 L 100,1100" fill="none" />
         </svg>
 
         <!-- ══ PARADES ══ -->
@@ -121,6 +124,19 @@
             <div class="stop-name">La Comissió</div>
             <div class="stop-desc">Memòria</div>
             <div class="stop-score" id="score-memoria-pastissera">–</div>
+          </div>
+        </div>
+
+        <!-- Easter Egg: Racó de l'Edurne -->
+        <div class="map-stop stop-easter-egg unlocked" id="stop-raco-edurne"
+             data-game="raco-edurne"
+             style="left:100px; top:1100px; transform: translate(-50%, -50%);"
+             onclick="goToGame('raco-edurne')">
+          <div class="stop-node stop-special" style="width:45px!important;height:45px!important;font-size:1.2rem;">🪐</div>
+          <div class="stop-label">
+            <div class="stop-name">Racó de l'Edurne</div>
+            <div class="stop-desc">Salva el Planeta</div>
+            <div class="stop-score" id="score-raco-edurne">–</div>
           </div>
         </div>
 

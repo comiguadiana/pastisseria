@@ -19,6 +19,7 @@ export const GAMES = {
   PASTIS_PERFECTE:   'pastis-perfecte',
   CACA_SASHA:        'caca-sasha',
   FUSIO_PASTISSERA:  'fusio-pastissera',
+  RACO_EDURNE:       'raco-edurne',
 };
 
 /* ─── Desar score (solo guarda el màxim per usuari per joc) ─── */

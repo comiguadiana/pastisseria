@@ -17,6 +17,7 @@ const GAME_URLS = {
   'pastis-perfecte':    'games/pastis-perfecte/index.html',
   'caca-sasha':         'games/caca-sasha/index.html',
   'fusio-pastissera':   'games/suika-pastis/index.html',
+  'raco-edurne':        'games/raco-edurne/index.html',
 };
 
 // Posicions de l'avatar per a cada parada (centrat sobre el node)
@@ -29,6 +30,7 @@ const STOP_POSITIONS = {
   5: { left: 250, top: 1700 }, // Caça Sasha
   6: { left: 500, top: 2000  }, // Fusió Pastissera
   7: { left: 384, top: 2450  }, // Fama
+  'raco-edurne': { left: 100, top: 1100 }, // Easter egg
 };
 
 let currentUser = null;
@@ -135,6 +137,7 @@ function stopIdMap(gameId) {
     'pastis-perfecte':    'pastis-perfecte',
     'caca-sasha':         'sasha',
     'fusio-pastissera':   'fusio-pastissera',
+    'raco-edurne':        'raco-edurne',
   };
   return m[gameId] || gameId;
 }
@@ -163,6 +166,12 @@ async function loadMyScores(uid) {
 
 /* ── Navegar al joc ── */
 window.goToGame = function(gameId) {
+  // L'easter egg sempre està desbloquejat
+  if (gameId === 'raco-edurne') {
+    window.location.href = GAME_URLS[gameId];
+    return;
+  }
+  
   const unlocked = currentProfile?.unlockedGames || ['pasteblock'];
   if (!unlocked.includes(gameId)) {
     const modal = document.getElementById('locked-modal');
