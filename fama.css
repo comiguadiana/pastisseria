@@ -144,8 +144,8 @@ body {
 .tab-btn {
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
+  font-size: 1.05rem;
+  padding: 0.6rem 1.2rem;
   border-radius: var(--radius-full);
   background: rgba(255,255,255,0.7);
   color: var(--choco-light);
@@ -173,6 +173,6 @@ body {
 @media (max-width: 480px) {
   .podium-block { width: 70px; }
   .podium-avatar { width: 56px; height: 56px; }
-  .ranking-tabs { gap: 0.3rem; }
-  .tab-btn { font-size: 0.75rem; padding: 0.4rem 0.7rem; }
+  .ranking-tabs { gap: 0.4rem; }
+  .tab-btn { font-size: 0.95rem; padding: 0.5rem 0.9rem; }
 }
