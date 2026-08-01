@@ -72,17 +72,20 @@ function showLockedToast() {
   setTimeout(() => toast.remove(), 3000);
 }
 
-/* ── Comptador de jugadors ── */
-async function loadPlayerCount() {
+/* ── Comptador de jugadors i jocs ── */
+async function loadStats() {
   try {
     const snap = await getCountFromServer(collection(db, 'users'));
-    const el = document.getElementById('stat-players');
-    if (el) el.textContent = snap.data().count;
+    const elPlayers = document.getElementById('stat-players');
+    if (elPlayers) elPlayers.textContent = snap.data().count;
   } catch (e) {
-    // Firebase no configurat encara
+    console.error("Error loading players count:", e);
   }
+
+  const elGames = document.getElementById('stat-games');
+  if (elGames) elGames.textContent = Object.keys(GAMES).length;
 }
 
 /* ── Init ── */
 updateGameBadges();
-loadPlayerCount();
+loadStats();
