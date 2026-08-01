@@ -234,7 +234,8 @@
 .easter-egg-name {
   font-size: 0.55rem;
   margin-bottom: 0;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .easter-egg-score {
