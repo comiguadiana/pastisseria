@@ -3,20 +3,20 @@
  */
 
 import { requireAuth, renderNavbarUser, logout, getDiceBearUrl, showToast }
-  from '../assets/js/auth.js';
+  from './assets/js/auth.js';
 import { GAMES, getGameRanking }
-  from '../assets/js/ranking.js';
-import { db } from '../assets/js/firebase-config.js';
+  from './assets/js/ranking.js';
+import { db } from './assets/js/firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const GAME_URLS = {
-  'pasteblock':         '../games/pasteblock/index.html',
-  'pastis-caigut':      '../games/pastis-caigut/index.html',
-  'llanca-ensaimada':   '../games/llanca-ensaimada/index.html',
-  'memoria-pastissera': '../games/memoria-pastissera/index.html',
-  'pastis-perfecte':    '../games/pastis-perfecte/index.html',
-  'caca-sasha':         '../games/caca-sasha/index.html',
-  'fusio-pastissera':   '../games/suika-pastis/index.html',
+  'pasteblock':         'games/pasteblock/index.html',
+  'pastis-caigut':      'games/pastis-caigut/index.html',
+  'llanca-ensaimada':   'games/llanca-ensaimada/index.html',
+  'memoria-pastissera': 'games/memoria-pastissera/index.html',
+  'pastis-perfecte':    'games/pastis-perfecte/index.html',
+  'caca-sasha':         'games/caca-sasha/index.html',
+  'fusio-pastissera':   'games/suika-pastis/index.html',
 };
 
 // Posicions de l'avatar per a cada parada (centrat sobre el node)
@@ -35,7 +35,7 @@ let currentUser = null;
 let currentProfile = null;
 
 /* ── Init ── */
-requireAuth('../login.html?next=mapa.html')
+requireAuth('login.html?next=mapa.html')
   .then(({ user, profile }) => {
     currentUser    = user;
     currentProfile = profile;
@@ -48,7 +48,7 @@ requireAuth('../login.html?next=mapa.html')
 /* ── Logout ── */
 document.getElementById('nav-logout-btn')?.addEventListener('click', async () => {
   await logout();
-  window.location.href = '../login.html';
+  window.location.href = 'login.html';
 });
 
 /* ── Inicialitza el mapa ── */
