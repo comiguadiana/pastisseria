@@ -238,6 +238,28 @@ p {
   color: var(--gold);
 }
 
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s, text-decoration 0.2s;
+}
+
+.footer-links a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 /* ── Contenidors ── */
 .container {
   max-width: 1200px;
