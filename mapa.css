@@ -208,6 +208,40 @@
   margin-top: 0.1rem;
 }
 
+/* ── Easter Egg Específic ── */
+.easter-egg-node {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 0.8rem !important;
+  border-width: 2px !important;
+  background: var(--gray-200);
+}
+
+.map-stop.unlocked .easter-egg-node {
+  background: var(--white);
+  border-color: var(--mint);
+  box-shadow: 0 0 0 2px rgba(93,187,99,0.3);
+  animation: pulse-scale 3s ease-in-out infinite;
+}
+
+.easter-egg-label {
+  min-width: auto;
+  max-width: 120px;
+  padding: 0.2rem 0.4rem;
+  border-width: 2px;
+}
+
+.easter-egg-name {
+  font-size: 0.55rem;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.easter-egg-score {
+  font-size: 0.6rem;
+  margin-top: 0;
+}
+
 /* ── Decoració de l'entorn ── */
 .map-deco {
   position: absolute;
