@@ -81,7 +81,7 @@ function initGame() {
   sasha.x = canvas.width / 2; sasha.y = canvas.height / 2;
   sasha.vx = 100 + Math.random() * 80;
   sasha.vy = 80  + Math.random() * 60;
-  sasha.phrase = '🐍 Atrapa\'m!'; sasha.phraseTimer = 2;
+  sasha.phrase = 'Atrapa\'m!'; sasha.phraseTimer = 2;
 
   document.getElementById('cs-overlay').classList.add('hidden');
   document.getElementById('timer').style.color = '';

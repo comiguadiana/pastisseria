@@ -25,7 +25,7 @@ const GAME_INFO = [
   { id: GAMES.LLANCA_ENSAIMADA,   emoji:'🎯', label:'Llança l\'Ensaïmada' },
   { id: GAMES.MEMORIA_PASTISSERA, emoji:'🧠', label:'Memòria Pastissera' },
   { id: GAMES.PASTIS_PERFECTE,    emoji:'🍰', label:'Pastís Perfecte' },
-  { id: GAMES.CACA_SASHA,         emoji:'🐍', label:'Caça la Sasha!' },
+  { id: GAMES.CACA_SASHA,         emoji:'<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;">', label:'Caça la Sasha!' },
   { id: GAMES.FUSIO_PASTISSERA,   emoji:'🎂', label:'Fusió Pastissera' },
 ];
 

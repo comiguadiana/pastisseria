@@ -14,7 +14,7 @@ const TAB_CONFIG = {
   'llanca-ensaimada':  { label:'🎯 Llança l\'Ensaïmada',      fn: () => getGameRanking(GAMES.LLANCA_ENSAIMADA, 20) },
   'memoria-pastissera':{ label:'🧠 Memòria Pastissera',       fn: () => getGameRanking(GAMES.MEMORIA_PASTISSERA, 20) },
   'pastis-perfecte':   { label:'🍰 Pastís Perfecte',          fn: () => getGameRanking(GAMES.PASTIS_PERFECTE, 20) },
-  'caca-sasha':        { label:'🐍 Caça la Sasha!',           fn: () => getGameRanking(GAMES.CACA_SASHA, 20) },
+  'caca-sasha':        { label:'<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;"> Caça la Sasha!',           fn: () => getGameRanking(GAMES.CACA_SASHA, 20) },
   'fusio-pastissera':  { label:'🎂 Fusió Pastissera',         fn: () => getGameRanking(GAMES.FUSIO_PASTISSERA, 20) },
 };
 
