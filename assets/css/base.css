@@ -439,64 +439,90 @@ p {
   gap: 1rem;
 }
 
+/* ── Amagar / Mostrar capçalera globalment ── */
+body.navbar-hidden .navbar {
+  display: none !important;
+}
+
+body.navbar-hidden .game-page,
+body.navbar-hidden main {
+  padding-top: 0.25rem !important;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .navbar {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
+    gap: 0.5rem;
   }
   .navbar-brand {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   .nav-link {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
   }
   .section {
-    padding: 2.5rem 0;
+    padding: 2rem 0;
+  }
+  .container, .container-sm, .container-lg {
+    padding: 0 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
+  .navbar {
+    padding: 0.3rem 0.5rem;
+    gap: 0.35rem;
+  }
   .navbar-brand {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
+    gap: 0.3rem;
   }
   .navbar-brand img {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
   }
   .nav-link {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.5rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.4rem;
   }
   .navbar-nav .nav-link span {
     display: none;
+  }
+  .navbar-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .container, .container-sm, .container-lg {
+    padding: 0 0.4rem;
   }
 }
 
 /* ── Landscape Mobile (Mòbil horitzontal) ── */
 @media (max-height: 500px) and (orientation: landscape) {
   .navbar {
-    padding: 0.2rem 1rem;
+    padding: 0.15rem 0.6rem;
     border-bottom-width: 2px;
   }
   .navbar-brand {
-    font-size: 0.8rem;
-  }
-  .navbar-brand img {
-    width: 24px;
-    height: 24px;
-  }
-  .nav-link {
-    padding: 0.2rem 0.5rem;
     font-size: 0.75rem;
   }
+  .navbar-brand img {
+    width: 20px;
+    height: 20px;
+  }
+  .nav-link {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+  }
   .navbar-avatar {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-width: 2px;
   }
   #btn-jugar {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
   }
 }

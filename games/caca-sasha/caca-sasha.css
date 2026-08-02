@@ -65,3 +65,14 @@
   display: flex; gap: 1rem; justify-content: center; align-items: center;
   flex-wrap: wrap; font-size: 0.85rem; color: rgba(184,240,216,0.7); font-weight: 600;
 }
+
+@media (max-width: 600px) {
+  .game-page { padding: 0.5rem 0 2rem; }
+  .cs-board-wrap { margin: 0.5rem 0; border-radius: var(--radius-lg); }
+  .cs-canvas { border-radius: var(--radius-lg); }
+  .cs-overlay-content { padding: 1rem; }
+  .cs-overlay-title { font-size: 1.8rem; }
+  .cs-overlay-score { font-size: 1.3rem; }
+  .cs-sasha-end { width: 80px; height: 80px; margin-bottom: 0.5rem; }
+  #combo-text { font-size: 1.3rem; }
+}

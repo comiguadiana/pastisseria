@@ -78,14 +78,31 @@ function initGame() {
   document.getElementById('pb-overlay').classList.add('hidden');
 }
 
-/* ── Redimensiona el canvas ── */
+/* ── Redimensiona el canvas (adaptatiu a amplada i alçada de pantalla) ── */
 function resizeCanvas() {
-  const maxW  = Math.min(window.innerWidth - 32, 600);
-  const cellW = Math.floor(maxW / COLS);
-  const cellH = cellW;
-  canvas.width  = cellW * COLS;
-  canvas.height = cellH * ROWS;
-  canvas._cell  = cellW;
+  const isHeaderHidden = document.body.classList.contains('navbar-hidden');
+  const navEl = document.querySelector('.navbar');
+  const hudEl = document.querySelector('.pb-hud') || document.querySelector('.game-hud');
+  
+  const navH = (!isHeaderHidden && navEl && navEl.offsetParent !== null) ? navEl.offsetHeight : 0;
+  const hudH = (hudEl && hudEl.offsetParent !== null) ? hudEl.offsetHeight : 45;
+  
+  // Ample i alt màxims disponibles per al tauler
+  const maxW = Math.min(window.innerWidth - (window.innerWidth < 500 ? 12 : 24), 560);
+  
+  // Deixem marge per al HUD, espaiat i padding
+  const extraPadding = window.innerWidth < 500 ? 18 : 36;
+  const maxH = Math.max(260, window.innerHeight - navH - hudH - extraPadding);
+  
+  // Calculem la cel·la perquè càpiga TANT en amplada (8 cols) com en alçada (10 rows)
+  const cellByW = Math.floor(maxW / COLS);
+  const cellByH = Math.floor(maxH / ROWS);
+  
+  const cell = Math.max(24, Math.min(cellByW, cellByH, 56));
+  
+  canvas.width  = cell * COLS;
+  canvas.height = cell * ROWS;
+  canvas._cell  = cell;
   draw();
 }
 
@@ -352,6 +369,31 @@ async function loadRanking() {
 /* ── Events botons ── */
 document.getElementById('btn-restart').addEventListener('click', initGame);
 document.getElementById('overlay-restart').addEventListener('click', initGame);
+
+const btnToggleHeader = document.getElementById('btn-toggle-header');
+if (btnToggleHeader) {
+  // Comprovar si ja s'havia amagat la capçalera
+  const savedState = localStorage.getItem('pasteblock_hide_header');
+  if (savedState === 'true') {
+    document.body.classList.add('navbar-hidden');
+    btnToggleHeader.classList.add('active');
+    btnToggleHeader.title = 'Mostrar capçalera';
+    const icon = btnToggleHeader.querySelector('.toggle-icon');
+    if (icon) icon.textContent = '🖥️';
+  }
+
+  btnToggleHeader.addEventListener('click', () => {
+    const isHidden = document.body.classList.toggle('navbar-hidden');
+    btnToggleHeader.classList.toggle('active', isHidden);
+    btnToggleHeader.title = isHidden ? 'Mostrar capçalera' : 'Amagar capçalera';
+    const icon = btnToggleHeader.querySelector('.toggle-icon');
+    if (icon) icon.textContent = isHidden ? '🖥️' : '📱';
+    localStorage.setItem('pasteblock_hide_header', isHidden ? 'true' : 'false');
+    
+    // Reajustar canvas després del canvi de visibilitat
+    setTimeout(resizeCanvas, 50);
+  });
+}
 
 document.getElementById('btn-ranking').addEventListener('click', async () => {
   const modal = document.getElementById('ranking-modal');

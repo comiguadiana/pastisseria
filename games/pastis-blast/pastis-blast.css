@@ -439,23 +439,52 @@
 
 /* ── Responsive ── */
 @media (max-width: 480px) {
+  .pb-main {
+    padding: 0.4rem 0.5rem 2rem;
+  }
+  .pb-game-area {
+    gap: 0.5rem;
+  }
+  .pb-board-wrap {
+    max-width: min(100%, calc(100vh - 270px));
+  }
+  .pb-board {
+    padding: 5px;
+    gap: 2px;
+    border-radius: 10px;
+  }
+  .pb-cell {
+    border-radius: 4px;
+  }
+  .pb-pieces-tray {
+    padding: 0.5rem 0.4rem;
+    min-height: 80px;
+    gap: 0.4rem;
+    border-radius: 0.75rem;
+  }
+  .pb-piece-slot {
+    min-height: 65px;
+  }
   .pb-hud {
     gap: 0.3rem;
-    padding: 0.6rem 0.75rem;
+    padding: 0.4rem 0.6rem;
+    justify-content: space-around;
+  }
+  .pb-hud-item {
+    min-width: 44px;
+  }
+  .pb-hud-label {
+    font-size: 0.58rem;
   }
   .pb-hud-value {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   .pb-hud-actions {
-    width: 100%;
-    justify-content: center;
+    width: auto;
     margin-left: 0;
   }
-  .pb-hud {
-    justify-content: center;
-  }
   .sasha-char {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
 }

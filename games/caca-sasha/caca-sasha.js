@@ -93,9 +93,19 @@ function initGame() {
 }
 
 function resizeCanvas() {
-  const maxW = Math.min(window.innerWidth - 32, 600);
+  const maxW = Math.min(window.innerWidth - 24, 600);
+  const navEl = document.querySelector('.navbar');
+  const hudEl = document.querySelector('.game-hud');
+  const navH = (navEl && navEl.offsetHeight) || 50;
+  const hudH = (hudEl && hudEl.offsetHeight) || 60;
+  const availH = window.innerHeight - navH - hudH - 50;
   canvas.width  = maxW;
-  canvas.height = Math.min(window.innerHeight * 0.55, 480);
+  canvas.height = Math.max(260, Math.min(availH, 480));
+
+  if (sasha) {
+    sasha.x = Math.max(30, Math.min(canvas.width - 30, sasha.x));
+    sasha.y = Math.max(30, Math.min(canvas.height - 30, sasha.y));
+  }
 }
 
 window.addEventListener('resize', resizeCanvas);

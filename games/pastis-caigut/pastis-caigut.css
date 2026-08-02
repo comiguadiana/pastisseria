@@ -35,3 +35,12 @@
   display: flex; gap: 1rem; justify-content: center; align-items: center;
   flex-wrap: wrap; font-size: 0.85rem; color: var(--choco-light); font-weight: 600;
 }
+
+@media (max-width: 600px) {
+  .game-page { padding: 0.5rem 0 2rem; }
+  .pc-board-wrap { margin: 0.5rem 0; border-radius: var(--radius-lg); }
+  .pc-canvas { border-radius: var(--radius-lg); }
+  .pc-overlay-content { padding: 1.25rem; }
+  .pc-overlay-title { font-size: 1.8rem; }
+  .pc-overlay-score { font-size: 1.3rem; }
+}

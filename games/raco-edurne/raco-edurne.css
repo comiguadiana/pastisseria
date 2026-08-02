@@ -15,23 +15,26 @@
 #gameCanvas {
   display: block;
   width: 100%;
-  height: 60vh;
-  min-height: 400px;
-  max-height: 700px;
+  height: clamp(260px, 48vh, 500px);
   touch-action: none;
 }
 
 .controls {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.6rem;
   background: var(--chocolate);
+  gap: 0.5rem;
 }
 
 .controls .btn {
   flex: 1;
-  margin: 0 0.5rem;
+  margin: 0;
   background: var(--cream);
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 0.6rem;
+  touch-action: manipulation;
 }
 
 .re-overlay {
@@ -46,17 +49,18 @@
   display: none;
 }
 
-.re-overlay-content { text-align: center; padding: 2rem; color: var(--cream); }
-.re-overlay-title  { font-family: var(--font-display); font-size: 2.2rem; color: var(--mint); margin-bottom: 0.5rem; }
-.re-overlay-msg   { font-size: 1.2rem; color: var(--cream-dark); }
+.re-overlay-content { text-align: center; padding: 1.5rem; color: var(--cream); }
+.re-overlay-title  { font-family: var(--font-display); font-size: 2rem; color: var(--mint); margin-bottom: 0.5rem; }
+.re-overlay-msg   { font-size: 1.1rem; color: var(--cream-dark); }
 
 .re-instructions {
   display: flex; gap: 1.5rem; justify-content: center; align-items: center;
-  flex-wrap: wrap; font-size: 1rem; color: var(--gold); font-weight: 600;
+  flex-wrap: wrap; font-size: 0.9rem; color: var(--gold); font-weight: 600;
 }
 
-@media (max-width: 768px) {
-  #gameCanvas {
-    height: 50vh;
-  }
+@media (max-width: 600px) {
+  .game-page { padding: 0.5rem 0 2rem; }
+  .re-board-wrap { margin: 0.5rem auto; border-radius: var(--radius-lg); }
+  .re-overlay-title { font-size: 1.6rem; }
+  .re-overlay-msg { font-size: 0.95rem; }
 }

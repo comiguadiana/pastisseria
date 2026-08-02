@@ -71,14 +71,15 @@ function initGame() {
 
   function resizeCanvas() {
     config.width = canvas.parentElement.clientWidth;
-    // Set internal resolution
     canvas.width = config.width;
-    canvas.height = canvas.clientHeight;
+    canvas.height = canvas.clientHeight || 340;
     config.height = canvas.height;
     
-    config.player.y = config.height - config.player.height - 20;
+    config.player.width = Math.min(80, Math.max(50, config.width * 0.18));
+    config.player.height = config.player.width;
+    config.player.y = config.height - config.player.height - 15;
     
-    if (!config.gameRunning && config.player.x === 0) {
+    if (!config.gameRunning && (config.player.x === 0 || config.player.x > config.width)) {
       config.player.x = config.width / 2 - config.player.width / 2;
     }
   }

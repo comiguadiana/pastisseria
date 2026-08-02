@@ -103,6 +103,21 @@ document.getElementById('nav-logout-btn')?.addEventListener('click', async () =>
    INICIALITZACIÓ BASE DEL MAPA
    (sense dades de Firebase: avatar + primer joc desbloquejat)
    ══════════════════════════════════════════════════════════ */
+function getAvatarStop(profile) {
+  const lastPlayed = profile?.lastPlayedGame || localStorage.getItem('obrador_last_played_game');
+  if (lastPlayed === 'raco-edurne') return 'raco-edurne';
+  if (lastPlayed && GAME_ORDER.includes(lastPlayed)) {
+    return GAME_ORDER.indexOf(lastPlayed);
+  }
+
+  // Si no tenim registre de l'últim joc jugat, fem servir l'últim completat (o el primer si no n'hi ha cap)
+  const lastCompletedIdx = GAME_ORDER.reduce((acc, gId, idx) => {
+    return myScores[gId] !== undefined ? idx : acc;
+  }, -1);
+
+  return lastCompletedIdx >= 0 ? lastCompletedIdx : 0;
+}
+
 function initMapBase(profile) {
   // Avatar del jugador
   const avatarImg = document.getElementById('player-avatar-img');
@@ -110,11 +125,16 @@ function initMapBase(profile) {
   if (avatarImg) avatarImg.src = getDiceBearUrl(profile.avatarStyle, profile.avatarSeed, 48);
   if (nameLabel) nameLabel.textContent = profile.displayName;
 
-  // Posició inicial de l'avatar (primer joc, fins que carreguin les puntuacions)
-  moveAvatar(0);
+  // Posició inicial de l'avatar a l'últim joc jugat
+  const initialStop = getAvatarStop(profile);
+  moveAvatar(initialStop);
 
-  // Il·luminar la primera parada mentre carreguen les dades
-  illuminateFog([0]);
+  // Il·luminar la parada inicial mentre carreguen les dades
+  const initialIllum = [0];
+  if (typeof initialStop === 'number' && !initialIllum.includes(initialStop)) {
+    initialIllum.push(initialStop);
+  }
+  illuminateFog(initialIllum);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -166,33 +186,34 @@ async function loadMyScores(uid) {
     // else: queda sense classe (bloquejat, aspecte per defecte)
   });
 
-  // Calcular la posició actual del jugador:
-  // L'últim joc completat + 1 (el joc que pot jugar ara)
+  // Calcular el joc desbloquejat per progressió
   const lastCompletedIdx = GAME_ORDER.reduce((acc, gId, idx) => {
     return myScores[gId] !== undefined ? idx : acc;
   }, -1);
-  const currentIdx = Math.min(lastCompletedIdx + 1, GAME_ORDER.length);
+  const unlockedIdx = Math.min(lastCompletedIdx + 1, GAME_ORDER.length);
 
-  // Moure l'avatar al joc actual
-  moveAvatar(currentIdx);
+  // Moure l'avatar a l'últim joc jugat (no a l'últim jugable ni al final)
+  const avatarStop = getAvatarStop(currentProfile);
+  moveAvatar(avatarStop);
 
   // Actualitzar la boira de guerra
   const illuminated = [];
   GAME_ORDER.forEach((gId, idx) => {
-    // Il·luminar tots els jocs completats, el joc actual i el següent
-    if (myScores[gId] !== undefined || idx <= currentIdx) {
+    // Il·luminar tots els jocs completats i el següent desbloquejat
+    if (myScores[gId] !== undefined || idx <= unlockedIdx) {
       illuminated.push(idx);
     }
   });
+  if (typeof avatarStop === 'number' && !illuminated.includes(avatarStop)) {
+    illuminated.push(avatarStop);
+  }
   // Il·luminar la Fama si s'ha completat tot
-  if (currentIdx >= GAME_ORDER.length) illuminated.push(GAME_ORDER.length);
-  // L'Easter Egg sempre il·luminat
-  // (no s'afegeix a la llista numèrica, el seu cercle es posa directament)
+  if (unlockedIdx >= GAME_ORDER.length) illuminated.push(GAME_ORDER.length);
 
   illuminateFog(illuminated);
 
-  // Scroll cap a la posició actual
-  scrollToPosition(currentIdx);
+  // Scroll cap a la posició de l'avatar (l'últim joc jugat)
+  scrollToPosition(avatarStop);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -254,6 +275,10 @@ function scrollToPosition(stopIdx) {
  *   - L'Easter Egg sempre ho és.
  */
 window.goToGame = function(gameId) {
+  try {
+    localStorage.setItem('obrador_last_played_game', gameId);
+  } catch (e) {}
+
   if (gameId === 'raco-edurne') {
     window.location.href = GAME_URLS[gameId];
     return;

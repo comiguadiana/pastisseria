@@ -122,3 +122,31 @@
   font-size: 0.9rem;
   color: var(--gray-400);
 }
+
+@media (max-width: 600px) {
+  .game-page { padding: 0.5rem 0 2rem; }
+  .suika-board-wrap {
+    margin: 0.5rem auto;
+    border-radius: var(--radius-lg);
+    max-width: min(94vw, calc((100vh - 220px) * 0.75));
+  }
+  .suika-game-container canvas {
+    border-radius: var(--radius-lg);
+  }
+  .suika-evolution {
+    margin-top: 0.75rem;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+  .evolution-chain {
+    font-size: 1.2rem;
+    gap: 0.2rem;
+  }
+  .suika-instructions {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+  }
+  .suika-overlay-content { padding: 1.25rem; }
+  .suika-overlay-title { font-size: 1.8rem; }
+  .suika-overlay-score { font-size: 1.3rem; }
+}

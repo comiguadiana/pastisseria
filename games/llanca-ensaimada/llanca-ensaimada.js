@@ -93,9 +93,15 @@ function initGame() {
 }
 
 function resizeCanvas() {
-  const maxW = Math.min(window.innerWidth - 32, 600);
+  const maxW = Math.min(window.innerWidth - 20, 600);
+  const navEl = document.querySelector('.navbar');
+  const hudEl = document.querySelector('.game-hud');
+  const navH = (navEl && navEl.offsetHeight) || 45;
+  const hudH = (hudEl && hudEl.offsetHeight) || 55;
+  const availH = window.innerHeight - navH - hudH - 50;
+  
   canvas.width  = maxW;
-  canvas.height = Math.min(window.innerHeight * 0.58, 480);
+  canvas.height = Math.max(260, Math.min(availH, 480));
 
   // Posicions relatives al canvas
   launchPos.x = Math.floor(canvas.width  * 0.18);

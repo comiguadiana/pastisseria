@@ -81,15 +81,22 @@ function initGame() {
 }
 
 function resizeCanvas() {
-  const maxW = Math.min(window.innerWidth - 32, 480);
+  const maxW = Math.min(window.innerWidth - 20, 480);
+  const navEl = document.querySelector('.navbar');
+  const hudEl = document.querySelector('.game-hud');
+  const navH = (navEl && navEl.offsetHeight) || 45;
+  const hudH = (hudEl && hudEl.offsetHeight) || 55;
+  const availH = window.innerHeight - navH - hudH - 50;
+
   canvas.width  = maxW;
-  canvas.height = Math.min(window.innerHeight * 0.55, 520);
+  canvas.height = Math.max(260, Math.min(availH, 520));
   basket.y = canvas.height - BASKET_Y_OFFSET;
+  basket.w = Math.min(canvas.width * 0.25, 120);
+  basket.x = Math.max(0, Math.min(canvas.width - basket.w, basket.x));
 }
 
 window.addEventListener('resize', () => {
   resizeCanvas();
-  basket.y = canvas.height - BASKET_Y_OFFSET;
 });
 
 /* ── Game loop ── */

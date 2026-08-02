@@ -105,6 +105,21 @@ body {
   color: var(--rose);
 }
 
+.podium-plays {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--chocolate);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-top: -0.2rem;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+}
+
 .podium-block {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   display: flex;
@@ -169,10 +184,220 @@ body {
   box-shadow: var(--shadow-choco);
 }
 
-/* ── Responsive ── */
-@media (max-width: 480px) {
-  .podium-block { width: 70px; }
-  .podium-avatar { width: 56px; height: 56px; }
-  .ranking-tabs { gap: 0.4rem; }
-  .tab-btn { font-size: 0.95rem; padding: 0.5rem 0.9rem; }
+/* ── Barra d'Estadístiques Globals ── */
+.fame-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
 }
+
+.fame-stat-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(212, 160, 23, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 4px 16px rgba(92, 51, 23, 0.08);
+  transition: all var(--t-base) var(--ease-bounce);
+}
+
+.fame-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(212, 160, 23, 0.2);
+  border-color: var(--gold);
+}
+
+.fame-stat-card.total-stat {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 240, 0.9));
+  border: 2px solid var(--gold);
+  box-shadow: 0 6px 20px rgba(212, 160, 23, 0.25);
+}
+
+.fame-stat-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
+}
+
+.fame-stat-data {
+  flex: 1;
+}
+
+.fame-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--chocolate);
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.fame-stat-card.total-stat .fame-stat-value {
+  color: var(--rose);
+}
+
+.fame-stat-label {
+  font-size: 0.88rem;
+  color: var(--choco-light);
+  font-weight: 600;
+}
+
+.stat-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(212, 160, 23, 0.3);
+  border-top-color: var(--chocolate);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Badges de partides ── */
+.tab-plays-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 143, 171, 0.2));
+  border: 1.5px solid var(--gold);
+  color: var(--chocolate);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(212, 160, 23, 0.15);
+}
+
+/* ── Secció de Partides per Minijoc ── */
+.game-stats-section {
+  margin-top: 3rem;
+}
+
+.game-stats-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.game-stats-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--chocolate);
+  margin-bottom: 0.3rem;
+}
+
+.game-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.game-stat-item {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid var(--cream-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--t-base) var(--ease-bounce);
+  cursor: pointer;
+}
+
+.game-stat-item:hover {
+  transform: translateY(-4px);
+  background: var(--white);
+  border-color: var(--pink);
+  box-shadow: var(--shadow-md);
+}
+
+.game-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.game-stat-badge-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.game-stat-plays-pill {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: rgba(92, 51, 23, 0.07);
+  color: var(--chocolate);
+  font-weight: 700;
+  border: 1px solid rgba(92, 51, 23, 0.12);
+}
+
+.game-stat-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--chocolate);
+  margin: 0;
+}
+
+.game-stat-desc {
+  font-size: 0.85rem;
+  color: var(--choco-light);
+  line-height: 1.4;
+  margin: 0;
+  flex: 1;
+}
+
+.game-stat-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.game-stat-actions .btn {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.6rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .fame-stats-bar {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .game-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .ranking-content .card-body {
+    padding: 0.75rem 0.4rem;
+  }
+  .ranking-content .card-header {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fame-main {
+    padding: 1.5rem 0;
+  }
+  .podium-block { width: 68px; }
+  .podium-avatar { width: 52px; height: 52px; }
+  .podium-plays { font-size: 0.6rem; padding: 0.15rem 0.35rem; }
+  .ranking-tabs { gap: 0.35rem; }
+  .tab-btn { font-size: 0.88rem; padding: 0.45rem 0.75rem; }
+  .fame-stat-value { font-size: 1.4rem; }
+  .tab-plays-badge { font-size: 0.68rem; padding: 0.25rem 0.55rem; }
+}
+

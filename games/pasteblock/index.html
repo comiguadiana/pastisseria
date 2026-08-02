@@ -28,8 +28,8 @@
   <main class="game-page">
 
     <!-- HUD -->
-    <div class="container">
-      <div class="game-hud">
+    <div class="container pb-hud-container">
+      <div class="game-hud pb-hud">
         <div class="hud-item">
           <span class="hud-label">Punts</span>
           <span class="hud-value" id="score">0</span>
@@ -46,9 +46,19 @@
           <span class="hud-label">Moviments</span>
           <span class="hud-value" id="moves">∞</span>
         </div>
-        <div style="display:flex;gap:0.5rem">
-          <button class="btn btn-outline btn-sm" id="btn-restart">↺ Reiniciar</button>
-          <button class="btn btn-primary btn-sm" id="btn-ranking">🏆 Rànquing</button>
+        <div class="hud-actions">
+          <button class="btn btn-outline btn-sm" id="btn-toggle-header" title="Amagar / Mostrar capçalera">
+            <span class="toggle-icon">📱</span>
+            <span class="btn-text-full">Capçalera</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-restart" title="Reiniciar partida">
+            <span>↺</span>
+            <span class="btn-text-full">Reiniciar</span>
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-ranking" title="Veure rànquing">
+            <span>🏆</span>
+            <span class="btn-text-full">Rànquing</span>
+          </button>
         </div>
       </div>
     </div>

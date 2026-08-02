@@ -24,23 +24,88 @@ export const GAMES = {
   RACO_EDURNE:       'raco-edurne',
 };
 
-/* ─── Desar score (solo guarda el màxim per usuari per joc) ─── */
+/* ─── Registrar partida jugada (globals i d'usuari) ─── */
+export async function recordGamePlay(gameId, uid) {
+  try {
+    try {
+      localStorage.setItem('obrador_last_played_game', gameId);
+    } catch (e) {}
+
+    // 1. Comptador global i per joc a doc('stats', 'games')
+    const statsRef = doc(db, 'stats', 'games');
+    await setDoc(statsRef, {
+      totalPlays: increment(1),
+      [gameId]: increment(1),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    // 2. Comptador a l'usuari si tenim UID
+    if (uid) {
+      const userRef = doc(db, 'users', uid);
+      await setDoc(userRef, {
+        gamesPlayed: increment(1),
+        lastPlayedGame: gameId,
+        lastPlayedAt: serverTimestamp(),
+        [`gamePlays.${gameId}`]: increment(1)
+      }, { merge: true });
+
+      // 3. Comptador al document individual del jugador
+      const playerRef = doc(db, 'scores', gameId, 'players', uid);
+      await setDoc(playerRef, {
+        playsCount: increment(1)
+      }, { merge: true });
+    }
+  } catch (err) {
+    console.warn('Error enregistrant partida jugada:', err);
+  }
+}
+
+/* ─── Obtenir estadístiques globals de partides ─── */
+export async function getGamesStats() {
+  try {
+    const statsRef = doc(db, 'stats', 'games');
+    const snap = await getDoc(statsRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      const byGame = {};
+      Object.values(GAMES).forEach(g => {
+        byGame[g] = data[g] || 0;
+      });
+      return {
+        totalPlays: data.totalPlays || 0,
+        byGame
+      };
+    }
+  } catch (err) {
+    console.warn('Error obtenint estadístiques:', err);
+  }
+
+  // Fallback inicial amb 0
+  const byGame = {};
+  Object.values(GAMES).forEach(g => { byGame[g] = 0; });
+  return { totalPlays: 0, byGame };
+}
+
+/* ─── Desar score (desa rècord i enregistra la partida jugada) ─── */
 export async function saveScore(gameId, uid, score, profile) {
+  // Sempre comptabilitzem la partida jugada
+  await recordGamePlay(gameId, uid);
+
   const ref  = doc(db, 'scores', gameId, 'players', uid);
   const snap = await getDoc(ref);
 
   if (snap.exists() && snap.data().score >= score) {
-    return false; // No millora el rècord
+    return false; // No millora el rècord personal
   }
 
   await setDoc(ref, {
     uid,
     score,
-    displayName:  profile.displayName,
-    avatarStyle:  profile.avatarStyle,
-    avatarSeed:   profile.avatarSeed,
+    displayName:  profile?.displayName || 'Jugador',
+    avatarStyle:  profile?.avatarStyle || 'adventurer',
+    avatarSeed:   profile?.avatarSeed || uid,
     updatedAt:    serverTimestamp()
-  });
+  }, { merge: true });
 
   // Actualitzar puntuació total a l'usuari
   await recalcTotalScore(uid);
@@ -108,30 +173,38 @@ export function renderRankingTable(entries, containerId, highlight = null) {
   const medals = ['🥇', '🥈', '🥉'];
 
   container.innerHTML = `
-    <table class="ranking-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Avatar</th>
-          <th>Nom</th>
-          <th style="text-align:right">Punts</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${entries.map(e => `
-          <tr class="rank-${e.rank} ${e.uid === highlight ? 'highlight' : ''}">
-            <td class="rank-number">${medals[e.rank - 1] || e.rank}</td>
-            <td>
-              <img class="rank-avatar"
-                src="${getDiceBearUrl(e.avatarStyle || 'adventurer', e.avatarSeed || e.uid, 36)}"
-                alt="${e.displayName}" />
-            </td>
-            <td class="rank-name">${escapeHtml(e.displayName || 'Jugador')}</td>
-            <td class="rank-score">${(e.score || e.totalScore || 0).toLocaleString()}</td>
-          </tr>`
-        ).join('')}
-      </tbody>
-    </table>`;
+    <div class="ranking-table-responsive">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th class="th-rank">#</th>
+            <th class="th-avatar">Avatar</th>
+            <th class="th-name">Nom</th>
+            <th class="th-score" style="text-align:right">Punts</th>
+            <th class="th-plays" style="text-align:center">Partides</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${entries.map(e => {
+            const plays = e.gamesPlayed ?? e.playsCount ?? (e.score ? 1 : 0);
+            return `
+            <tr class="rank-${e.rank} ${e.uid === highlight ? 'highlight' : ''}">
+              <td class="rank-number">${medals[e.rank - 1] || e.rank}</td>
+              <td class="td-avatar">
+                <img class="rank-avatar"
+                  src="${getDiceBearUrl(e.avatarStyle || 'adventurer', e.avatarSeed || e.uid, 36)}"
+                  alt="${escapeHtml(e.displayName || 'Jugador')}" />
+              </td>
+              <td class="rank-name" title="${escapeHtml(e.displayName || 'Jugador')}">${escapeHtml(e.displayName || 'Jugador')}</td>
+              <td class="rank-score">${(e.score || e.totalScore || 0).toLocaleString()}</td>
+              <td class="rank-plays" style="text-align:center">
+                <span class="player-plays-badge" title="${plays} partides jugades">${plays.toLocaleString()}</span>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
 }
 
 /* ─── Confeti de victòria ─── */

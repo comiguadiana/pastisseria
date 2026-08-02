@@ -321,14 +321,27 @@ function getLaneXAtY(laneIdx, screenY) {
 function resizeCanvas() {
   const wrap = document.querySelector('.kp-canvas-wrap');
   if (!wrap) return;
-  const maxW = Math.min(wrap.clientWidth, 440);
-  const scale = maxW / VIRTUAL_W;
-  const canvasH = VIRTUAL_H * scale;
+  const navEl = document.querySelector('.navbar');
+  const hudEl = document.querySelector('.kp-hud');
+  const touchEl = document.querySelector('.kp-touch-row');
+  const powerupEl = document.querySelector('.kp-powerup-bar');
+  
+  const navH = (navEl && navEl.offsetHeight) || 45;
+  const hudH = (hudEl && hudEl.offsetHeight) || 55;
+  const touchH = (touchEl && touchEl.offsetHeight) || 60;
+  const powerH = (powerupEl && !powerupEl.classList.contains('hidden') ? powerupEl.offsetHeight : 0);
+  
+  const availH = Math.max(260, window.innerHeight - navH - hudH - touchH - powerH - 24);
+  const maxW = Math.min(wrap.clientWidth || (window.innerWidth - 20), 440);
+  
+  const scale = Math.min(maxW / VIRTUAL_W, availH / VIRTUAL_H);
+  const finalW = Math.max(240, Math.round(VIRTUAL_W * scale));
+  const finalH = Math.max(340, Math.round(VIRTUAL_H * scale));
 
-  canvas.width  = maxW;
-  canvas.height = canvasH;
-  canvas.style.width  = maxW + 'px';
-  canvas.style.height = canvasH + 'px';
+  canvas.width  = finalW;
+  canvas.height = finalH;
+  canvas.style.width  = finalW + 'px';
+  canvas.style.height = finalH + 'px';
 }
 window.addEventListener('resize', resizeCanvas);
 
