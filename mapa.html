@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 2800" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 3900" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -66,7 +66,9 @@
                L 250,1300 L 500,1400
                L 500,1600 L 250,1700
                L 250,1900 L 500,2000
-               L 500,2200 L 384,2450"
+               L 500,2200 L 250,2400
+               L 250,2800 L 500,3000
+               L 500,3300 L 384,3500"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -178,10 +180,36 @@
           </div>
         </div>
 
-        <!-- 8. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-8 stop-end" id="stop-fama"
-             data-game="" data-index="7"
-             style="left:50%; top:2450px; transform: translate(-50%, -50%);"
+        <!-- 8. Pastis Blast -->
+        <div class="map-stop stop-8" id="stop-pastis-blast"
+             data-game="pastis-blast" data-index="7"
+             style="left:32.5%; top:2400px; transform: translate(-50%, -50%);"
+             onclick="goToGame('pastis-blast')">
+          <div class="stop-node">🧱</div>
+          <div class="stop-label">
+            <div class="stop-name">La Rebotiga</div>
+            <div class="stop-desc">Pastis Blast</div>
+            <div class="stop-score" id="score-pastis-blast">–</div>
+          </div>
+        </div>
+
+        <!-- 9. Kart Pastisser -->
+        <div class="map-stop stop-9" id="stop-kart-pastisser"
+             data-game="kart-pastisser" data-index="8"
+             style="left:65.1%; top:3000px; transform: translate(-50%, -50%);"
+             onclick="goToGame('kart-pastisser')">
+          <div class="stop-node">🛒</div>
+          <div class="stop-label">
+            <div class="stop-name">El Supermercat</div>
+            <div class="stop-desc">Kart Pastisser</div>
+            <div class="stop-score" id="score-kart-pastisser">–</div>
+          </div>
+        </div>
+
+        <!-- 10. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-10 stop-end" id="stop-fama"
+             data-game="" data-index="9"
+             style="left:50%; top:3500px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">

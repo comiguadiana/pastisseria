@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════
+   kart-pastisser.css — Estils del joc Kart Pastisser
+   ═══════════════════════════════════════════════ */
+
+/* ── Layout ── */
+.kp-main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0.75rem 0.75rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── HUD ── */
+.kp-hud {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--white);
+  border-radius: 1rem;
+  padding: 0.6rem 0.9rem;
+  box-shadow: 0 2px 12px rgba(180,100,20,0.12);
+  margin-bottom: 0.75rem;
+  width: 100%;
+  max-width: 440px;
+  flex-wrap: wrap;
+}
+
+.kp-hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  min-width: 48px;
+}
+
+.kp-hud-score { min-width: 72px; }
+.kp-hud-section { min-width: 76px; }
+
+.kp-hud-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-400);
+  font-weight: 600;
+}
+
+.kp-hud-value {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--choco);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.kp-hud-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+/* ── Power-up indicator bar ── */
+.kp-powerup-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #FFF9E6, #FFF2D6);
+  border: 2px solid #D4A017;
+  border-radius: 20px;
+  padding: 0.3rem 0.9rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 4px 14px rgba(212,160,23,0.25);
+  animation: popIn 0.3s ease-out;
+}
+
+.kp-powerup-bar.hidden { display: none; }
+
+#kp-powerup-icon {
+  font-size: 1.3rem;
+}
+
+#kp-powerup-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--choco);
+  white-space: nowrap;
+}
+
+.kp-powerup-meter {
+  flex: 1;
+  height: 8px;
+  background: rgba(180,100,20,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.kp-powerup-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #D4A017, #FF5722);
+  border-radius: 4px;
+  transition: width 0.1s linear;
+}
+
+/* ── Turn Warning Overlay ── */
+.kp-turn-warning {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(231, 76, 60, 0.92);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 1.2rem;
+  border-radius: 24px;
+  box-shadow: 0 0 20px rgba(231,76,60,0.7), 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 15;
+  pointer-events: none;
+  animation: turnPulse 0.45s ease-in-out infinite alternate;
+  white-space: nowrap;
+}
+
+.kp-turn-warning.hidden { display: none; }
+
+@keyframes turnPulse {
+  from { transform: translateX(-50%) scale(0.92); opacity: 0.85; }
+  to   { transform: translateX(-50%) scale(1.08); opacity: 1; filter: brightness(1.2); }
+}
+
+/* ── Canvas wrap ── */
+.kp-canvas-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 6px 32px rgba(100,50,10,0.22),
+    0 0 0 3px rgba(212,160,23,0.35);
+  background: #f3e5c8;
+}
+
+#kp-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: none; /* hide cursor during play */
+}
+
+/* ── Countdown ── */
+.kp-countdown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,245,230,0.88);
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 20vw, 7rem);
+  color: var(--choco);
+  z-index: 20;
+  animation: countPulse 0.7s ease-out;
+}
+
+@keyframes countPulse {
+  0%   { transform: scale(2); opacity: 0; }
+  60%  { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.kp-countdown.hidden { display: none; }
+
+/* ── Game over overlay ── */
+.kp-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,245,230,0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.kp-overlay.hidden { display: none; }
+
+.kp-overlay-content {
+  text-align: center;
+  padding: 1.5rem;
+  animation: bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes bounceIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.kp-overlay-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--choco);
+  margin: 0.4rem 0 0.2rem;
+}
+
+.kp-overlay-score {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--rose);
+  margin: 0.15rem 0;
+}
+
+.kp-overlay-msg {
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+/* ── Start button ── */
+.kp-start-btn-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 15%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.kp-start-btn {
+  pointer-events: all;
+  font-size: 1.25rem;
+  padding: 0.9rem 2.5rem;
+  animation: float 2s ease-in-out infinite;
+  box-shadow: 0 6px 24px rgba(212,160,23,0.4);
+}
+
+.kp-start-btn-wrap.hidden { display: none; }
+
+/* ── Touch controls ── */
+.kp-touch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 0.6rem;
+  padding: 0 0.25rem;
+}
+
+.kp-touch-btn {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--white);
+  border: 3px solid var(--chocolate);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--chocolate);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--chocolate);
+  transition: transform 0.08s, box-shadow 0.08s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.kp-touch-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--chocolate);
+}
+
+.kp-touch-hint {
+  flex: 1;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  font-weight: 600;
+}
+
+/* ── Sasha ── */
+.sasha-container {
+  position: fixed;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sasha-container.hidden { display: none; }
+
+.sasha-char {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  transition: transform 0.05s linear;
+}
+
+.sasha-speech {
+  background: white;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--choco);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  animation: speechPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes speechPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .kp-hud { gap: 0.25rem; padding: 0.5rem 0.6rem; }
+  .kp-hud-value { font-size: 0.95rem; }
+  .kp-hud-actions { margin-left: 0; width: 100%; justify-content: center; }
+  .kp-touch-btn { width: 64px; height: 50px; font-size: 1.3rem; }
+}
+
+@media (max-height: 700px) {
+  .kp-main { padding-bottom: 1rem; }
+  .pb-instructions { display: none; }
+}

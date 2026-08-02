@@ -19,6 +19,8 @@ export const GAMES = {
   PASTIS_PERFECTE:   'pastis-perfecte',
   CACA_SASHA:        'caca-sasha',
   FUSIO_PASTISSERA:  'fusio-pastissera',
+  PASTIS_BLAST:      'pastis-blast',
+  KART_PASTISSER:    'kart-pastisser',
   RACO_EDURNE:       'raco-edurne',
 };
 

@@ -17,6 +17,8 @@ const TAB_CONFIG = {
   'caca-sasha':        { label:'<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;"> Caça la Sasha!',           fn: () => getGameRanking(GAMES.CACA_SASHA, 20) },
   'raco-edurne':       { label: "🎸 El Racó de l'Edurne",     fn: () => getGameRanking(GAMES.RACO_EDURNE, 20) },
   'fusio-pastissera':  { label:'🎂 Fusió Pastissera',         fn: () => getGameRanking(GAMES.FUSIO_PASTISSERA, 20) },
+  'pastis-blast':      { label:'🧱 Pastis Blast',             fn: () => getGameRanking(GAMES.PASTIS_BLAST, 20) },
+  'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 20) },
 };
 
 let currentTab = 'general';

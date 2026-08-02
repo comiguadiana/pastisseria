@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kart Pastisser · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Kart Pastisser: condueix el teu carro de supermercat, recull postres i esquiva les bombes!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="kart-pastisser.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="kp-main">
+
+    <!-- HUD -->
+    <div class="kp-hud">
+      <div class="kp-hud-item">
+        <span class="kp-hud-label">Vides</span>
+        <span class="kp-hud-value" id="hud-lives">❤️❤️❤️</span>
+      </div>
+      <div class="kp-hud-item kp-hud-score">
+        <span class="kp-hud-label">Punts</span>
+        <span class="kp-hud-value" id="hud-score">0</span>
+      </div>
+      <div class="kp-hud-item">
+        <span class="kp-hud-label">Millor</span>
+        <span class="kp-hud-value" id="hud-best">0</span>
+      </div>
+      <div class="kp-hud-item">
+        <span class="kp-hud-label">Nivell</span>
+        <span class="kp-hud-value" id="hud-speed">1</span>
+      </div>
+      <div class="kp-hud-item kp-hud-section">
+        <span class="kp-hud-label">Passadís</span>
+        <span class="kp-hud-value" id="hud-section">🥐 Forn</span>
+      </div>
+      <div class="kp-hud-actions">
+        <button class="btn btn-outline btn-sm" id="btn-restart" title="Reiniciar">↺</button>
+        <button class="btn btn-primary btn-sm" id="btn-ranking" title="Rànquing">🏆</button>
+      </div>
+    </div>
+
+    <!-- Power-up active badge -->
+    <div id="kp-powerup-bar" class="kp-powerup-bar hidden">
+      <span id="kp-powerup-icon">⭐</span>
+      <span id="kp-powerup-name">Invulnerable!</span>
+      <div class="kp-powerup-meter"><div id="kp-powerup-fill" class="kp-powerup-fill"></div></div>
+    </div>
+
+    <!-- Canvas area -->
+    <div class="kp-canvas-wrap">
+      <canvas id="kp-canvas"></canvas>
+
+      <!-- Turn warning indicator -->
+      <div class="kp-turn-warning hidden" id="kp-turn-warning">◀◀ GIR A L'ESQUERRA</div>
+
+      <!-- Countdown overlay -->
+      <div class="kp-countdown hidden" id="kp-countdown">3</div>
+
+      <!-- Game over overlay -->
+      <div class="kp-overlay hidden" id="kp-overlay">
+        <div class="kp-overlay-content">
+          <div id="overlay-emoji" style="font-size:3.5rem">🛒</div>
+          <h2 id="overlay-title" class="kp-overlay-title">Fi de la Carrera!</h2>
+          <p id="overlay-score" class="kp-overlay-score">0 punts</p>
+          <p id="overlay-msg" class="kp-overlay-msg"></p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.25rem">
+            <button class="btn btn-primary btn-lg" id="overlay-restart">Tornar a córrer! 🛒</button>
+            <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start screen button (inside canvas area) -->
+      <div class="kp-start-btn-wrap" id="kp-start-wrap">
+        <button class="btn btn-primary btn-lg kp-start-btn" id="btn-start">
+          🛒 Endavant!
+        </button>
+      </div>
+    </div>
+
+    <!-- Touch controls (mobile) -->
+    <div class="kp-touch-row">
+      <button class="kp-touch-btn" id="kp-btn-left" aria-label="Esquerra">◀</button>
+      <div class="kp-touch-hint">◀ / ▶ &nbsp;·&nbsp; ← → o A/D &nbsp;·&nbsp; Llisca</div>
+      <button class="kp-touch-btn" id="kp-btn-right" aria-label="Dreta">▶</button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="pb-instructions" style="margin-top:0.5rem">
+      <div class="pb-instruction"><span>🥐</span><span>Recull postres per sumar punts</span></div>
+      <div class="pb-instruction"><span>🛒</span><span>Esquiva els carros d'altres clients i 💣 bombes</span></div>
+      <div class="pb-instruction"><span>⚡</span><span>Passa pels Turbo Pads per accelerar</span></div>
+      <div class="pb-instruction"><span>💧</span><span>Compte amb les taques d'aigua i 🍌 plàtans</span></div>
+      <div class="pb-instruction"><span>🧲</span><span>L'imant atreu tots els dolços propers</span></div>
+      <div class="pb-instruction"><span>⭐</span><span>L'estrella et fa invulnerable</span></div>
+    </div>
+
+    <!-- Ranking -->
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Kart Pastisser</h3></div>
+        <div class="card-body" id="ranking-container">
+          <div class="flex-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sasha (DOM overlay, animations via JS) -->
+  <div class="sasha-container hidden" id="sasha-container" aria-hidden="true">
+    <img src="../../assets/img/sasha.png" alt="Sasha" class="sasha-char" id="sasha-char" />
+    <div class="sasha-speech" id="sasha-speech">Vinga! 🏁</div>
+  </div>
+
+  <!-- Modal rànquing -->
+  <div class="modal-overlay hidden" id="ranking-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 Rànquing Kart Pastisser</h2>
+        <button class="modal-close" id="close-ranking">✕</button>
+      </div>
+      <div class="modal-body" id="ranking-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script type="module" src="kart-pastisser.js"></script>
+</body>
+</html>

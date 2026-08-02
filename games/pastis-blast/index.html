@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastis Blast · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Pastis Blast: col·loca figures de postres al tauler, completa files i columnes, i la Sasha se les menjarà!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="pastis-blast.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-main">
+
+    <!-- HUD -->
+    <div class="pb-hud">
+      <div class="pb-hud-item">
+        <span class="pb-hud-label">Punts</span>
+        <span class="pb-hud-value" id="score">0</span>
+      </div>
+      <div class="pb-hud-item">
+        <span class="pb-hud-label">Millor</span>
+        <span class="pb-hud-value" id="best-score">0</span>
+      </div>
+      <div class="pb-hud-item">
+        <span class="pb-hud-label">Combo</span>
+        <span class="pb-hud-value" id="combo">×1</span>
+      </div>
+      <div class="pb-hud-item">
+        <span class="pb-hud-label">Files</span>
+        <span class="pb-hud-value" id="lines-cleared">0</span>
+      </div>
+      <div class="pb-hud-actions">
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺ Reiniciar</button>
+        <button class="btn btn-primary btn-sm" id="btn-ranking">🏆 Rànquing</button>
+      </div>
+    </div>
+
+    <!-- Àrea del joc -->
+    <div class="pb-game-area">
+
+      <!-- Tauler de 9×9 -->
+      <div class="pb-board-wrap">
+        <div class="pb-board" id="pb-board"></div>
+
+        <!-- Overlay game over -->
+        <div class="pb-overlay hidden" id="pb-overlay">
+          <div class="pb-overlay-content">
+            <div id="overlay-emoji" style="font-size:4rem">🎂</div>
+            <h2 id="overlay-title" class="pb-overlay-title">Fi del Joc!</h2>
+            <p id="overlay-score" class="pb-overlay-score">0 punts</p>
+            <p id="overlay-msg" class="pb-overlay-msg"></p>
+            <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
+              <button class="btn btn-primary btn-lg" id="overlay-restart">Tornar a jugar!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zona de peces -->
+      <div class="pb-pieces-zone">
+        <p class="pb-pieces-title">Arrossega una peça al tauler</p>
+        <div class="pb-pieces-tray" id="pb-pieces-tray">
+          <div class="pb-piece-slot" id="slot-0"></div>
+          <div class="pb-piece-slot" id="slot-1"></div>
+          <div class="pb-piece-slot" id="slot-2"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Instruccions -->
+    <div class="pb-instructions">
+      <div class="pb-instruction">
+        <span>👆</span>
+        <span>Arrossega les peces al tauler</span>
+      </div>
+      <div class="pb-instruction">
+        <span>✅</span>
+        <span>Omple una fila o columna per eliminar-la</span>
+      </div>
+      <div class="pb-instruction">
+        <span>🐸</span>
+        <span>La Sasha apareixerà a menjar cada 3 files!</span>
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header">
+          <h3>🏆 Rànquing Pastis Blast</h3>
+        </div>
+        <div class="card-body" id="ranking-container">
+          <div class="flex-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sasha overlay (animació) -->
+  <div class="sasha-container" id="sasha-container" aria-hidden="true">
+    <img src="../../assets/img/sasha.png" alt="Sasha" class="sasha-char" id="sasha-char" />
+    <div class="sasha-speech" id="sasha-speech">Mmm! 😋</div>
+  </div>
+
+  <!-- Modal rànquing -->
+  <div class="modal-overlay hidden" id="ranking-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 Rànquing Pastis Blast</h2>
+        <button class="modal-close" id="close-ranking">✕</button>
+      </div>
+      <div class="modal-body" id="ranking-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script type="module" src="pastis-blast.js"></script>
+</body>
+</html>
