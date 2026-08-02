@@ -563,7 +563,7 @@ async function endGame() {
   document.getElementById('le-title').textContent = isNew ? 'Nou Rècord!' : (hits >= 7 ? 'Ets un As!' : 'Fi del joc!');
   document.getElementById('le-score').textContent = score.toLocaleString() + ' punts';
   document.getElementById('le-msg').textContent   =
-    `${hits} encerts de ${totalThrows} llançaments (${accuracy}% precisió)`;
+    `${hits} encerts de ${totalThrows} llançaments (${accuracy}% de precisió)`;
   document.getElementById('le-overlay').classList.remove('hidden');
 
   if (uid && profile) {

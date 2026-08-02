@@ -173,7 +173,7 @@ function initGame() {
     
     overlayTitle.textContent = "Has Perdut!";
     overlayMsg.textContent = `Has salvat ${config.score} planetes.`;
-    startBtn.textContent = "TORNAR A JUGAR";
+    startBtn.textContent = "TORNA A JUGAR";
     overlay.classList.remove('hidden');
 
     if (isRecord) {

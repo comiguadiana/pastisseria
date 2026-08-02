@@ -30,9 +30,9 @@ const PASTRY_IMG_BASE = '../../assets/img/pasteles/';
 
 /* Postres disponibles amb la seva imatge */
 const PASTRIES = [
-  { id: 'cruasan',   img: 'cruasan.png',   label: 'Cruasant',   color: '#D4A017' },
+  { id: 'cruasan',   img: 'cruasan.png',   label: 'Croissant',   color: '#D4A017' },
   { id: 'magdalena', img: 'magdalena.png', label: 'Magdalena',  color: '#CE93D8' },
-  { id: 'donut',     img: 'donut.png',     label: 'Donut',      color: '#FF8FAB' },
+  { id: 'donut',     img: 'donut.png',     label: 'Dònut',      color: '#FF8FAB' },
   { id: 'pastis',    img: 'pastis.png',    label: 'Pastís',     color: '#FFD6E5' },
   { id: 'ensaimada', img: 'ensaimada.png', label: 'Ensaïmada',  color: '#B8F0D8' },
   { id: 'cunya',     img: 'cunya.png',     label: 'Cunya',      color: '#F0C040' },
@@ -41,7 +41,7 @@ const PASTRIES = [
 /* Missatges de la Sasha */
 const SASHA_MSGS = [
   'Mmm! 😋', 'Boníssim! 🤤', 'Més, més! 😍',
-  'Deliciós! ✨', 'Que bo! 🥰', 'Olé! 🎉',
+  'Deliciós! ✨', 'Que bo! 🥰', 'Fantàstic! 🎉',
   'Increïble! 😲', 'Me\'n menjo un altre! 🤭',
 ];
 
@@ -952,7 +952,7 @@ async function endGame() {
   document.getElementById('overlay-title').textContent = isNewBest ? 'Nou Rècord!' : 'Fi del Joc!';
   document.getElementById('overlay-score').textContent = score.toLocaleString() + ' punts';
   document.getElementById('overlay-msg').textContent   = isNewBest
-    ? '¡Fantàstic! Has superat el teu millor marcador!'
+    ? 'Fantàstic! Has superat el teu rècord personal!'
     : `Millor: ${bestScore.toLocaleString()} punts`;
 
   overlayEl.classList.remove('hidden');

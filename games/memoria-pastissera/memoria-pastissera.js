@@ -12,12 +12,12 @@ import { db } from '../../assets/js/firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const CARDS = [
-  { emoji:'🥐', label:'Cruasán'   },
-  { emoji:'🍩', label:'Donut'     },
+  { emoji:'🥐', label:'Croissant' },
+  { emoji:'🍩', label:'Dònut'     },
   { emoji:'🧁', label:'Magdalena' },
   { emoji:'🎂', label:'Pastís'    },
   { emoji:'🍪', label:'Galeta'    },
-  { emoji:'🥧', label:'Tarta'     },
+  { emoji:'🥧', label:'Cassoleta' },
   { emoji:'🍰', label:'Cunya'     },
   { emoji:'<img src="../../assets/img/sasha.png" style="width:80%;height:80%;object-fit:contain">', label:'Sasha' },
 ];

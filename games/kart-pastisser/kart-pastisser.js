@@ -38,18 +38,18 @@ const VIRTUAL_W           = 360;   // amplada virtual del joc
 const VIRTUAL_H           = 600;   // alçada virtual del joc
 
 const PASTRIES = [
-  { id: 'cruasan',   img: 'cruasan.png',   label: 'Cruasant',  value: 15 },
+  { id: 'cruasan',   img: 'cruasan.png',   label: 'Croissant',  value: 15 },
   { id: 'magdalena', img: 'magdalena.png', label: 'Magdalena', value: 20 },
-  { id: 'donut',     img: 'donut.png',     label: 'Donut',     value: 10 },
+  { id: 'donut',     img: 'donut.png',     label: 'Dònut',     value: 10 },
   { id: 'pastis',    img: 'pastis.png',    label: 'Pastís',    value: 50 },
   { id: 'ensaimada', img: 'ensaimada.png', label: 'Ensaïmada', value: 25 },
   { id: 'cunya',     img: 'cunya.png',     label: 'Cunya',     value: 30 },
 ];
 
 const SASHA_MSGS = [
-  'Vinga! 🏁', '¡Molt bé! 🎉', 'Al ritme! 🥳',
+  'Vinga! 🏁', 'Molt bé! 🎉', 'Al ritme! 🥳',
   'Esquiva! 💨', "Agafa'ls tots! 🤤", 'Im-pa-ra-ble! 😲',
-  'Go go go! 🛒', 'Ets el millor! 🏆', 'Compte amb el carro! ⚡'
+  'Endavant! 🛒', 'Ets el millor! 🏆', 'Compte amb el carro! ⚡'
 ];
 
 /* ── Seccions temàtiques del supermercat ── */
@@ -1904,10 +1904,10 @@ async function endGame() {
   if (isNewBest) bestScore = finalScore;
 
   document.getElementById('overlay-emoji').textContent = isNewBest ? '🏆' : '🛒';
-  document.getElementById('overlay-title').textContent = isNewBest ? 'Nou Rècord!' : 'Fi de la Carrera!';
+  document.getElementById('overlay-title').textContent = isNewBest ? 'Nou Rècord!' : 'Fi de la Cursa!';
   document.getElementById('overlay-score').textContent = finalScore.toLocaleString() + ' punts';
   document.getElementById('overlay-msg').textContent   = isNewBest
-    ? '¡Increïble! Has superat el teu millor marcador!'
+    ? 'Increïble! Has superat el teu rècord personal!'
     : `Millor: ${bestScore.toLocaleString()} punts`;
 
   overlayEl.classList.remove('hidden');

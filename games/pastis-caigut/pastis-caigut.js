@@ -19,12 +19,12 @@ const BASE_SPEED = 150;  // px/s
 const SPAWN_INTERVAL = 1200; // ms
 
 const PASTRIES = [
-  { emoji:'🥐', pts:10, label:'Cruasán'  },
-  { emoji:'🍩', pts:15, label:'Donut'    },
-  { emoji:'🧁', pts:20, label:'Magdalena'},
-  { emoji:'🎂', pts:30, label:'Pastís'   },
-  { emoji:'🍪', pts:10, label:'Galeta'   },
-  { emoji:'💣', pts:-50, label:'Bomba!'  }, // obstacle
+  { emoji:'🥐', pts:10, label:'Croissant' },
+  { emoji:'🍩', pts:15, label:'Dònut'     },
+  { emoji:'🧁', pts:20, label:'Magdalena' },
+  { emoji:'🎂', pts:30, label:'Pastís'    },
+  { emoji:'🍪', pts:10, label:'Galeta'    },
+  { emoji:'💣', pts:-50, label:'Bomba!'   }, // obstacle
 ];
 
 let canvas = document.getElementById('pc-canvas');

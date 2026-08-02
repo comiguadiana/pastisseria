@@ -64,7 +64,7 @@ export const GAMES_INFO = {
     name: 'Caça la Sasha!',
     icon: '🐾',
     htmlLabel: '<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;"> Caça la Sasha!',
-    desc: 'Atrapa la gosseta Sasha quan surt dels caus',
+    desc: 'Llança pastissos a la serp alienígena Sasha!',
     url: 'games/caca-sasha/index.html',
     color: '#FFA726',
   },
@@ -74,7 +74,7 @@ export const GAMES_INFO = {
     name: "El Racó de l'Edurne",
     icon: '🎸',
     htmlLabel: "🎸 El Racó de l'Edurne",
-    desc: 'Toca les notes al ritme del rock pastisser',
+    desc: "Salva els planetes amb l'alienígena a l'espai",
     url: 'games/raco-edurne/index.html',
     color: '#EC407A',
   },
@@ -293,7 +293,7 @@ async function loadTab(tabId) {
         <span class="tab-plays-badge">
           🎮 <strong>${gamePlays.toLocaleString()}</strong> ${gamePlays === 1 ? 'partida' : 'partides'}
         </span>
-        ${gameInfo ? `<a href="${gameInfo.url}" class="btn btn-secondary btn-sm" style="padding:0.35rem 0.9rem">▶ Jugar</a>` : ''}
+        ${gameInfo ? `<a href="${gameInfo.url}" class="btn btn-secondary btn-sm" style="padding:0.35rem 0.9rem">▶ Juga</a>` : ''}
       </div>
     `;
   }

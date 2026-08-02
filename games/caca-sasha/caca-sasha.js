@@ -5,7 +5,7 @@
  * - La Sasha es mou erràticament per la pantalla
  * - Clica (o toca) per llançar un pastís cap allà on la Sasha estava
  * - Encerta per acumular punts, erra per perdre el combo
- * - Sistema de combo: aciertos consecutius multipliquen punts
+ * - Sistema de combo: encerts consecutius multipliquen punts
  * - Dura 60 segons
  */
 
@@ -24,8 +24,8 @@ const PASTRY_SPEED = 600;  // px/s
 const COMBO_TIME   = 2.5;  // s per mantenir combo
 
 const PASTRIES = ['🥐','🍩','🧁','🎂','🍪','🥧'];
-const SASHA_PHRASES_MISS  = ['Ha ha ha! 😈','No em pillaràs!','🐍💨','Torpe!','Ni de conya!'];
-const SASHA_PHRASES_HIT   = ['Aïïïïïïï! 😤','M\'has donat!','🤕','Reviuré...','Compte!'];
+const SASHA_PHRASES_MISS  = ['Ha, ha, ha! 😈', 'No m\'atraparàs!', '🐍💨', 'Poca-traça!', 'I un be negre!'];
+const SASHA_PHRASES_HIT   = ['Aïïïïïïï! 😤', 'M\'has tocat!', '🤕', 'Tornaré...', 'Compte!'];
 
 /* ── Estat ── */
 let canvas = document.getElementById('cs-canvas');
@@ -183,8 +183,9 @@ function update(dt) {
       const sashaDistAtShot = Math.sqrt((hx - p.sashaX)**2 + (hy - p.sashaY)**2);
 
       if (sashaDistAtShot < SASHA_SIZE * 0.8) {
-        // ACIERTO!
+        // ENCERT!
         totalHits++;
+        playHitSound();
         const pts = 10 * combo;
         score += pts;
         comboTimer = COMBO_TIME;
@@ -379,7 +380,7 @@ async function endGame() {
 
   document.getElementById('cs-title').textContent   = isNew ? 'Nou Rècord! 🏆' : 'Temps esgotat!';
   document.getElementById('cs-score-text').textContent = `${score.toLocaleString()} punts`;
-  document.getElementById('cs-msg').textContent     = `${totalHits} aciertos de ${totalShots} llançaments (${accuracy}% precisió)`;
+  document.getElementById('cs-msg').textContent     = `${totalHits} encerts de ${totalShots} llançaments (${accuracy}% de precisió)`;
   document.getElementById('cs-overlay').classList.remove('hidden');
 
   if (uid && profile) {

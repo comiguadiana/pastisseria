@@ -24,12 +24,12 @@ const CELL   = 64; // px per cel·la
 
 /* Emojis + colors de fons per a cada tipus */
 const PASTRY = [
-  { emoji: '🥐', color: '#D4A017', label: 'Cruasán'  },
-  { emoji: '🍩', color: '#FF8FAB', label: 'Donut'    },
-  { emoji: '🧁', color: '#CE93D8', label: 'Magdalena'},
-  { emoji: '🎂', color: '#FFD6E5', label: 'Pastís'   },
-  { emoji: '🥧', color: '#B8F0D8', label: 'Tarta'    },
-  { emoji: '🍪', color: '#8B5E3C', label: 'Galeta'   },
+  { emoji: '🥐', color: '#D4A017', label: 'Croissant' },
+  { emoji: '🍩', color: '#FF8FAB', label: 'Dònut'     },
+  { emoji: '🧁', color: '#CE93D8', label: 'Magdalena' },
+  { emoji: '🎂', color: '#FFD6E5', label: 'Pastís'    },
+  { emoji: '🥧', color: '#B8F0D8', label: 'Cassoleta' },
+  { emoji: '🍪', color: '#8B5E3C', label: 'Galeta'    },
 ];
 
 let board      = [];
@@ -327,7 +327,7 @@ async function endGame() {
   overlayTitle.textContent = isNewBest ? 'Nou Rècord!' : 'Fi del Joc!';
   overlayScore.textContent = score.toLocaleString() + ' punts';
   overlayMsg.textContent   = isNewBest
-    ? '¡Fantàstic! Has superat el teu millor marcador!'
+    ? 'Fantàstic! Has superat el teu rècord personal!'
     : `Millor puntuació: ${bestScore.toLocaleString()}`;
 
   overlay.classList.remove('hidden');

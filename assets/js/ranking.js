@@ -248,7 +248,7 @@ export function showNewRecordModal(score, rank) {
         </p>
         ${rank ? `<p style="color:var(--choco-light)">Posició #${rank} al rànquing!</p>` : ''}
         <button class="btn btn-primary btn-lg" style="margin-top:1.5rem" onclick="this.closest('.modal-overlay').remove()">
-          Continuar 🎂
+          Continua 🎂
         </button>
       </div>
     </div>`;
