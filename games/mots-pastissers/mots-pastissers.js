@@ -55,6 +55,7 @@ let currentGuess = "";   // Lletres teclejades a la fila activa
 let currentRow = 0;
 let isGameOver = false;
 let isAnimating = false;
+let cloudDailyProgress = null;
 
 let userStats = {
   totalScore: 0,
@@ -638,13 +639,41 @@ function saveDailyProgress(isFinished = false, won = false, points = 0) {
   try {
     localStorage.setItem(getDailyStorageKey(), JSON.stringify(payload));
   } catch (e) {}
+
+  // Sincronitzar immediatament a Firestore perquè cap altre dispositiu pugui repetir
+  if (currentUser) {
+    try {
+      const playerRef = doc(db, 'scores', GAMES.MOTS_PASTISSERS, 'players', currentUser.uid);
+      setDoc(playerRef, {
+        lastPlayedDate: todayData.data,
+        todayProgress: payload
+      }, { merge: true }).catch(err => {
+        console.warn("Avís guardant progrés al núvol:", err);
+      });
+    } catch (e) {}
+  }
 }
 
 function loadDailyProgress() {
   try {
+    let localData = null;
     const raw = localStorage.getItem(getDailyStorageKey());
-    if (!raw) return false;
-    const data = JSON.parse(raw);
+    if (raw) {
+      try { localData = JSON.parse(raw); } catch (e) {}
+    }
+
+    // Comprovar si tenim progrés al núvol (Firestore) o a localStorage
+    let data = null;
+    if (cloudDailyProgress && cloudDailyProgress.date === todayData.data) {
+      if (!localData || (cloudDailyProgress.isGameOver && !localData.isGameOver) || (cloudDailyProgress.guesses?.length || 0) >= (localData.guesses?.length || 0)) {
+        data = cloudDailyProgress;
+      } else {
+        data = localData;
+      }
+    } else if (localData && localData.date === todayData.data) {
+      data = localData;
+    }
+
     if (data && data.date === todayData.data) {
       guesses = data.guesses || [];
       evaluations = data.evaluations || [];
@@ -674,6 +703,11 @@ function loadDailyProgress() {
       } else {
         currentRow = guesses.length;
       }
+
+      // Guardar a localStorage per mantenir el dispositiu actual actualitzat
+      try {
+        localStorage.setItem(getDailyStorageKey(), JSON.stringify(data));
+      } catch (e) {}
       return true;
     }
   } catch (e) {}
@@ -935,25 +969,38 @@ function launchConfetti() {
    INICIALITZACIÓ PRINCIPAL I EVENTS
    ══════════════════════════════════════════════════════════ */
 // Exposar funció de reinici per a proves
-window.resetMotsPastissers = function(resetAll = true) {
+window.resetMotsPastissers = async function(resetAll = true) {
   Object.keys(localStorage).forEach(k => {
     if (k.startsWith('mots_pastissers')) localStorage.removeItem(k);
   });
+  if (currentUser) {
+    try {
+      const playerRef = doc(db, 'scores', GAMES.MOTS_PASTISSERS, 'players', currentUser.uid);
+      await setDoc(playerRef, { todayProgress: null }, { merge: true });
+    } catch (e) {}
+  }
   window.location.href = window.location.pathname;
 };
 
 async function init() {
+  selectTodayWord();
+
   // Suport per a reinici ràpid via paràmetre URL ?reset=1
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('reset')) {
     Object.keys(localStorage).forEach(k => {
       if (k.startsWith('mots_pastissers')) localStorage.removeItem(k);
     });
+    if (currentUser) {
+      try {
+        const playerRef = doc(db, 'scores', GAMES.MOTS_PASTISSERS, 'players', currentUser.uid);
+        await setDoc(playerRef, { todayProgress: null }, { merge: true });
+      } catch (e) {}
+    }
     window.location.replace(window.location.pathname);
     return;
   }
 
-  selectTodayWord();
   loadUserStats();
   buildBoard();
   buildKeyboard();
@@ -963,7 +1010,7 @@ async function init() {
   // Carregar diccionari en segon pla
   loadDictionary();
 
-  // Carregar progrés diari si existeix
+  // Carregar progrés diari si existeix (local o núvol)
   loadDailyProgress();
 
   // Teclat físic
@@ -1009,13 +1056,15 @@ async function init() {
 /* ══════════════════════════════════════════════════════════
    AUTENTICACIÓ
    ══════════════════════════════════════════════════════════ */
+selectTodayWord();
+
 requireAuth('../../login.html?next=games/mots-pastissers/index.html')
   .then(async ({ user, profile }) => {
     currentUser = user;
     currentProfile = profile;
     renderNavbarUser(profile, user);
 
-    // Sincronitzar amb Firebase si hi ha puntuacions prèvies
+    // Sincronitzar amb Firebase si hi ha dades prèvies
     try {
       const scoreRef = doc(db, 'scores', GAMES.MOTS_PASTISSERS, 'players', user.uid);
       const snap = await getDoc(scoreRef);
@@ -1030,10 +1079,28 @@ requireAuth('../../login.html?next=games/mots-pastissers/index.html')
         if (remoteData.history) {
           userStats.history = Object.assign(userStats.history || {}, remoteData.history);
         }
+
+        // Recuperar progrés o estat bloquejat d'avui des de Firestore
+        if (remoteData.todayProgress && remoteData.todayProgress.date === todayData.data) {
+          cloudDailyProgress = remoteData.todayProgress;
+        } else if (remoteData.history && remoteData.history[todayData.data]) {
+          const h = remoteData.history[todayData.data];
+          cloudDailyProgress = {
+            date: todayData.data,
+            guesses: h.guesses || [],
+            evaluations: h.evaluations || [],
+            isGameOver: true,
+            won: !!h.won,
+            points: h.points || 0
+          };
+        }
+
         saveUserStats();
         updateHudDisplay();
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Avís recuperant dades del núvol:", e);
+    }
 
     init();
   })
