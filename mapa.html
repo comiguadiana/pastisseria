@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 4000" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 4400" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -69,7 +69,8 @@
                L 500,2200 L 250,2400
                L 250,2600 L 500,2800
                L 500,3000 L 250,3200
-               L 250,3400 L 384,3600"
+               L 250,3400 L 500,3600
+               L 500,3800 L 384,4000"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -220,10 +221,23 @@
           </div>
         </div>
 
-        <!-- 11. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-11 stop-end" id="stop-fama"
-             data-game="" data-index="10"
-             style="left:50%; top:3600px; transform: translate(-50%, -50%);"
+        <!-- 11. Mots Pastissers -->
+        <div class="map-stop stop-11" id="stop-mots-pastissers"
+             data-game="mots-pastissers" data-index="10"
+             style="left:65.1%; top:3600px; transform: translate(-50%, -50%);"
+             onclick="goToGame('mots-pastissers')">
+          <div class="stop-node">🔠</div>
+          <div class="stop-label">
+            <div class="stop-name">L'Escriptori Dolç</div>
+            <div class="stop-desc">Mots Pastissers</div>
+            <div class="stop-score" id="score-mots-pastissers">–</div>
+          </div>
+        </div>
+
+        <!-- 12. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-12 stop-end" id="stop-fama"
+             data-game="" data-index="11"
+             style="left:50%; top:4000px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">

@@ -118,6 +118,16 @@ export const GAMES_INFO = {
     url: 'games/sasha-comecocos/index.html',
     color: '#FFA000',
   },
+  [GAMES.MOTS_PASTISSERS]: {
+    id: GAMES.MOTS_PASTISSERS,
+    tab: 'mots-pastissers',
+    name: 'Mots Pastissers',
+    icon: '🔠',
+    htmlLabel: '🔠 Mots Pastissers',
+    desc: 'Endevina el mot secret de 6 lletres en el Wordle dolç del dia',
+    url: 'games/mots-pastissers/index.html',
+    color: '#E91E63',
+  },
 };
 
 const TAB_CONFIG = {
@@ -133,6 +143,7 @@ const TAB_CONFIG = {
   'pastis-blast':      { label:'🧱 Pastis Blast',             fn: () => getGameRanking(GAMES.PASTIS_BLAST, 20), gameId: GAMES.PASTIS_BLAST },
   'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 20), gameId: GAMES.KART_PASTISSER },
   'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 20), gameId: GAMES.SASHA_COMECOCOS },
+  'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 20), gameId: GAMES.MOTS_PASTISSERS },
 };
 
 let currentTab = 'general';

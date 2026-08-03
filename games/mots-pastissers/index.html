@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Mots Pastissers · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Endevina el mot secret pastisser de 6 lletres de cada dia en 6 intents! Acumula punts i ràtxes diàries." />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="mots-pastissers.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="main-navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+      <a href="../../fama.html" class="nav-link">🏆 Fama</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wordle-main">
+    <div class="container wordle-container">
+
+      <!-- Header & Stats Bar -->
+      <header class="wordle-header">
+        <div class="wordle-title-wrap">
+          <div class="wordle-badge">📅 Repte Diari</div>
+          <h1 class="wordle-title">🔠 Mots Pastissers</h1>
+          <p class="wordle-subtitle" id="daily-date-label">Carregant repte...</p>
+        </div>
+
+        <!-- HUD -->
+        <div class="wordle-hud">
+          <div class="hud-box">
+            <span class="hud-label">🔥 Ràtxa</span>
+            <span class="hud-val" id="hud-streak">0 dies</span>
+          </div>
+          <div class="hud-box">
+            <span class="hud-label">🏆 Punts Totals</span>
+            <span class="hud-val" id="hud-total-score">0 pts</span>
+          </div>
+          <div class="hud-box">
+            <span class="hud-label">🎂 Dies Resolts</span>
+            <span class="hud-val" id="hud-days-solved">0/28</span>
+          </div>
+          <div class="hud-actions">
+            <button class="btn btn-sm btn-outline" id="btn-help" title="Com jugar">❓</button>
+            <button class="btn btn-sm btn-outline" id="btn-stats" title="Estadístiques">📊</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Secció Sasha / Pista -->
+      <section class="sasha-helper-section" id="sasha-section">
+        <div class="sasha-avatar-wrap">
+          <img src="../../assets/img/sasha.png" alt="Sasha" class="sasha-avatar-img animate-float" id="sasha-img" />
+          <div class="sasha-status-dot"></div>
+        </div>
+        <div class="sasha-bubble-wrap">
+          <div class="sasha-bubble-header">
+            <span class="sasha-name">Sasha la Pastissera</span>
+            <button class="btn-hint-toggle" id="btn-hint-toggle">💡 Pista del dia</button>
+          </div>
+          <div class="sasha-bubble-text" id="sasha-speech">
+            Hola pastisser! Avui tenim una paraula dolça secreta de 6 lletres. Bona sort! 🧁
+          </div>
+          <div class="sasha-hint-box hidden" id="sasha-hint-box">
+            <strong>Pista dolça:</strong> <span id="sasha-hint-text">...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Graella de 6x6 -->
+      <div class="wordle-board-wrap">
+        <div class="wordle-board" id="wordle-board" role="grid" aria-label="Graella del Wordle">
+          <!-- Generat dinàmicament en JS (6 files de 6 caselles) -->
+        </div>
+      </div>
+
+      <!-- Teclat Virtual -->
+      <div class="wordle-keyboard" id="wordle-keyboard" role="toolbar" aria-label="Teclat virtual">
+        <!-- Generat dinàmicament en JS -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Toast Notificació -->
+  <div class="wordle-toast-container" id="toast-container"></div>
+
+  <!-- Modal d'Instruccions / Com jugar -->
+  <div class="wordle-modal-overlay hidden" id="modal-help">
+    <div class="wordle-modal-card animate-bounce-in">
+      <button class="modal-close-btn" id="btn-close-help">✕</button>
+      <div class="modal-header-icon">🧁</div>
+      <h2 class="modal-title">Com jugar a Mots Pastissers?</h2>
+      <p class="modal-desc">
+        Endevina la <strong>paraula secreta de 6 lletres</strong> de l'obrador en <strong>6 intents</strong>.
+        Totes les paraules són ingredients, dolços, eines o processos de la pastisseria!
+      </p>
+
+      <div class="help-examples">
+        <div class="help-example-row">
+          <div class="mini-tile correct">T</div>
+          <div class="mini-tile">A</div>
+          <div class="mini-tile">S</div>
+          <div class="mini-tile">T</div>
+          <div class="mini-tile">E</div>
+          <div class="mini-tile">T</div>
+        </div>
+        <p class="help-example-text">La lletra <strong>T</strong> és a la paraula i a la posició correcta (🟩 verd).</p>
+
+        <div class="help-example-row">
+          <div class="mini-tile">D</div>
+          <div class="mini-tile present">A</div>
+          <div class="mini-tile">U</div>
+          <div class="mini-tile">R</div>
+          <div class="mini-tile">E</div>
+          <div class="mini-tile">S</div>
+        </div>
+        <p class="help-example-text">La lletra <strong>A</strong> és a la paraula però en una altra posició (🟨 groc).</p>
+
+        <div class="help-example-row">
+          <div class="mini-tile absent">F</div>
+          <div class="mini-tile">L</div>
+          <div class="mini-tile">A</div>
+          <div class="mini-tile">O</div>
+          <div class="mini-tile">N</div>
+          <div class="mini-tile">S</div>
+        </div>
+        <p class="help-example-text">La lletra <strong>F</strong> no és a la paraula secreta (⬛ gris).</p>
+      </div>
+
+      <div class="help-rules-box">
+        <p>✨ <strong>Puntuació acumulativa:</strong> Guanyes punts segons l'intent en què encertes. Com menys intents, més punts!</p>
+        <p>🔥 <strong>Ràtxa diària:</strong> +50 punts extres per cada dia consecutiu encertat.</p>
+        <p>📅 <strong>1 paraula al dia:</strong> Cada dia hi ha un nou repte dolç!</p>
+      </div>
+
+      <button class="btn btn-primary w-full mt-1" id="btn-help-ok">HO HE ENTÈS!</button>
+    </div>
+  </div>
+
+  <!-- Modal de Resultat i Estadístiques -->
+  <div class="wordle-modal-overlay hidden" id="modal-result">
+    <div class="wordle-modal-card animate-bounce-in">
+      <button class="modal-close-btn" id="btn-close-result">✕</button>
+
+      <div class="result-hero" id="result-hero">
+        <div class="result-mascot-row">
+          <img src="../../assets/img/sasha.png" alt="Sasha" class="result-sasha-img animate-float" />
+          <div class="result-sweet-badge" id="result-badge">🎉</div>
+        </div>
+        <h2 class="modal-title" id="result-title">Enhorabona!</h2>
+        <p class="modal-desc" id="result-subtitle">Has encertat el mot del dia!</p>
+      </div>
+
+      <!-- Paraula revelada -->
+      <div class="revealed-word-box">
+        <span class="revealed-label">Paraula secreta d'avui:</span>
+        <div class="revealed-word" id="result-word">------</div>
+        <div class="revealed-clue" id="result-clue">...</div>
+      </div>
+
+      <!-- Puntuació guanyada avui -->
+      <div class="points-earned-card" id="points-earned-card">
+        <div class="points-row">
+          <span class="points-label">Punts d'avui:</span>
+          <span class="points-val" id="result-today-points">+800 pts</span>
+        </div>
+        <div class="points-streak-sub" id="result-streak-bonus">Bonus de ràtxa: +50 pts</div>
+      </div>
+
+      <!-- Taula d'Estadístiques -->
+      <div class="result-stats-grid">
+        <div class="stat-cell">
+          <span class="stat-num" id="stat-played">0</span>
+          <span class="stat-lbl">Jugades</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" id="stat-win-pct">0%</span>
+          <span class="stat-lbl">% Victòries</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" id="stat-curr-streak">0</span>
+          <span class="stat-lbl">Ràtxa actual</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" id="stat-max-streak">0</span>
+          <span class="stat-lbl">Millor ràtxa</span>
+        </div>
+      </div>
+
+      <!-- Distribució d'intents -->
+      <div class="guess-distribution-box">
+        <div class="guess-dist-title">Distribució d'intents:</div>
+        <div class="dist-bars" id="dist-bars">
+          <!-- Generat en JS -->
+        </div>
+      </div>
+
+      <!-- Compte enrere -->
+      <div class="next-word-box">
+        <span class="next-word-label">PROPERA PARAULA EN:</span>
+        <div class="countdown-timer" id="countdown-timer">00:00:00</div>
+      </div>
+
+      <!-- Accions -->
+      <div class="result-actions">
+        <button class="btn btn-primary w-full" id="btn-share">📋 Compartir Resultat</button>
+        <div class="result-nav-buttons">
+          <a href="../../fama.html" class="btn btn-secondary flex-1">🏆 Saló de la Fama</a>
+          <a href="../../mapa.html" class="btn btn-outline flex-1">← Tornar al Mapa</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" class="confetti-canvas pointer-events-none"></canvas>
+
+  <!-- Scripts -->
+  <script type="module" src="mots-pastissers.js"></script>
+</body>
+</html>
