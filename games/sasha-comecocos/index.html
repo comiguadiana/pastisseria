@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sasha Menjamaracujàs · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Ajuda la Sasha a menjar maracujàs pel laberint per fabricar la seva famosa llauna de Te de Maracujà!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="sasha-comecocos.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="main-navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="sc-main">
+    <div class="container sc-container">
+
+      <!-- HUD -->
+      <div class="game-hud sc-hud">
+        <div class="hud-item">
+          <span class="hud-label">Punts</span>
+          <span class="hud-value" id="score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Millor</span>
+          <span class="hud-value" id="best-score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Vides</span>
+          <span class="hud-value sc-lives" id="lives">❤️❤️❤️</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Maracujàs</span>
+          <span class="hud-value" id="fruit-counter">0/0</span>
+        </div>
+        <div class="hud-actions">
+          <button class="btn btn-outline btn-sm" id="btn-toggle-nav" title="Amagar/mostrar capçalera">📱</button>
+          <button class="btn btn-outline btn-sm" id="btn-restart" title="Reiniciar partida">↺</button>
+        </div>
+      </div>
+
+      <!-- Barra de Superpoder (Power Mode) -->
+      <div class="sc-power-bar-wrap hidden" id="power-bar-wrap">
+        <div class="sc-power-bar-fill" id="power-bar-fill"></div>
+        <span class="sc-power-label">⚡ MODO SUPER-SASHA! CAPTURA ELS MARACUYÀS! ⚡</span>
+      </div>
+
+      <!-- Zona del tauler / canvas -->
+      <div class="sc-board-wrap" id="board-wrap">
+        <canvas id="sc-canvas"></canvas>
+
+        <!-- Overlay Inicial / Pausa -->
+        <div class="sc-overlay" id="overlay-start">
+          <div class="sc-overlay-card animate-bounce-in">
+            <div class="sc-hero-mascot">
+              <img src="../../assets/img/sasha.png" alt="Sasha" class="sc-mascot-img" />
+              <img src="../../assets/img/pasteles/maracuja.png" alt="Maracujà" class="sc-fruit-intro" />
+            </div>
+            <h1 class="sc-overlay-title">Sasha Menjamaracujàs!</h1>
+            <p class="sc-overlay-desc">
+              Recull les gotes de fruita i <strong>captura els Maracuyàs</strong> per fabricar la <strong>Llauna de Te</strong>!
+            </p>
+            <div class="sc-instructions-list">
+              <div class="sc-instruction-item">
+                <span>🟡</span>
+                <span><b>Gotes de Maracujà</b>: +10 pts</span>
+              </div>
+              <div class="sc-instruction-item">
+                <span>🌟</span>
+                <span><b>Super Essència</b>: Captura els Maracuyàs (+200 pts)!</span>
+              </div>
+              <div class="sc-instruction-item">
+                <span>🥭</span>
+                <span><b>Maracuyàs</b>: Esquiva'ls fins a activar el Superpoder!</span>
+              </div>
+            </div>
+            <button class="btn btn-primary mt-1" id="btn-start" style="padding: 0.45rem 1.4rem; font-size: 0.92rem; font-weight: 800;">COMENÇA!</button>
+          </div>
+        </div>
+
+        <!-- Overlay de Victòria: Fabricació del Te de Maracujà -->
+        <div class="sc-overlay hidden" id="overlay-victory">
+          <div class="sc-overlay-card sc-victory-card animate-bounce-in">
+            <div class="sc-tea-crafting">
+              <div class="sc-tea-aura"></div>
+              <img src="../../assets/img/pasteles/te_maracuja.png" alt="Llauna de Te de Maracujà" class="sc-tea-can-img animate-float" />
+              <div class="sc-bubble sc-b1">🫧</div>
+              <div class="sc-bubble sc-b2">✨</div>
+              <div class="sc-bubble sc-b3">🍹</div>
+              <div class="sc-bubble sc-b4">🫧</div>
+            </div>
+            <h2 class="sc-victory-title">🎉 Te de Maracujà Fabricat!</h2>
+            <p class="sc-victory-text">
+              La Sasha ha capturat tots els maracujàs i ha elaborat una <strong>Llauna de Te Refrescant</strong> perfecta!
+            </p>
+            <div class="sc-reward-score">
+              Puntuació: <span id="victory-score">0</span> punts
+            </div>
+            <div class="sc-actions-row">
+              <button class="btn btn-primary btn-md" id="btn-next-level">Nivell Següent! 🚀</button>
+              <button class="btn btn-secondary btn-md" id="btn-victory-replay">Torna a jugar!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-md">← Mapa</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overlay de Game Over -->
+        <div class="sc-overlay hidden" id="overlay-gameover">
+          <div class="sc-overlay-card animate-bounce-in">
+            <div style="font-size:2.6rem;margin-bottom:0.2rem">💥</div>
+            <h2 class="sc-overlay-title">Fi de la partida!</h2>
+            <p class="sc-overlay-score" id="gameover-score">0 punts</p>
+            <p class="sc-overlay-msg" id="gameover-msg">Els Maracuyàs s'han escapat abans de poder omplir la llauna de te!</p>
+            <div class="sc-actions-row">
+              <button class="btn btn-primary btn-md" id="btn-gameover-replay">Torna a jugar!</button>
+              <a href="../../mapa.html" class="btn btn-outline btn-md">← Mapa</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Controls tàctils (D-Pad per a mòbils) -->
+      <div class="sc-touch-controls" id="touch-controls">
+        <button class="sc-dpad-btn sc-dpad-up" id="btn-up" aria-label="Amunt">▲</button>
+        <div class="sc-dpad-middle">
+          <button class="sc-dpad-btn sc-dpad-left" id="btn-left" aria-label="Esquerra">◀</button>
+          <div class="sc-dpad-center"></div>
+          <button class="sc-dpad-btn sc-dpad-right" id="btn-right" aria-label="Dreta">▶</button>
+        </div>
+        <button class="sc-dpad-btn sc-dpad-down" id="btn-down" aria-label="Avall">▼</button>
+      </div>
+
+      <!-- Indicador d'instruccions ràpides -->
+      <div class="sc-footer-hint">
+        <span>🎮 Usa <b>WASD</b>, <b>fletxes</b> o <b>lliscament tàctil</b> per dirigir la Sasha</span>
+      </div>
+
+    </div>
+
+    <!-- Rànquing -->
+    <div class="container mt-4 mb-4">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Sasha Menjamaracujàs</h3></div>
+        <div class="card-body" id="ranking-container">
+          <div class="flex-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast-container"></div>
+  <script type="module" src="sasha-comecocos.js"></script>
+</body>
+</html>

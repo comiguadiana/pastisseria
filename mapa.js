@@ -24,6 +24,7 @@ const GAME_ORDER = [
   'fusio-pastissera',
   'pastis-blast',
   'kart-pastisser',
+  'sasha-comecocos',
 ];
 
 const GAME_URLS = {
@@ -36,6 +37,7 @@ const GAME_URLS = {
   'fusio-pastissera':   'games/suika-pastis/index.html',
   'pastis-blast':       'games/pastis-blast/index.html',
   'kart-pastisser':     'games/kart-pastisser/index.html',
+  'sasha-comecocos':    'games/sasha-comecocos/index.html',
   'raco-edurne':        'games/raco-edurne/index.html',
 };
 
@@ -49,8 +51,9 @@ const STOP_POSITIONS = {
   5: { left: '32.5%', top: 1700 }, // Caça Sasha
   6: { left: '65.1%', top: 2000 }, // Fusió Pastissera
   7: { left: '32.5%', top: 2400 }, // Pastis Blast
-  8: { left: '65.1%', top: 3000 }, // Kart Pastisser
-  9: { left: '50%',   top: 3500 }, // Fama (fi del recorregut)
+  8: { left: '65.1%', top: 2800 }, // Kart Pastisser
+  9: { left: '32.5%', top: 3200 }, // Sasha Menjamaracujàs
+  10: { left: '50%',  top: 3600 }, // Fama (fi del recorregut)
   'raco-edurne': { left: '15%', top: 1250 }, // Easter Egg
 };
 
@@ -66,6 +69,7 @@ function stopDomId(gameId) {
     'fusio-pastissera':   'fusio-pastissera',
     'pastis-blast':       'pastis-blast',
     'kart-pastisser':     'kart-pastisser',
+    'sasha-comecocos':    'sasha-comecocos',
     'raco-edurne':        'raco-edurne',
   };
   return m[gameId] || gameId;
@@ -316,6 +320,7 @@ function gameLabel(gameId) {
     'fusio-pastissera':   'Fusió Suika',
     'pastis-blast':       'Pastis Blast',
     'kart-pastisser':     'Kart Pastisser',
+    'sasha-comecocos':    'Sasha Menjamaracujàs',
   };
   return labels[gameId] || gameId;
 }

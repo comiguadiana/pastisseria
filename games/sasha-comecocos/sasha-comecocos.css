@@ -1,0 +1,486 @@
+/* ==========================================================================
+   Sasha Comecocos (Maracujà) — Estils del Joc
+   ========================================================================== */
+
+.sc-main {
+  padding: 0.25rem 0 1rem;
+}
+
+body.navbar-hidden .navbar {
+  display: none !important;
+}
+
+body.navbar-hidden .sc-main {
+  padding-top: 0.1rem;
+}
+
+.sc-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 0.4rem;
+}
+
+/* ── HUD ── */
+.sc-hud {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--chocolate);
+  color: var(--cream);
+  border: 2px solid var(--black);
+  border-radius: var(--radius-md);
+  padding: 0.3rem 0.6rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 0.1rem;
+  box-sizing: border-box;
+}
+
+.sc-hud .hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.sc-hud .hud-label {
+  font-family: var(--font-display);
+  font-size: 0.60rem;
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sc-hud .hud-value {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.sc-lives {
+  letter-spacing: 1px;
+  font-size: 0.88rem;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hud-actions .btn {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+}
+
+/* ── Power Bar ── */
+.sc-power-bar-wrap {
+  width: 100%;
+  max-width: 480px;
+  height: 20px;
+  background: #331A4D;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  animation: pulse-border 0.8s infinite alternate;
+}
+
+@keyframes pulse-border {
+  from { box-shadow: 0 0 4px rgba(255, 215, 0, 0.4); }
+  to { box-shadow: 0 0 12px rgba(255, 215, 0, 0.9); }
+}
+
+.sc-power-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #FF9800, #FFD700, #FF5722);
+  transition: width 0.1s linear;
+}
+
+.sc-power-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #2D0C4E;
+  text-shadow: 0 0 4px #FFF;
+  letter-spacing: 0.5px;
+}
+
+/* ── Board & Canvas (Totalment Ajustat al Viewport Mòbil) ── */
+.sc-board-wrap {
+  position: relative;
+  width: min(calc((100dvh - 215px) * (19 / 21)), 92vw, 450px);
+  aspect-ratio: 19 / 21;
+  max-height: calc(100dvh - 215px);
+  background: #180D24;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), 0 0 0 3px var(--caramel);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  touch-action: none;
+}
+
+body.navbar-hidden .sc-board-wrap {
+  width: min(calc((100dvh - 160px) * (19 / 21)), 94vw, 470px);
+  max-height: calc(100dvh - 160px);
+}
+
+#sc-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Overlays ── */
+.sc-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(24, 13, 36, 0.92);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  padding: 0.35rem;
+  box-sizing: border-box;
+}
+
+.sc-overlay.hidden {
+  display: none !important;
+}
+
+.sc-overlay-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.75rem;
+  width: 96%;
+  max-width: 330px;
+  max-height: 96%;
+  overflow-y: auto;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 3px solid var(--gold);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sc-hero-mascot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.sc-mascot-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.sc-fruit-intro {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: float 2.5s ease-in-out infinite 0.5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.sc-overlay-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--choco-dark);
+  margin-bottom: 0.12rem;
+  line-height: 1.15;
+}
+
+.sc-overlay-desc {
+  font-size: 0.70rem;
+  color: var(--choco);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.sc-instructions-list {
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+  font-size: 0.68rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.3rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sc-instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ── Victory & Tea Crafting ── */
+.sc-victory-card {
+  border-color: #FFB300;
+  background: radial-gradient(circle at center, #FFF9E6 0%, #FFFFFF 100%);
+}
+
+.sc-tea-crafting {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sc-tea-aura {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 179, 0, 0.4) 0%, rgba(255, 136, 0, 0) 70%);
+  animation: aura-glow 2s infinite alternate;
+}
+
+@keyframes aura-glow {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+.sc-tea-can-img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  z-index: 2;
+  filter: drop-shadow(0 4px 8px rgba(255, 152, 0, 0.4));
+}
+
+.sc-bubble {
+  position: absolute;
+  font-size: 0.8rem;
+  z-index: 3;
+  animation: bubble-up 1.8s infinite ease-out;
+}
+
+.sc-b1 { left: 10%; bottom: 20%; animation-delay: 0s; }
+.sc-b2 { right: 10%; top: 15%; animation-delay: 0.4s; }
+.sc-b3 { left: 20%; top: 10%; animation-delay: 0.9s; }
+.sc-b4 { right: 15%; bottom: 15%; animation-delay: 1.3s; }
+
+@keyframes bubble-up {
+  0% { transform: translateY(6px) scale(0.6); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-16px) scale(1.2); opacity: 0; }
+}
+
+.sc-victory-title {
+  font-family: var(--font-display);
+  color: #D84315;
+  font-size: 1.05rem;
+  margin-bottom: 0.15rem;
+}
+
+.sc-victory-text {
+  font-size: 0.72rem;
+  color: var(--choco);
+  margin-bottom: 0.25rem;
+}
+
+.sc-reward-score {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--caramel);
+  margin-bottom: 0.4rem;
+}
+
+.sc-actions-row {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sc-actions-row .btn {
+  padding: 0.3rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.sc-overlay-score {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--caramel);
+  margin-bottom: 0.15rem;
+}
+
+.sc-overlay-msg {
+  font-size: 0.72rem;
+  color: var(--choco-light);
+  margin-bottom: 0.4rem;
+}
+
+/* ── Touch Controls / D-Pad (Ultra-Compact per a Mòbils) ── */
+.sc-touch-controls {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 0.1rem;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.sc-dpad-middle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sc-dpad-center {
+  width: 22px;
+  height: 22px;
+  background: var(--cream-dark);
+  border-radius: var(--radius-full);
+  opacity: 0.25;
+}
+
+.sc-dpad-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: var(--white);
+  border: 2px solid var(--caramel);
+  color: var(--choco-dark);
+  font-size: 0.95rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 0.05s, background-color 0.05s;
+  touch-action: none;
+}
+
+.sc-dpad-btn:active, .sc-dpad-btn.active {
+  background: var(--gold);
+  color: var(--white);
+  transform: scale(0.90);
+}
+
+.sc-footer-hint {
+  font-size: 0.70rem;
+  color: var(--choco-light);
+  text-align: center;
+  margin-top: 0.1rem;
+}
+
+/* ── Responsive Queries ── */
+@media (max-width: 768px), (pointer: coarse) {
+  .sc-touch-controls {
+    display: flex;
+  }
+  .sc-footer-hint {
+    display: none;
+  }
+}
+
+@media (max-height: 720px) {
+  .sc-main {
+    padding-top: 0.1rem;
+    padding-bottom: 0.25rem;
+  }
+  .sc-hud {
+    padding: 0.2rem 0.45rem;
+    margin-bottom: 0.05rem;
+  }
+  .sc-hud .hud-label {
+    font-size: 0.55rem;
+  }
+  .sc-hud .hud-value {
+    font-size: 0.92rem;
+  }
+  .sc-board-wrap {
+    width: min(calc((100dvh - 195px) * (19 / 21)), 90vw, 420px);
+    max-height: calc(100dvh - 195px);
+  }
+  body.navbar-hidden .sc-board-wrap {
+    width: min(calc((100dvh - 145px) * (19 / 21)), 92vw, 440px);
+    max-height: calc(100dvh - 145px);
+  }
+  .sc-dpad-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.88rem;
+  }
+  .sc-dpad-center {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-height: 620px) {
+  .sc-board-wrap {
+    width: min(calc((100dvh - 175px) * (19 / 21)), 88vw, 380px);
+    max-height: calc(100dvh - 175px);
+  }
+  body.navbar-hidden .sc-board-wrap {
+    width: min(calc((100dvh - 125px) * (19 / 21)), 90vw, 400px);
+    max-height: calc(100dvh - 125px);
+  }
+  .sc-overlay-card {
+    padding: 0.4rem 0.6rem;
+  }
+  .sc-mascot-img {
+    width: 28px;
+    height: 28px;
+  }
+  .sc-fruit-intro {
+    width: 26px;
+    height: 26px;
+  }
+  .sc-overlay-title {
+    font-size: 0.92rem;
+  }
+  .sc-overlay-desc {
+    font-size: 0.65rem;
+  }
+  .sc-instructions-list {
+    font-size: 0.62rem;
+    padding: 0.2rem 0.4rem;
+  }
+  .sc-dpad-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+}

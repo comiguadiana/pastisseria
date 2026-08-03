@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 3900" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 4000" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -67,8 +67,9 @@
                L 500,1600 L 250,1700
                L 250,1900 L 500,2000
                L 500,2200 L 250,2400
-               L 250,2800 L 500,3000
-               L 500,3300 L 384,3500"
+               L 250,2600 L 500,2800
+               L 500,3000 L 250,3200
+               L 250,3400 L 384,3600"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -196,7 +197,7 @@
         <!-- 9. Kart Pastisser -->
         <div class="map-stop stop-9" id="stop-kart-pastisser"
              data-game="kart-pastisser" data-index="8"
-             style="left:65.1%; top:3000px; transform: translate(-50%, -50%);"
+             style="left:65.1%; top:2800px; transform: translate(-50%, -50%);"
              onclick="goToGame('kart-pastisser')">
           <div class="stop-node">🛒</div>
           <div class="stop-label">
@@ -206,10 +207,23 @@
           </div>
         </div>
 
-        <!-- 10. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-10 stop-end" id="stop-fama"
-             data-game="" data-index="9"
-             style="left:50%; top:3500px; transform: translate(-50%, -50%);"
+        <!-- 10. Sasha Menjamaracujàs -->
+        <div class="map-stop stop-10" id="stop-sasha-comecocos"
+             data-game="sasha-comecocos" data-index="9"
+             style="left:32.5%; top:3200px; transform: translate(-50%, -50%);"
+             onclick="goToGame('sasha-comecocos')">
+          <div class="stop-node">🍹</div>
+          <div class="stop-label">
+            <div class="stop-name">La Terrassa Tropical</div>
+            <div class="stop-desc">Sasha Menjamaracujàs</div>
+            <div class="stop-score" id="score-sasha-comecocos">–</div>
+          </div>
+        </div>
+
+        <!-- 11. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-11 stop-end" id="stop-fama"
+             data-game="" data-index="10"
+             style="left:50%; top:3600px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">

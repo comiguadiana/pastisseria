@@ -108,6 +108,16 @@ export const GAMES_INFO = {
     url: 'games/kart-pastisser/index.html',
     color: '#EF5350',
   },
+  [GAMES.SASHA_COMECOCOS]: {
+    id: GAMES.SASHA_COMECOCOS,
+    tab: 'sasha-comecocos',
+    name: 'Sasha Menjamaracujàs',
+    icon: '🍹',
+    htmlLabel: '🍹 Sasha Menjamaracujàs',
+    desc: 'Menja maracujàs i crea la llauna de te de maracujà',
+    url: 'games/sasha-comecocos/index.html',
+    color: '#FFA000',
+  },
 };
 
 const TAB_CONFIG = {
@@ -122,6 +132,7 @@ const TAB_CONFIG = {
   'fusio-pastissera':  { label:'🎂 Fusió Pastissera',         fn: () => getGameRanking(GAMES.FUSIO_PASTISSERA, 20), gameId: GAMES.FUSIO_PASTISSERA },
   'pastis-blast':      { label:'🧱 Pastis Blast',             fn: () => getGameRanking(GAMES.PASTIS_BLAST, 20), gameId: GAMES.PASTIS_BLAST },
   'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 20), gameId: GAMES.KART_PASTISSER },
+  'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 20), gameId: GAMES.SASHA_COMECOCOS },
 };
 
 let currentTab = 'general';
@@ -145,15 +156,37 @@ async function loadStats() {
     cachedStats = await getGamesStats();
     renderStatsBar(cachedStats);
     renderGameStatsGrid(cachedStats);
+    updateActiveTabPlaysBadge();
   } catch (err) {
     console.warn('Error carregant estadístiques:', err);
     renderStatsBar({ totalPlays: 0, byGame: {} });
   }
 }
 
+function updateActiveTabPlaysBadge() {
+  const badgeEl = document.querySelector('.tab-plays-badge');
+  if (!badgeEl) return;
+
+  if (currentTab === 'general') {
+    const total = cachedStats?.totalPlays || 0;
+    badgeEl.innerHTML = `🎮 <strong>${total.toLocaleString()}</strong> partides en total`;
+  } else {
+    const config = TAB_CONFIG[currentTab];
+    if (config?.gameId) {
+      const plays = cachedStats?.byGame?.[config.gameId] || 0;
+      badgeEl.innerHTML = `🎮 <strong>${plays.toLocaleString()}</strong> ${plays === 1 ? 'partida' : 'partides'}`;
+    }
+  }
+}
+
 function renderStatsBar(stats) {
-  const totalPlaysEl = document.getElementById('stat-total-plays');
-  const topGameEl    = document.getElementById('stat-top-game');
+  const totalPlaysEl    = document.getElementById('stat-total-plays');
+  const topGameEl       = document.getElementById('stat-top-game');
+  const totalMinigamesEl = document.getElementById('stat-total-minigames');
+
+  if (totalMinigamesEl) {
+    totalMinigamesEl.textContent = Object.keys(GAMES_INFO).length;
+  }
 
   const total = stats.totalPlays || 0;
   if (totalPlaysEl) {
@@ -176,7 +209,10 @@ function renderStatsBar(stats) {
 
   if (topGameEl) {
     if (maxPlays > 0) {
-      topGameEl.innerHTML = `${topGameIcon} ${escapeHtml(topGameName)} <span style="font-size:0.85rem;opacity:0.8">(${maxPlays})</span>`;
+      topGameEl.innerHTML = `
+        <span class="top-game-name">${topGameIcon} ${escapeHtml(topGameName)}</span>
+        <span class="top-game-badge">${maxPlays} ${maxPlays === 1 ? 'partida' : 'partides'}</span>
+      `;
     } else {
       topGameEl.textContent = 'En joc! 🚀';
     }
@@ -335,6 +371,7 @@ function escapeHtml(str) {
 }
 
 /* ── Init ── */
-loadStats();
-loadPodium();
-loadTab('general');
+async function init() {
+  await Promise.all([loadStats(), loadPodium(), loadTab('general')]);
+}
+init();

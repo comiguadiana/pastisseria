@@ -21,26 +21,24 @@ export const GAMES = {
   FUSIO_PASTISSERA:  'fusio-pastissera',
   PASTIS_BLAST:      'pastis-blast',
   KART_PASTISSER:    'kart-pastisser',
+  SASHA_COMECOCOS:   'sasha-comecocos',
   RACO_EDURNE:       'raco-edurne',
 };
 
 /* ─── Registrar partida jugada (globals i d'usuari) ─── */
 export async function recordGamePlay(gameId, uid) {
+  // 1. Guardar a localStorage per a persistència local
   try {
+    localStorage.setItem('obrador_last_played_game', gameId);
+    const localTotal = (parseInt(localStorage.getItem('obrador_local_plays_total') || '0', 10) + 1);
+    localStorage.setItem('obrador_local_plays_total', String(localTotal));
+    const localGame = (parseInt(localStorage.getItem(`obrador_local_plays_${gameId}`) || '0', 10) + 1);
+    localStorage.setItem(`obrador_local_plays_${gameId}`, String(localGame));
+  } catch (e) {}
+
+  // 2. Comptador a l'usuari si tenim UID (col·lecció 'users')
+  if (uid) {
     try {
-      localStorage.setItem('obrador_last_played_game', gameId);
-    } catch (e) {}
-
-    // 1. Comptador global i per joc a doc('stats', 'games')
-    const statsRef = doc(db, 'stats', 'games');
-    await setDoc(statsRef, {
-      totalPlays: increment(1),
-      [gameId]: increment(1),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-
-    // 2. Comptador a l'usuari si tenim UID
-    if (uid) {
       const userRef = doc(db, 'users', uid);
       await setDoc(userRef, {
         gamesPlayed: increment(1),
@@ -48,67 +46,169 @@ export async function recordGamePlay(gameId, uid) {
         lastPlayedAt: serverTimestamp(),
         [`gamePlays.${gameId}`]: increment(1)
       }, { merge: true });
+    } catch (err) {
+      console.warn('Avís actualitzant partides a users:', err);
+    }
 
-      // 3. Comptador al document individual del jugador
+    // 3. Comptador al document individual del jugador a scores/{gameId}/players/{uid}
+    try {
       const playerRef = doc(db, 'scores', gameId, 'players', uid);
       await setDoc(playerRef, {
-        playsCount: increment(1)
+        playsCount: increment(1),
+        lastPlayedAt: serverTimestamp()
       }, { merge: true });
+    } catch (err) {
+      console.warn('Avís actualitzant partides a scores/players:', err);
     }
+  }
+
+  // 4. Intentar actualitzar stats/games si els permisos ho permeten (sense fallar la resta)
+  try {
+    const statsRef = doc(db, 'stats', 'games');
+    await setDoc(statsRef, {
+      totalPlays: increment(1),
+      [gameId]: increment(1),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
   } catch (err) {
-    console.warn('Error enregistrant partida jugada:', err);
+    // Silenciós: si les regles de Firestore no permeten escriure a 'stats', continuem
   }
 }
 
 /* ─── Obtenir estadístiques globals de partides ─── */
 export async function getGamesStats() {
+  const byGame = {};
+  Object.values(GAMES).forEach(g => { byGame[g] = 0; });
+  let totalPlays = 0;
+
+  // 1. Intentem calcular les partides a partir de tots els usuaris registrats ('users')
+  try {
+    const usersSnap = await getDocs(collection(db, 'users'));
+    usersSnap.forEach(docSnap => {
+      const u = docSnap.data();
+      const uTotal = Number(u.gamesPlayed) || 0;
+      
+      // Si té el mapa detallat de gamePlays
+      if (u.gamePlays && typeof u.gamePlays === 'object') {
+        let sumUser = 0;
+        Object.entries(u.gamePlays).forEach(([gId, cnt]) => {
+          const count = Number(cnt) || 0;
+          if (byGame[gId] !== undefined) {
+            byGame[gId] += count;
+            sumUser += count;
+          }
+        });
+        totalPlays += Math.max(uTotal, sumUser);
+      } else if (uTotal > 0) {
+        totalPlays += uTotal;
+        if (u.lastPlayedGame && byGame[u.lastPlayedGame] !== undefined) {
+          byGame[u.lastPlayedGame] += uTotal;
+        }
+      }
+    });
+  } catch (err) {
+    console.warn('Avís obtenint estadístiques des de users:', err);
+  }
+
+  // 2. Consulta les col·leccions de cada joc a 'scores/{gameId}/players' per comptar partides/jugadors
+  try {
+    await Promise.all(Object.values(GAMES).map(async (gameId) => {
+      try {
+        const scoresSnap = await getDocs(collection(db, 'scores', gameId, 'players'));
+        let gameSum = 0;
+        scoresSnap.forEach(docSnap => {
+          const data = docSnap.data();
+          const pCount = Number(data.playsCount) || (data.score ? 1 : 0);
+          gameSum += pCount;
+        });
+        if (gameSum > (byGame[gameId] || 0)) {
+          const diff = gameSum - (byGame[gameId] || 0);
+          byGame[gameId] = gameSum;
+          totalPlays += diff;
+        }
+      } catch (e) {}
+    }));
+  } catch (err) {
+    console.warn('Avís obtenint estadístiques des de scores:', err);
+  }
+
+  // 3. Comprova també doc('stats', 'games') per si de cas està disponible i té més dades
   try {
     const statsRef = doc(db, 'stats', 'games');
     const snap = await getDoc(statsRef);
     if (snap.exists()) {
       const data = snap.data();
-      const byGame = {};
       Object.values(GAMES).forEach(g => {
-        byGame[g] = data[g] || 0;
+        if (data[g]) byGame[g] = Math.max(byGame[g] || 0, Number(data[g]) || 0);
       });
-      return {
-        totalPlays: data.totalPlays || 0,
-        byGame
-      };
+      if (data.totalPlays) {
+        totalPlays = Math.max(totalPlays, Number(data.totalPlays) || 0);
+      }
     }
-  } catch (err) {
-    console.warn('Error obtenint estadístiques:', err);
+  } catch (e) {
+    // Silenciós per si no hi ha permisos a stats
   }
 
-  // Fallback inicial amb 0
-  const byGame = {};
-  Object.values(GAMES).forEach(g => { byGame[g] = 0; });
-  return { totalPlays: 0, byGame };
+  // 4. Sumatori final de seguretat
+  let sumAll = 0;
+  Object.values(byGame).forEach(c => { sumAll += c; });
+  totalPlays = Math.max(totalPlays, sumAll);
+
+  // 5. Fallback amb partides locals si encara és 0
+  if (totalPlays === 0) {
+    try {
+      const localTotal = parseInt(localStorage.getItem('obrador_local_plays_total') || '0', 10);
+      if (localTotal > 0) {
+        totalPlays = localTotal;
+        Object.values(GAMES).forEach(g => {
+          const localG = parseInt(localStorage.getItem(`obrador_local_plays_${g}`) || '0', 10);
+          if (localG > 0) byGame[g] = localG;
+        });
+      }
+    } catch (e) {}
+  }
+
+  return { totalPlays, byGame };
 }
 
 /* ─── Desar score (desa rècord i enregistra la partida jugada) ─── */
 export async function saveScore(gameId, uid, score, profile) {
-  // Sempre comptabilitzem la partida jugada
+  // Sempre comptabilitzem la partida jugada primer
   await recordGamePlay(gameId, uid);
 
   const ref  = doc(db, 'scores', gameId, 'players', uid);
-  const snap = await getDoc(ref);
+  let prevScore = 0;
+  let prevSnap = null;
+  try {
+    prevSnap = await getDoc(ref);
+    if (prevSnap && prevSnap.exists()) {
+      prevScore = prevSnap.data().score || 0;
+    }
+  } catch (e) {}
 
-  if (snap.exists() && snap.data().score >= score) {
+  if (prevSnap && prevSnap.exists() && prevScore >= score) {
     return false; // No millora el rècord personal
   }
 
-  await setDoc(ref, {
-    uid,
-    score,
-    displayName:  profile?.displayName || 'Jugador',
-    avatarStyle:  profile?.avatarStyle || 'adventurer',
-    avatarSeed:   profile?.avatarSeed || uid,
-    updatedAt:    serverTimestamp()
-  }, { merge: true });
+  try {
+    await setDoc(ref, {
+      uid,
+      score,
+      displayName:  profile?.displayName || 'Jugador',
+      avatarStyle:  profile?.avatarStyle || 'adventurer',
+      avatarSeed:   profile?.avatarSeed || uid,
+      updatedAt:    serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    console.warn('Error desant score a Firestore:', err);
+  }
 
   // Actualitzar puntuació total a l'usuari
-  await recalcTotalScore(uid);
+  try {
+    await recalcTotalScore(uid);
+  } catch (err) {
+    console.warn('Error recalculant puntuació total:', err);
+  }
 
   return true; // Nou rècord!
 }
@@ -117,14 +217,18 @@ export async function saveScore(gameId, uid, score, profile) {
 async function recalcTotalScore(uid) {
   let total = 0;
   for (const gameId of Object.values(GAMES)) {
-    const ref  = doc(db, 'scores', gameId, 'players', uid);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      total += snap.data().score || 0;
-    }
+    try {
+      const ref  = doc(db, 'scores', gameId, 'players', uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        total += snap.data().score || 0;
+      }
+    } catch (e) {}
   }
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, { totalScore: total });
+  try {
+    const userRef = doc(db, 'users', uid);
+    await setDoc(userRef, { totalScore: total }, { merge: true });
+  } catch (e) {}
 }
 
 /* ─── Obtenir ranking d'un joc (top N) ─── */
@@ -135,7 +239,20 @@ export async function getGameRanking(gameId, topN = 10) {
     limit(topN)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d, i) => ({ rank: i + 1, ...d.data() }));
+  return snap.docs.map((d, i) => {
+    const data = d.data();
+    let plays = Number(data.playsCount);
+    if (isNaN(plays) || plays <= 0) {
+      plays = (data.score > 0) ? 1 : 0;
+    }
+    return {
+      rank: i + 1,
+      uid: d.id,
+      ...data,
+      playsCount: plays,
+      gamesPlayed: plays
+    };
+  });
 }
 
 /* ─── Obtenir ranking general (top N per totalScore) ─── */
@@ -146,7 +263,56 @@ export async function getGeneralRanking(topN = 20) {
     limit(topN)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d, i) => ({ rank: i + 1, ...d.data() }));
+  const users = snap.docs.map((d, i) => ({
+    rank: i + 1,
+    uid: d.id,
+    ...d.data()
+  }));
+
+  // Agreguem les partides de cada jugador consultant les col·leccions de cada joc a scores/{gameId}/players
+  const userUids = new Set(users.map(u => u.uid));
+  const userScoresPlaysMap = {};
+
+  try {
+    await Promise.all(Object.values(GAMES).map(async (gameId) => {
+      try {
+        const scoresSnap = await getDocs(collection(db, 'scores', gameId, 'players'));
+        scoresSnap.forEach(docSnap => {
+          const pUid = docSnap.id;
+          if (userUids.has(pUid)) {
+            const data = docSnap.data();
+            const pCount = Number(data.playsCount) || (data.score > 0 ? 1 : 0);
+            userScoresPlaysMap[pUid] = (userScoresPlaysMap[pUid] || 0) + pCount;
+          }
+        });
+      } catch (e) {}
+    }));
+  } catch (err) {
+    console.warn('Avís agregant partides per usuari:', err);
+  }
+
+  return users.map(u => {
+    const playsFromScores = userScoresPlaysMap[u.uid] || 0;
+    const playsFromUserDoc = Number(u.gamesPlayed) || 0;
+    let playsFromGamePlays = 0;
+    if (u.gamePlays && typeof u.gamePlays === 'object') {
+      playsFromGamePlays = Object.values(u.gamePlays).reduce((a, b) => a + (Number(b) || 0), 0);
+    }
+
+    const calculatedPlays = Math.max(playsFromScores, playsFromUserDoc, playsFromGamePlays, (u.totalScore > 0 ? 1 : 0));
+
+    // Auto-curació a Firestore si les dades d'usuari eren antigues
+    if (calculatedPlays > playsFromUserDoc && u.uid) {
+      try {
+        setDoc(doc(db, 'users', u.uid), { gamesPlayed: calculatedPlays }, { merge: true }).catch(() => {});
+      } catch (e) {}
+    }
+
+    return {
+      ...u,
+      gamesPlayed: calculatedPlays
+    };
+  });
 }
 
 /* ─── Obtenir posició de l'usuari en un joc ─── */
