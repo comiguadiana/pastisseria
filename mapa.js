@@ -26,6 +26,7 @@ const GAME_ORDER = [
   'kart-pastisser',
   'sasha-comecocos',
   'mots-pastissers',
+  'sasha-go',
 ];
 
 const GAME_URLS = {
@@ -40,6 +41,7 @@ const GAME_URLS = {
   'kart-pastisser':     'games/kart-pastisser/index.html',
   'sasha-comecocos':    'games/sasha-comecocos/index.html',
   'mots-pastissers':    'games/mots-pastissers/index.html',
+  'sasha-go':           'games/sasha-go/index.html',
   'raco-edurne':        'games/raco-edurne/index.html',
 };
 
@@ -56,7 +58,8 @@ const STOP_POSITIONS = {
   8: { left: '65.1%', top: 2800 }, // Kart Pastisser
   9: { left: '32.5%', top: 3200 }, // Sasha Menjamaracujàs
   10: { left: '65.1%', top: 3600 }, // Mots Pastissers
-  11: { left: '50%',  top: 4000 }, // Fama (fi del recorregut)
+  11: { left: '32.5%', top: 4000 }, // Sasha GO (Safari de Sants)
+  12: { left: '50%',  top: 4400 }, // Fama (fi del recorregut)
   'raco-edurne': { left: '15%', top: 1250 }, // Easter Egg
 };
 
@@ -74,6 +77,7 @@ function stopDomId(gameId) {
     'kart-pastisser':     'kart-pastisser',
     'sasha-comecocos':    'sasha-comecocos',
     'mots-pastissers':    'mots-pastissers',
+    'sasha-go':           'sasha-go',
     'raco-edurne':        'raco-edurne',
   };
   return m[gameId] || gameId;
@@ -326,6 +330,7 @@ function gameLabel(gameId) {
     'kart-pastisser':     'Kart Pastisser',
     'sasha-comecocos':    'Sasha Menjamaracujàs',
     'mots-pastissers':    'Mots Pastissers',
+    'sasha-go':           'Sasha GO (Safari Sants)',
   };
   return labels[gameId] || gameId;
 }

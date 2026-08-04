@@ -1,0 +1,1255 @@
+/* ═══════════════════════════════════════════════════════════
+   sasha-go.css — Sasha GO: El Safari de Sants
+   Obrador Màgic Guadiana
+═══════════════════════════════════════════════════════════ */
+
+:root {
+  --c-primary: #ff6b8b;
+  --c-primary-light: #ff8fab;
+  --c-primary-dark: #d81b60;
+  --c-gold: #ffb703;
+  --c-gold-dark: #fb8500;
+  --c-teal: #2ec4b6;
+  --c-purple: #7209b7;
+  --c-violet: #560bad;
+  --c-bg: #f8f9fa;
+  --c-card-bg: rgba(255, 255, 255, 0.92);
+
+  --font-game: 'Fredoka One', cursive, sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #1a1a2e;
+  color: #2b2d42;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+#sashago-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── HUD SUPERIOR ────────────────────────────────────────── */
+.go-header {
+  position: absolute;
+  top: 60px; /* just sota la navbar */
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  pointer-events: none;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hud-pill {
+  pointer-events: auto;
+  background: var(--c-card-bg);
+  backdrop-filter: blur(12px);
+  padding: 8px 14px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 0 0 1.5px rgba(255,255,255,0.8);
+  font-family: var(--font-game);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: #2b2d42;
+}
+
+.hud-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+.gps-pill {
+  font-size: 0.82rem;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+.status-dot.pulsing {
+  box-shadow: 0 0 0 rgba(74, 222, 128, 0.4);
+  animation: pulseGps 1.5s infinite;
+}
+
+.status-dot.warning {
+  background: #fbbf24;
+  box-shadow: 0 0 0 rgba(251, 191, 36, 0.4);
+}
+
+@keyframes pulseGps {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.score-pill {
+  color: var(--c-primary-dark);
+}
+
+.sashadex-btn-pill {
+  background: linear-gradient(135deg, #ff8fab, #ff477e);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 71, 126, 0.35);
+}
+
+.sashadex-btn-pill:hover {
+  transform: scale(1.05);
+}
+
+/* ── CONTENIDOR DEL MAPA ─────────────────────────────────── */
+#map-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.fog-of-war-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 450;
+  transition: background 0.08s ease-out;
+}
+
+/* ── CONTROLS FLOTANTS SOBRE EL MAPA ─────────────────────── */
+.map-controls {
+  position: absolute;
+  right: 16px;
+  top: 140px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map-action-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.map-action-btn:hover {
+  transform: scale(1.1);
+  background: #fff8f0;
+}
+
+.map-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* ── PROXIMITY BANNER ────────────────────────────────────── */
+.proximity-banner {
+  position: absolute;
+  top: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 8px 18px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #333;
+  max-width: 90%;
+  text-align: center;
+  pointer-events: none;
+  animation: slideDown 0.3s ease-out;
+  border: 1.5px solid var(--c-primary-light);
+}
+
+@keyframes slideDown {
+  from { transform: translate(-50%, -20px); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* ── SIMULATOR JOYSTICK ─────────────────────────────────── */
+.sim-joystick {
+  position: absolute;
+  bottom: 95px;
+  left: 16px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+  border: 2px solid white;
+}
+
+.joystick-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 6px;
+  color: #555;
+  font-family: var(--font-game);
+}
+
+.d-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.d-row {
+  display: flex;
+  gap: 4px;
+}
+
+.d-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0f3f8, #dbe2ef);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #3f72af;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.08s;
+}
+
+.d-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0;
+}
+
+.d-center {
+  background: linear-gradient(135deg, #ffd166, #ffb703);
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* ── FOOTER & INVENTARI DE MUNICIÓ ───────────────────────── */
+.go-footer {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 94%;
+  max-width: 500px;
+  pointer-events: none;
+}
+
+.ammo-inventory {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.18), inset 0 0 0 2px white;
+  gap: 8px;
+}
+
+.ammo-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ammo-item:hover {
+  background: #fff0f3;
+}
+
+.ammo-item.active {
+  background: #fff0f3;
+  border-color: var(--c-primary);
+  transform: scale(1.04);
+  box-shadow: 0 4px 12px rgba(255, 107, 139, 0.25);
+}
+
+.ammo-icon {
+  font-size: 1.5rem;
+}
+
+.ammo-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ammo-name {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #666;
+  white-space: nowrap;
+}
+
+.ammo-count {
+  font-family: var(--font-game);
+  font-size: 0.95rem;
+  color: var(--c-primary-dark);
+}
+
+/* ── MARCADORS DEL MAPA (LEAFLET) ────────────────────────── */
+.player-marker {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--c-primary);
+  box-shadow: 0 4px 12px rgba(255, 107, 139, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-marker-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.player-radar-ring {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 107, 139, 0.6);
+  background: rgba(255, 107, 139, 0.12);
+  top: -26px;
+  left: -26px;
+  pointer-events: none;
+  animation: radarRotate 8s linear infinite;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.sasha-pin {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: relative;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.3));
+  animation: bobPin 2s infinite ease-in-out;
+  transition: transform 0.2s;
+}
+
+.sasha-pin:hover {
+  transform: scale(1.25);
+}
+
+.sasha-pin img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sasha-pin-aura {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+  animation: pulseAura 1.5s infinite alternate;
+  z-index: -1;
+}
+
+@keyframes bobPin {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes pulseAura {
+  from { transform: scale(0.8); opacity: 0.4; }
+  to   { transform: scale(1.3); opacity: 0.9; }
+}
+
+.pastry-pin {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: white;
+  border: 2.5px solid #ffb703;
+  box-shadow: 0 4px 10px rgba(255, 183, 3, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  animation: bobPin 2.2s infinite ease-in-out;
+  transition: transform 0.15s;
+}
+
+.pastry-pin:hover {
+  transform: scale(1.3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   PANTALLA DE CAPTURA (ESTIL POKÉMON GO)
+══════════════════════════════════════════════════════════ */
+.catch-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background: #111;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.catch-scenery {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scenery-sky {
+  flex: 3;
+  background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+  position: relative;
+}
+
+.scenery-sky::after {
+  content: '☁️ ☁️ ☁️';
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  font-size: 2.5rem;
+  opacity: 0.4;
+  letter-spacing: 50px;
+}
+
+.scenery-street {
+  flex: 2;
+  background: linear-gradient(180deg, #c7a77e 0%, #8b6b47 100%);
+  box-shadow: inset 0 10px 20px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.scenery-street::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: #a88d67;
+}
+
+.catch-escape-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: var(--font-game);
+  font-size: 0.95rem;
+  color: #ff477e;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.encounter-header {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding-top: 24px;
+}
+
+.encounter-badge {
+  display: inline-block;
+  background: #ffb703;
+  color: #333;
+  font-family: var(--font-game);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.encounter-header h2 {
+  font-family: var(--font-game);
+  font-size: 2rem;
+  color: white;
+  text-shadow: 0 3px 8px rgba(0,0,0,0.35);
+}
+
+.encounter-sub {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ── ARENA DE CAPTURA ── */
+.encounter-arena {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sasha-target-wrap {
+  position: relative;
+  width: 220px;
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: sashaIdle 2.5s infinite ease-in-out;
+  transition: transform 0.2s;
+}
+
+.encounter-sasha-sprite {
+  width: 190px;
+  height: 250px;
+  object-fit: contain;
+  z-index: 3;
+  filter: drop-shadow(0 15px 20px rgba(0,0,0,0.35));
+}
+
+.sasha-shadow {
+  position: absolute;
+  bottom: 0;
+  width: 140px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.25);
+  filter: blur(4px);
+  z-index: 2;
+}
+
+/* Anell de dificultat de captura */
+.catch-ring {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid #4ade80;
+  z-index: 4;
+  pointer-events: none;
+  animation: ringContract 2s infinite linear;
+}
+
+@keyframes ringContract {
+  0%   { transform: scale(1.3); opacity: 0.9; }
+  100% { transform: scale(0.5); opacity: 0.4; }
+}
+
+@keyframes sashaIdle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-16px) scale(1.02); }
+}
+
+.sasha-jump {
+  animation: sashaDodge 0.6s ease-in-out !important;
+}
+
+@keyframes sashaDodge {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(-70px) rotate(8deg); }
+  100% { transform: translateY(0); }
+}
+
+.sasha-eat {
+  animation: sashaMunch 0.7s ease-in-out forwards !important;
+}
+
+@keyframes sashaMunch {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.3) rotate(-5deg); filter: brightness(1.3); }
+  60%  { transform: scale(0.9) rotate(5deg); }
+  100% { transform: scale(1); }
+}
+
+/* ── ZONA DE LLANÇAMENT INFERIOR ── */
+.throw-zone {
+  position: relative;
+  z-index: 10;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.throw-instruction {
+  font-family: var(--font-game);
+  font-size: 0.95rem;
+  color: white;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.3);
+  padding: 4px 16px;
+  border-radius: 20px;
+}
+
+.throwable-pastry {
+  width: 90px;
+  height: 90px;
+  cursor: grab;
+  position: absolute;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+  touch-action: none;
+}
+
+.throwable-pastry:active {
+  cursor: grabbing;
+}
+
+.throwable-pastry img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: floatPastry 2s infinite ease-in-out;
+}
+
+@keyframes floatPastry {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-8px) rotate(4deg); }
+}
+
+.catch-ammo-bar {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.catch-ammo-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 2px solid transparent;
+  padding: 6px 12px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: var(--font-game);
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.catch-ammo-btn.active {
+  border-color: var(--c-primary);
+  background: #fff0f3;
+  transform: scale(1.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MODALS (SASHADEX, BENVINGUDA, DETALL, CELEBRACIÓ)
+══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+  from { transform: scale(0.7) translateY(30px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ── SASHADEX ── */
+.dex-card {
+  background: white;
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  border: 3px solid white;
+}
+
+.dex-header {
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #ff8fab, #ff477e);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dex-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dex-title h2 {
+  font-family: var(--font-game);
+  font-size: 1.4rem;
+}
+
+.dex-close-btn {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.dex-stats-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 16px;
+  background: #fdf2f4;
+  border-bottom: 1px solid #ffd6df;
+}
+
+.dex-stat {
+  text-align: center;
+}
+
+.stat-num {
+  font-family: var(--font-game);
+  font-size: 1.3rem;
+  color: var(--c-primary-dark);
+  display: block;
+}
+
+.stat-lbl {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.dex-grid {
+  padding: 20px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+  flex: 1;
+}
+
+.dex-item {
+  background: #f8f9fa;
+  border-radius: 18px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 2px solid #eee;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.dex-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+}
+
+.dex-item.discovered {
+  background: white;
+  border-color: #ffd6df;
+}
+
+.dex-item.locked {
+  filter: grayscale(1);
+  opacity: 0.65;
+}
+
+.dex-item.locked img {
+  filter: brightness(0) opacity(0.35);
+}
+
+.dex-item-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.dex-item-name {
+  font-family: var(--font-game);
+  font-size: 0.82rem;
+  color: #333;
+}
+
+.dex-item-count {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #888;
+}
+
+.dex-item-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 900;
+}
+
+.badge-comuna { background: #e0e7ff; color: #4338ca; }
+.badge-rara   { background: #fef3c7; color: #b45309; }
+.badge-mitica { background: #fae8ff; color: #86198f; box-shadow: 0 0 8px rgba(217, 70, 239, 0.5); }
+
+/* ── MODAL DETALL SASHA ── */
+.sasha-detail-card {
+  background: white;
+  border-radius: 28px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.sasha-detail-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin: 10px auto;
+  display: block;
+}
+
+/* ── MODAL BENVINGUDA & CELEBRACIÓ ── */
+.welcome-card, .celebration-card {
+  background: white;
+  border-radius: 28px;
+  padding: 32px 28px;
+  max-width: 480px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+}
+
+.welcome-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff8fab, #ff477e);
+  color: white;
+  font-family: var(--font-game);
+  font-size: 0.72rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.welcome-icon {
+  font-size: 3.5rem;
+  margin-bottom: 8px;
+}
+
+.welcome-card h1, .celebration-card h2 {
+  font-family: var(--font-game);
+  font-size: 1.8rem;
+  color: var(--c-primary-dark);
+  margin-bottom: 10px;
+}
+
+.welcome-desc {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.rules-box {
+  background: #fff8f0;
+  border: 2px solid #ffe3d1;
+  border-radius: 18px;
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #5c3317;
+  margin-bottom: 20px;
+}
+
+.rules-box strong {
+  display: block;
+  font-family: var(--font-game);
+  color: var(--c-primary);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.rules-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.action-btn {
+  font-family: var(--font-game);
+  font-size: 1.15rem;
+  background: linear-gradient(135deg, #ff8fab, #ff477e);
+  color: white;
+  border: 3px solid white;
+  border-radius: 30px;
+  padding: 14px 36px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 rgba(216, 27, 96, 0.4), 0 10px 20px rgba(255, 71, 126, 0.35);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 rgba(216, 27, 96, 0.4), 0 14px 24px rgba(255, 71, 126, 0.4);
+}
+
+.action-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(216, 27, 96, 0.4);
+}
+
+/* ── CELEBRACIÓ ESPECÍFICA ── */
+.sparkles-burst {
+  font-size: 2.2rem;
+  margin-bottom: 6px;
+}
+
+.sasha-caught-avatar-wrap {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 12px;
+  background: radial-gradient(circle, #fff0f3 0%, transparent 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.caught-modal-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  animation: bobPin 1.5s infinite ease-in-out;
+}
+
+.caught-rarity-pill {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-family: var(--font-game);
+  font-size: 0.75rem;
+  background: #ffb703;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.caught-points-badge {
+  font-family: var(--font-game);
+  font-size: 1.3rem;
+  color: #10b981;
+  margin: 14px 0 20px;
+}
+
+/* ── ANIMACIONS DE CICLE DE VIDA DE SPAWNS (APARICIÓ I DESAPARICIÓ) ── */
+.custom-sasha-pin, .custom-pastry-pin {
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+.custom-sasha-pin *, .custom-pastry-pin * {
+  pointer-events: auto !important;
+}
+
+.sasha-pin.spawn-appearing, .pastry-pin.spawn-appearing {
+  animation: spawnPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes spawnPopIn {
+  0%   { transform: scale(0) translateY(15px); opacity: 0; }
+  70%  { transform: scale(1.15) translateY(-5px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.sasha-pin.spawn-fading-out, .pastry-pin.spawn-fading-out {
+  animation: spawnFadeOut 4.5s ease forwards;
+}
+
+@keyframes spawnFadeOut {
+  0%   { opacity: 1; transform: scale(1); }
+  50%  { opacity: 0.7; transform: scale(0.9) translateY(-3px); }
+  85%  { opacity: 0.3; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(0.1) translateY(-10px); }
+}
+
+/* ── MARCADOR ESPECIAL OBRADOR GUADIANA ── */
+.obrador-badge-marker {
+  pointer-events: none;
+  z-index: 1 !important;
+}
+
+.obrador-map-pin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 2px solid var(--c-primary);
+  box-shadow: 0 4px 14px rgba(255, 107, 139, 0.4);
+  font-family: var(--font-game);
+  font-size: 0.78rem;
+  color: var(--c-primary-dark);
+  white-space: nowrap;
+  animation: pulseObrador 2s infinite alternate;
+}
+
+@keyframes pulseObrador {
+  from { transform: scale(1); box-shadow: 0 4px 14px rgba(255, 107, 139, 0.3); }
+  to   { transform: scale(1.06); box-shadow: 0 6px 18px rgba(255, 107, 139, 0.6); }
+}
+
+/* ── MODAL ZONES DE SANTS ── */
+.zones-card {
+  background: white;
+  width: 100%;
+  max-width: 580px;
+  max-height: 85vh;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  border: 3px solid white;
+}
+
+.zones-header {
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #7209b7, #4361ee);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zones-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zones-title h2 {
+  font-family: var(--font-game);
+  font-size: 1.4rem;
+}
+
+.zones-sub {
+  padding: 12px 20px 6px;
+  font-size: 0.88rem;
+  color: #666;
+  font-weight: 700;
+}
+
+.zones-grid {
+  padding: 14px 20px 20px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  flex: 1;
+}
+
+.zone-item-btn {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.15s ease;
+}
+
+.zone-item-btn:hover {
+  background: #f0f4ff;
+  border-color: #4361ee;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(67, 97, 238, 0.15);
+}
+
+.zone-item-btn.guadiana-zone {
+  background: #fff0f5;
+  border-color: #ff8fab;
+}
+
+.zone-item-btn.guadiana-zone:hover {
+  background: #ffe3ec;
+  border-color: #ff477e;
+  box-shadow: 0 6px 14px rgba(255, 71, 126, 0.25);
+}
+
+.zone-item-name {
+  font-family: var(--font-game);
+  font-size: 0.95rem;
+  color: #2b2d42;
+}
+
+.zone-item-btn.guadiana-zone .zone-item-name {
+  color: var(--c-primary-dark);
+}
+
+.zone-item-desc {
+  font-size: 0.75rem;
+  color: #777;
+  line-height: 1.3;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .go-header {
+    top: 55px;
+    padding: 6px 10px;
+  }
+  
+  .hud-pill {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .ammo-inventory {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .ammo-item {
+    padding: 4px 6px;
+  }
+
+  .ammo-icon { font-size: 1.2rem; }
+  .ammo-name { font-size: 0.58rem; }
+  .ammo-count { font-size: 0.85rem; }
+
+  .dex-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 12px;
+  }
+
+  .zones-grid {
+    grid-template-columns: 1fr;
+    padding: 10px 14px 16px;
+  }
+
+  .encounter-sasha-sprite {
+    width: 150px;
+    height: 200px;
+  }
+
+  .throwable-pastry {
+    width: 75px;
+    height: 75px;
+    bottom: 60px;
+  }
+}

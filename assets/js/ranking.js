@@ -23,6 +23,7 @@ export const GAMES = {
   KART_PASTISSER:    'kart-pastisser',
   SASHA_COMECOCOS:   'sasha-comecocos',
   MOTS_PASTISSERS:   'mots-pastissers',
+  SASHA_GO:          'sasha-go',
   RACO_EDURNE:       'raco-edurne',
 };
 

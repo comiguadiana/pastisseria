@@ -128,6 +128,16 @@ export const GAMES_INFO = {
     url: 'games/mots-pastissers/index.html',
     color: '#E91E63',
   },
+  [GAMES.SASHA_GO]: {
+    id: GAMES.SASHA_GO,
+    tab: 'sasha-go',
+    name: 'Sasha GO: El Safari de Sants',
+    icon: '🐾',
+    htmlLabel: '<img src="assets/img/sashas/sasha_reial.png" style="height: 1.2em; vertical-align: middle;"> Sasha GO (GPS)',
+    desc: 'Explora Sants amb geolocalització, llança pastissos i col·lecciona 16 Sashes alienígenes!',
+    url: 'games/sasha-go/index.html',
+    color: '#FF4081',
+  },
 };
 
 const TAB_CONFIG = {
@@ -144,6 +154,7 @@ const TAB_CONFIG = {
   'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 20), gameId: GAMES.KART_PASTISSER },
   'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 20), gameId: GAMES.SASHA_COMECOCOS },
   'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 20), gameId: GAMES.MOTS_PASTISSERS },
+  'sasha-go':          { label:'🐾 Sasha GO: Safari de Sants', fn: () => getGameRanking(GAMES.SASHA_GO, 20), gameId: GAMES.SASHA_GO },
 };
 
 let currentTab = 'general';

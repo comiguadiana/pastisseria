@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sasha GO: El Safari de Sants · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Explora el Carrer Guadiana a Sants, recull dolços i llança pastissos per capturar totes les variants alienígenes de la Sasha!" />
+  
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="sasha-go.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+        <button class="btn btn-ghost btn-sm" id="nav-logout-btn">Sortir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- App Wrapper -->
+  <div id="sashago-app">
+
+    <!-- HUD Superior -->
+    <header class="go-header">
+      <div class="hud-pill gps-pill" id="gps-status-pill">
+        <span class="status-dot pulsing" id="gps-dot"></span>
+        <span id="gps-text">Cercant GPS...</span>
+      </div>
+
+      <div class="hud-pill score-pill">
+        <span class="pill-icon">⭐</span>
+        <span id="hud-score">0</span> pts
+      </div>
+
+      <div class="hud-pill sashadex-btn-pill" id="open-dex-btn">
+        <span class="pill-icon">📖</span>
+        <span>SashaDex (<b id="hud-caught-count">0</b>/<span id="hud-total-sashas">42</span>)</span>
+      </div>
+    </header>
+
+    <!-- Mapa Principal (Leaflet) -->
+    <div id="map-container">
+      <div id="map"></div>
+      <div id="fog-overlay" class="fog-of-war-overlay"></div>
+
+      <!-- Controls flotants sobre el mapa -->
+      <div class="map-controls">
+        <button class="map-action-btn" id="btn-recenter" title="Centrar al meu avatar">
+          📍
+        </button>
+        <button class="map-action-btn" id="btn-open-zones" title="Explorar zones i places de Sants" style="display: none;">
+          🗺️
+        </button>
+        <button class="map-action-btn" id="btn-toggle-sim" title="Activar/Desactivar mode simulador" style="display: none;">
+          🕹️
+        </button>
+        <button class="map-action-btn" id="btn-help" title="Instruccions del joc">
+          ❓
+        </button>
+      </div>
+
+      <!-- Radar / Informador d'abast -->
+      <div class="proximity-banner" id="proximity-banner">
+        <span id="proximity-icon">📡</span>
+        <span id="proximity-text">Camina pel carrer Guadiana per trobar Sashes i pastissos!</span>
+      </div>
+
+      <!-- Joystick Virtual (Mode Simulador) -->
+      <div class="sim-joystick hidden" id="sim-joystick">
+        <div class="joystick-title">🕹️ Mode Passeig (Simulador Sants)</div>
+        <div class="d-pad">
+          <button class="d-btn d-up" id="btn-move-up">▲</button>
+          <div class="d-row">
+            <button class="d-btn d-left" id="btn-move-left">◀</button>
+            <button class="d-btn d-center" id="btn-spawn-nearby" title="Generar Sasha a prop">🐾</button>
+            <button class="d-btn d-right" id="btn-move-right">▶</button>
+          </div>
+          <button class="d-btn d-down" id="btn-move-down">▼</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bossa de Munició Flotant Inferior -->
+    <footer class="go-footer">
+      <div class="ammo-inventory">
+        <div class="ammo-item active" data-ammo="croissant" id="ammo-croissant">
+          <div class="ammo-icon">🥐</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Croissant</span>
+            <span class="ammo-count" id="count-croissant">10</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="ensaimada" id="ammo-ensaimada">
+          <div class="ammo-icon">🍥</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Ensaimada</span>
+            <span class="ammo-count" id="count-ensaimada">5</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="pastis" id="ammo-pastis">
+          <div class="ammo-icon">🎂</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Pastís Guadiana</span>
+            <span class="ammo-count" id="count-pastis">2</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="maracuja" id="ammo-maracuja">
+          <div class="ammo-icon">🫐</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Te Maracujà</span>
+            <span class="ammo-count" id="count-maracuja">1</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════════════════
+         PANTALLA DE CAPTURA (ESTIL POKÉMON GO)
+    ══════════════════════════════════════════════════════════ -->
+    <div id="catch-screen" class="catch-overlay hidden">
+      <!-- Fons de captura -->
+      <div class="catch-scenery">
+        <div class="scenery-sky"></div>
+        <div class="scenery-street"></div>
+      </div>
+
+      <!-- Botó sortir de la trobada -->
+      <button id="catch-escape-btn" class="catch-escape-btn">✕ Fugir</button>
+
+      <!-- Fitxa superior de la Sasha trobada -->
+      <div class="encounter-header">
+        <div class="encounter-badge" id="encounter-rarity">COMUNA</div>
+        <h2 id="encounter-name">Sasha Xef</h2>
+        <div class="encounter-sub" id="encounter-profession">Obrador de Sants</div>
+      </div>
+
+      <!-- Zona Central: La Sasha alienígena amb anell de captura -->
+      <div class="encounter-arena" id="encounter-arena">
+        <div class="sasha-target-wrap" id="sasha-target">
+          <!-- Anell de dificultat de captura (verd/groc/vermell) -->
+          <div class="catch-ring" id="catch-ring"></div>
+          <!-- Imatge de la Sasha -->
+          <img src="../../assets/img/sashas/sasha_xef_gourmet.png" alt="Sasha" id="encounter-sasha-img" class="encounter-sasha-sprite" />
+          <div class="sasha-shadow"></div>
+          <!-- Cors / efectes -->
+          <div class="sasha-emotes" id="sasha-emotes"></div>
+        </div>
+      </div>
+
+      <!-- Zona Inferior: Llançador de pastissos -->
+      <div class="throw-zone" id="throw-zone">
+        <div class="throw-instruction">👆 Llisca cap amunt o fes clic per llançar el pastís!</div>
+        
+        <!-- Projectil pastís que es llança -->
+        <div class="throwable-pastry" id="active-pastry">
+          <img src="../../assets/img/pasteles/cruasan.png" alt="Pastís" id="throwable-img" />
+        </div>
+
+        <!-- Selector ràpid de pastís en captura -->
+        <div class="catch-ammo-bar" id="catch-ammo-bar">
+          <!-- Generat dinàmicament -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL SASHADEX (ÀLBUM DE COL·LECCIÓ)
+    ══════════════════════════════════════════════════════════ -->
+    <div id="sashadex-modal" class="modal-overlay hidden">
+      <div class="dex-card">
+        <div class="dex-header">
+          <div class="dex-title">
+            <span class="dex-icon">📖</span>
+            <h2>SashaDex: Col·lecció Guadiana</h2>
+          </div>
+          <button class="dex-close-btn" id="close-dex-btn">✕</button>
+        </div>
+
+        <div class="dex-stats-bar">
+          <div class="dex-stat">
+            <span class="stat-num" id="dex-discovered-num">0</span>
+            <span class="stat-lbl">Descobertes</span>
+          </div>
+          <div class="dex-stat">
+            <span class="stat-num" id="dex-total-caught-num">0</span>
+            <span class="stat-lbl">Captures Totals</span>
+          </div>
+          <div class="dex-stat">
+            <span class="stat-num" id="dex-completion-pct">0%</span>
+            <span class="stat-lbl">Completat</span>
+          </div>
+        </div>
+
+        <!-- Grid de Sashes -->
+        <div class="dex-grid" id="dex-grid">
+          <!-- Generat dinàmicament amb les 16 variants -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL FITXA DETALL DE SASHA
+    ══════════════════════════════════════════════════════════ -->
+    <div id="sasha-detail-modal" class="modal-overlay hidden">
+      <div class="sasha-detail-card" id="sasha-detail-content">
+        <!-- Generat en fer clic a una Sasha del SashaDex -->
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL BENVINGUDA / INSTRUCCIONS
+    ══════════════════════════════════════════════════════════ -->
+    <div id="welcome-modal" class="modal-overlay">
+      <div class="welcome-card animate-bounce-in">
+        <div class="welcome-badge">🚀 NOU MINIJOC DE GEOLOCALITZACIÓ</div>
+        <div class="welcome-icon">🐾🎂</div>
+        <h1>Sasha GO: El Safari de Sants</h1>
+        <p class="welcome-desc">
+          Les Sashes alienígenes han omplert els carrers de tot el barri de Sants!
+        </p>
+
+        <div class="rules-box">
+          <strong>Com jugar:</strong>
+          <ul>
+            <li>📍 <b>Passeja pels carrers de Sants</b> (especialment al voltant del <b>Carrer Guadiana</b>, l'epicentre pastisser!).</li>
+            <li>🥐 <b>Recull caixes de dolços</b> als carrers per omplir la teva bossa de pastissos.</li>
+            <li>🎯 <b>Toca una Sasha propera</b> per entrar en la pantalla de captura.</li>
+            <li>🎂 <b>Llença-li un pastís</b> a la boca per capturar-la i afegir-la al teu <b>SashaDex</b>!</li>
+            <li>🌟 <b>Troba la teva Sasha preferida</b> entre les 42 variants de l'obrador!</li>
+          </ul>
+        </div>
+
+        <button id="start-game-btn" class="action-btn">EXPLORAR SANTS! 🐾</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL EXPLORAR ZONES DE SANTS
+    ══════════════════════════════════════════════════════════ -->
+    <div id="zones-modal" class="modal-overlay hidden">
+      <div class="zones-card animate-bounce-in">
+        <div class="zones-header">
+          <div class="zones-title">
+            <span class="zones-icon">🗺️</span>
+            <h2>Zones i Places de Sants</h2>
+          </div>
+          <button class="dex-close-btn" id="close-zones-btn">✕</button>
+        </div>
+        <p class="zones-sub">Tria un lloc del barri per viatjar-hi i buscar les teves Sashes preferides:</p>
+        <div class="zones-grid" id="zones-list">
+          <!-- Generat dinàmicament per sasha-go.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL CELEBRACIÓ DE CAPTURA
+    ══════════════════════════════════════════════════════════ -->
+    <div id="catch-celebration-modal" class="modal-overlay hidden">
+      <div class="celebration-card animate-bounce-in">
+        <div class="sparkles-burst">✨🎉✨</div>
+        <div class="sasha-caught-avatar-wrap">
+          <img src="" alt="" id="caught-modal-img" class="caught-modal-img" />
+        </div>
+        <div class="caught-rarity-pill" id="caught-modal-rarity">RARA</div>
+        <h2 id="caught-modal-name">Sasha Astronauta</h2>
+        <p id="caught-modal-bio">Un explorador còsmic apassionat pels pastissos de maracujà.</p>
+        <div class="caught-points-badge" id="caught-modal-points">+150 Punts!</div>
+        
+        <button id="celebration-continue-btn" class="action-btn">Genial! 🎂</button>
+      </div>
+    </div>
+
+  </div><!-- /#sashago-app -->
+
+  <div id="toast-container"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Game Logic -->
+  <script type="module" src="sasha-go.js"></script>
+</body>
+</html>

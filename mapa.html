@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 4400" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 4800" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -70,7 +70,8 @@
                L 250,2600 L 500,2800
                L 500,3000 L 250,3200
                L 250,3400 L 500,3600
-               L 500,3800 L 384,4000"
+               L 500,3800 L 250,4000
+               L 250,4200 L 384,4400"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -234,10 +235,23 @@
           </div>
         </div>
 
-        <!-- 12. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-12 stop-end" id="stop-fama"
-             data-game="" data-index="11"
-             style="left:50%; top:4000px; transform: translate(-50%, -50%);"
+        <!-- 12. Sasha GO: El Safari de Sants -->
+        <div class="map-stop stop-12" id="stop-sasha-go"
+             data-game="sasha-go" data-index="11"
+             style="left:32.5%; top:4000px; transform: translate(-50%, -50%);"
+             onclick="goToGame('sasha-go')">
+          <div class="stop-node" style="padding:0; overflow:hidden;"><img src="assets/img/sashas/sasha_reial.png" style="width:100%;height:100%;object-fit:cover;transform:scale(1.2)"></div>
+          <div class="stop-label">
+            <div class="stop-name">Safari de Sants</div>
+            <div class="stop-desc">Sasha GO (GPS)</div>
+            <div class="stop-score" id="score-sasha-go">–</div>
+          </div>
+        </div>
+
+        <!-- 13. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-13 stop-end" id="stop-fama"
+             data-game="" data-index="12"
+             style="left:50%; top:4400px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">

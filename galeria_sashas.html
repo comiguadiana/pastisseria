@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria de Sashes — Obrador Guadiana 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #f59e0b;
+      --primary-light: #fbbf24;
+      --accent: #ec4899;
+      --purple: #8b5cf6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fcd34d, #f59e0b, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 760px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .stat-chip {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--card-border);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-chip b {
+      color: var(--primary-light);
+    }
+
+    /* Folders Selector Banner */
+    .folder-mode-banner {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .folder-btn {
+      background: rgba(30, 41, 59, 0.9);
+      border: 2px solid var(--card-border);
+      color: var(--text);
+      padding: 12px 22px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .folder-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .folder-btn.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.2));
+      border-color: var(--primary);
+      color: var(--primary-light);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+    }
+
+    .folder-desc {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .bg-toggle {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .bg-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .bg-btn:hover { transform: scale(1.1); }
+    .bg-btn.active { border-color: var(--primary-light); }
+    .bg-btn-dark { background: #0f172a; }
+    .bg-btn-light { background: #f8fafc; }
+    .bg-btn-check {
+      background-image: linear-gradient(45deg, #2b3544 25%, transparent 25%),
+                        linear-gradient(-45deg, #2b3544 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #2b3544 75%),
+                        linear-gradient(-45deg, transparent 75%, #2b3544 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+      background-color: #1a2230;
+    }
+
+    /* Grid */
+    .sashas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .sasha-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sasha-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 12px 24px -10px rgba(245, 158, 11, 0.25);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      padding: 12px;
+      transition: background 0.3s;
+    }
+
+    /* Background variations for image wrapper */
+    .card-img-wrap.bg-dark { background: #0b1120; }
+    .card-img-wrap.bg-light { background: #f1f5f9; }
+    .card-img-wrap.bg-check {
+      background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%),
+                        linear-gradient(-45deg, #1e293b 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #1e293b 75%),
+                        linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #0f172a;
+    }
+
+    .card-img-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+      transition: transform 0.25s ease;
+    }
+
+    .sasha-card:hover .card-img-wrap img {
+      transform: scale(1.08);
+    }
+
+    .sasha-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .sasha-file {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      word-break: break-all;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .action-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+
+    .action-btn:hover {
+      background: var(--primary);
+      color: #1e1b4b;
+      border-color: var(--primary);
+    }
+
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .nav-links {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #1e1b4b;
+      font-weight: 800;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>👾 Galeria de Sashes — 42 Personatges</h1>
+      <p class="subtitle">Totes les variants seleccionades de la Sasha alienígena autèntica de l'Obrador Guadiana.</p>
+      
+      <div class="stats-bar">
+        <div class="stat-chip">✨ Sashes Actives: <b id="total-count">42</b></div>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="search-box">
+        <input type="text" id="search-input" class="search-input" placeholder="🔍 Cerca per nom o professió..." />
+      </div>
+
+      <div class="bg-toggle">
+        <span>Fons de previsualització:</span>
+        <button class="bg-btn bg-btn-check active" data-bg="bg-check" title="Fons de transparència"></button>
+        <button class="bg-btn bg-btn-dark" data-bg="bg-dark" title="Fons Fosc"></button>
+        <button class="bg-btn bg-btn-light" data-bg="bg-light" title="Fons Clar"></button>
+      </div>
+    </div>
+
+    <div class="sashas-grid" id="sashas-grid"></div>
+
+    <div class="nav-links">
+      <a href="games/sasha-go/index.html" class="btn-back">🐾 Jugar a Sasha GO: Safari de Sants</a>
+    </div>
+  </div>
+
+  <script>
+    // Exact 43 Sashes present in assets/img/sashas/
+    const SASHAS = [
+      { id: 'sasha_arquitecte_planols', name: 'Sasha Arquitecte de Plànols', file: 'sasha_arquitecte_planols.png' },
+      { id: 'sasha_artista_pintora', name: 'Sasha Pintora d\'Art', file: 'sasha_artista_pintora.png' },
+      { id: 'sasha_astronauta_bandera', name: 'Sasha Astronauta de Missió', file: 'sasha_astronauta_bandera.png' },
+      { id: 'sasha_badminton_raqueta', name: 'Sasha Jugador de Bàdminton', file: 'sasha_badminton_raqueta.png' },
+      { id: 'sasha_basquet_cistella', name: 'Sasha Jugador de Bàsquet', file: 'sasha_basquet_cistella.png' },
+      { id: 'sasha_bomber_extintor', name: 'Sasha Bomber amb Extintor', file: 'sasha_bomber_extintor.png' },
+      { id: 'sasha_cassador_tresors', name: 'Sasha Caçador de Tresors', file: 'sasha_cassador_tresors.png' },
+      { id: 'sasha_catedratic_toga', name: 'Sasha Catedràtic d\'Universitat', file: 'sasha_catedratic_toga.png' },
+      { id: 'sasha_ciclista_parc', name: 'Sasha Ciclista al Parc', file: 'sasha_ciclista_parc.png' },
+      { id: 'sasha_cientific_ulleres', name: 'Sasha Científic amb Matràs', file: 'sasha_cientific_ulleres.png' },
+      { id: 'sasha_detectiu_lupa', name: 'Sasha Detectiu amb Lupa', file: 'sasha_detectiu_lupa.png' },
+      { id: 'sasha_dj_auriculars', name: 'Sasha DJ amb Auriculars', file: 'sasha_dj_auriculars.png' },
+      { id: 'sasha_doctor_clinica', name: 'Sasha Doctor de Família', file: 'sasha_doctor_clinica.png' },
+      { id: 'sasha_escacs_taula', name: 'Sasha Jugador d\'Escacs', file: 'sasha_escacs_taula.png' },
+      { id: 'sasha_explorador_safari', name: 'Sasha Explorador Safari', file: 'sasha_explorador_safari.png' },
+      { id: 'sasha_flautista_orquestra', name: 'Sasha Flautista d\'Orquestra', file: 'sasha_flautista_orquestra.png' },
+      { id: 'sasha_fotograf_camera', name: 'Sasha Fotògraf Reporter', file: 'sasha_fotograf_camera.png' },
+      { id: 'sasha_futbolista_guadiana', name: 'Sasha Futbolista Guadiana', file: 'sasha_futbolista_guadiana.png' },
+      { id: 'sasha_gangster_metralladora', name: 'Sasha Gàngster Elegant', file: 'sasha_gangster_metralladora.png' },
+      { id: 'sasha_hacker_tauleta', name: 'Sasha Hacker Informàtic', file: 'sasha_hacker_tauleta.png' },
+      { id: 'sasha_jardiner_flors', name: 'Sasha Jardiner de Flors', file: 'sasha_jardiner_flors.png' },
+      { id: 'sasha_jutge_toga', name: 'Sasha Jutge del Tribunal', file: 'sasha_jutge_toga.png' },
+      { id: 'sasha_mag_estrelles', name: 'Sasha Mag d\'Estrelles', file: 'sasha_mag_estrelles.png' },
+      { id: 'sasha_mariner_vaixell', name: 'Sasha Mariner de Fragata', file: 'sasha_mariner_vaixell.png' },
+      { id: 'sasha_mecanic_mono', name: 'Sasha Mecànic de Taller', file: 'sasha_mecanic_mono.png' },
+      { id: 'sasha_mestre_escola', name: 'Sasha Mestre de Mates', file: 'sasha_mestre_escola.png' },
+      { id: 'sasha_miner_casc', name: 'Sasha Miner amb Pic', file: 'sasha_miner_casc.png' },
+      { id: 'sasha_ninja_shuriken', name: 'Sasha Ninja Furtiva', file: 'sasha_ninja_shuriken.png' },
+      { id: 'sasha_obrer_martell', name: 'Sasha Obrer amb Martell', file: 'sasha_obrer_martell.png' },
+      { id: 'sasha_pages_horta', name: 'Sasha Pagès de l\'Horta', file: 'sasha_pages_horta.png' },
+      { id: 'sasha_paleontoleg_fossils', name: 'Sasha Paleontòleg de Fòssils', file: 'sasha_paleontoleg_fossils.png' },
+      { id: 'sasha_patinador_skate', name: 'Sasha Patinador amb Skate', file: 'sasha_patinador_skate.png' },
+      { id: 'sasha_pilot_nau', name: 'Sasha Pilot d\'Avioneta', file: 'sasha_pilot_nau.png' },
+      { id: 'sasha_pirata_cofre', name: 'Sasha Pirata del Cofre', file: 'sasha_pirata_cofre.png' },
+      { id: 'sasha_rei_corona', name: 'Sasha Rei amb Corona', file: 'sasha_rei_corona.png' },
+      { id: 'sasha_reporter_microfon', name: 'Sasha Periodista de Notícies', file: 'sasha_reporter_microfon.png' },
+      { id: 'sasha_rocker_guitarra', name: 'Sasha Guitarrista Rock', file: 'sasha_rocker_guitarra.png' },
+      { id: 'sasha_samurai_katana', name: 'Sasha Samurai amb Katana', file: 'sasha_samurai_katana.png' },
+      { id: 'sasha_submarinista_trident', name: 'Sasha Submarinista Trident', file: 'sasha_submarinista_trident.png' },
+      { id: 'sasha_surfista_platja', name: 'Sasha Surfista de Sants', file: 'sasha_surfista_platja.png' },
+      { id: 'sasha_viking_destral', name: 'Sasha Viking amb Destral', file: 'sasha_viking_destral.png' },
+      { id: 'sasha_xef_gourmet', name: 'Sasha Xef Gourmet', file: 'sasha_xef_gourmet.png' }
+    ];
+
+    let currentBg = 'bg-check';
+    let searchQuery = '';
+
+    const grid = document.getElementById('sashas-grid');
+    const totalCountEl = document.getElementById('total-count');
+
+    function getBasePath() {
+      return 'assets/img/sashas/';
+    }
+
+    function renderGrid() {
+      grid.innerHTML = '';
+      const basePath = getBasePath();
+      
+      const q = searchQuery.trim().toLowerCase();
+      const list = SASHAS.filter(s => {
+        if (!q) return true;
+        return s.name.toLowerCase().includes(q) || s.file.toLowerCase().includes(q);
+      });
+
+      totalCountEl.textContent = list.length;
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty-msg">No s'ha trobat cap Sasha amb el terme "<b>${searchQuery}</b>"</div>`;
+        return;
+      }
+
+      list.forEach(sasha => {
+        const card = document.createElement('div');
+        card.className = 'sasha-card';
+        const fullImgUrl = basePath + sasha.file;
+
+        card.innerHTML = `
+          <div class="card-img-wrap ${currentBg}">
+            <img src="${fullImgUrl}" alt="${sasha.name}" loading="lazy" />
+          </div>
+          <div class="sasha-title">${sasha.name}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Search input
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderGrid();
+    });
+
+    // Background toggle events
+    document.querySelectorAll('.bg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentBg = btn.dataset.bg;
+        document.querySelectorAll('.card-img-wrap').forEach(w => {
+          w.className = `card-img-wrap ${currentBg}`;
+        });
+      });
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>

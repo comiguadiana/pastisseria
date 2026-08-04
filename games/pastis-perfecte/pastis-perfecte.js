@@ -192,9 +192,9 @@ function generateRandomLevel() {
 
 function calculateTargetStack(level) {
   let stack = [];
-  for (let i = level.values.length - 1; i >= 0; i--) {
+  for (let i = 0; i < level.values.length; i++) {
     const A = level.values[i];
-    for (let j = level.ops.length - 1; j >= 0; j--) {
+    for (let j = 0; j < level.ops.length; j++) {
       const op = level.ops[j];
       let flavor = parseOperation(op, A);
       if (flavor > 6) flavor = 6;
@@ -349,8 +349,13 @@ function showSolution() {
   isPlaying = false;
   solutionStack.innerHTML = '';
 
+  // Plat a baix (el primer fill queda a sota de tot amb column-reverse)
+  const plate = document.createElement('div');
+  plate.className = 'plate';
+  plate.innerHTML = '<div class="plate-inner"></div>';
+  solutionStack.appendChild(plate);
+
   // Mostrar les capes de la solució (de baix a dalt)
-  // Com que el stack usa column-reverse, afegim en l'ordre natural
   [...targetStack].forEach(flavor => {
     const layerEl = document.createElement('div');
     layerEl.className = `cake-layer flavor-${flavor}`;
@@ -360,12 +365,6 @@ function showSolution() {
     layerEl.appendChild(label);
     solutionStack.appendChild(layerEl);
   });
-
-  // Plat a baix
-  const plate = document.createElement('div');
-  plate.className = 'plate';
-  plate.innerHTML = '<div class="plate-inner"></div>';
-  solutionStack.appendChild(plate);
 
   solutionScreen.classList.remove('hidden');
 }

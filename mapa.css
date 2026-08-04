@@ -51,7 +51,7 @@
 .map-world {
   position: relative;
   width: 100%;
-  height: 4300px; /* Llargada del carrer (ampliada per Mots Pastissers i Fama) */
+  height: 4700px; /* Llargada del carrer (ampliada per Sasha GO i Fama) */
   background-image: url('assets/img/mapa/carrer_vertical.png');
   background-size: 100% auto;
   background-repeat: repeat-y;
