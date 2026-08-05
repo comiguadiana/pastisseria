@@ -156,8 +156,21 @@ let level = 1;
 let isPlaying = false;
 let isPaused = false;
 let powerTimer = 0;
-const POWER_DURATION = 9.0;
+let currentPowerDuration = 5.0;
 let maracuyaMultiplier = 1;
+
+function getPowerDuration() {
+  if (level === 1) return 5.0;
+  if (level === 2) return 3.5;
+  return 2.0;
+}
+
+function getGhostDelay(ghostId) {
+  if (ghostId === 0) return 0;
+  if (level === 1) return [0, 0.8, 2.0, 3.5][ghostId];
+  if (level === 2) return [0, 0.5, 1.2, 2.0][ghostId];
+  return [0, 0.3, 0.6, 1.0][ghostId];
+}
 
 let particles = [];
 
@@ -178,9 +191,9 @@ const sasha = {
 /* ─── Maracuyàs Enemics (Els Dolents) ─── */
 const MARACUYA_TYPES = [
   { id: 0, name: 'Maracujà Morat',     color: '#AB47BC', glowColor: 'rgba(171, 71, 188, 0.7)', eyeColor: '#4A148C', homeX: 17, homeY: 1,  spawnX: 9, spawnY: 8,  delay: 0 },
-  { id: 1, name: 'Maracujà Groc',      color: '#FFCA28', glowColor: 'rgba(255, 202, 40, 0.7)',  eyeColor: '#F57F17', homeX: 1,  homeY: 1,  spawnX: 9, spawnY: 10, delay: 1.2 },
-  { id: 2, name: 'Maracujà Tropical',  color: '#FF7043', glowColor: 'rgba(255, 112, 67, 0.7)',  eyeColor: '#D84315', homeX: 17, homeY: 19, spawnX: 8, spawnY: 10, delay: 3.0 },
-  { id: 3, name: 'Maracujà Espavilat', color: '#66BB6A', glowColor: 'rgba(102, 187, 106, 0.7)', eyeColor: '#1B5E20', homeX: 1,  homeY: 19, spawnX: 10, spawnY: 10, delay: 5.0 }
+  { id: 1, name: 'Maracujà Groc',      color: '#FFCA28', glowColor: 'rgba(255, 202, 40, 0.7)',  eyeColor: '#F57F17', homeX: 1,  homeY: 1,  spawnX: 9, spawnY: 10, delay: 0.8 },
+  { id: 2, name: 'Maracujà Tropical',  color: '#FF7043', glowColor: 'rgba(255, 112, 67, 0.7)',  eyeColor: '#D84315', homeX: 17, homeY: 19, spawnX: 8, spawnY: 10, delay: 2.0 },
+  { id: 3, name: 'Maracujà Espavilat', color: '#66BB6A', glowColor: 'rgba(102, 187, 106, 0.7)', eyeColor: '#1B5E20', homeX: 1,  homeY: 19, spawnX: 10, spawnY: 10, delay: 3.5 }
 ];
 
 let maracuyas = [];
@@ -204,7 +217,7 @@ function createMaracuyas() {
     y: (m.spawnY + 0.5) * TILE_SIZE,
     dirX: (m.id === 0) ? -1 : 0,
     dirY: (m.id === 0) ? 0 : -1,
-    spawnDelay: m.delay,
+    spawnDelay: getGhostDelay(m.id),
     isExiting: (m.id !== 0)
   }));
 }
@@ -272,7 +285,7 @@ function resetPositions() {
     m.y = (m.spawnY + 0.5) * TILE_SIZE;
     m.dirX = (m.id === 0) ? -1 : 0;
     m.dirY = (m.id === 0) ? 0 : -1;
-    m.spawnDelay = MARACUYA_TYPES[m.id].delay;
+    m.spawnDelay = getGhostDelay(m.id);
     m.isExiting = (m.id !== 0);
   });
 
@@ -290,7 +303,7 @@ function respawnSingleMaracuya(m) {
   m.y = (10 + 0.5) * TILE_SIZE;
   m.dirX = 0;
   m.dirY = -1;
-  m.spawnDelay = 1.0;
+  m.spawnDelay = Math.max(0.4, 1.0 - (level - 1) * 0.25);
   m.isExiting = true;
 }
 
@@ -359,14 +372,12 @@ function canPass(gx, gy, dx, dy, forEnemy = false, isExiting = false) {
 /* ─── Modes Globals dels Dolents (Cicles Pac-Man) ─── */
 function getGlobalGhostMode() {
   if (powerTimer > 0) return 'FRIGHTENED';
-  // Cicles de joc (Scatter / Chase)
   const t = gameTimer;
-  if (t < 7) return 'SCATTER';
-  if (t < 27) return 'CHASE';
-  if (t < 34) return 'SCATTER';
-  if (t < 54) return 'CHASE';
-  if (t < 59) return 'SCATTER';
-  return 'CHASE';
+  const scatterTime = level === 1 ? 5 : (level === 2 ? 3 : 2);
+  const chaseTime   = level === 1 ? 25 : (level === 2 ? 30 : 35);
+  const cycleLen    = scatterTime + chaseTime;
+  const cyclePos    = t % cycleLen;
+  return cyclePos < scatterTime ? 'SCATTER' : 'CHASE';
 }
 
 function reverseGhostDirections() {
@@ -481,9 +492,14 @@ function updateGhost(m, dt, globalMode) {
     return;
   }
 
-  const ghostSpeedTilesPerSec = (globalMode === 'FRIGHTENED')
-    ? 2.8
-    : (4.4 + (level - 1) * 0.25);
+  let ghostSpeedTilesPerSec;
+  if (globalMode === 'FRIGHTENED') {
+    ghostSpeedTilesPerSec = 2.8;
+  } else {
+    if (level === 1) ghostSpeedTilesPerSec = 4.7;
+    else if (level === 2) ghostSpeedTilesPerSec = 5.3;
+    else ghostSpeedTilesPerSec = 5.7; // més ràpids que la Sasha!
+  }
 
   let moveDist = ghostSpeedTilesPerSec * TILE_SIZE * dt;
 
@@ -611,7 +627,7 @@ function update(dt) {
     powerTimer -= dt;
     const fillEl = document.getElementById('power-bar-fill');
     if (fillEl) {
-      fillEl.style.width = `${Math.max(0, (powerTimer / POWER_DURATION) * 100)}%`;
+      fillEl.style.width = `${Math.max(0, (powerTimer / currentPowerDuration) * 100)}%`;
     }
     if (powerTimer <= 0) {
       powerTimer = 0;
@@ -630,7 +646,7 @@ function update(dt) {
   }
 
   // 2. Moviment de la Sasha
-  const sashaSpeed = 5.8 * TILE_SIZE * dt;
+  const sashaSpeed = 5.5 * TILE_SIZE * dt;
   const curGX = Math.floor(sasha.x / TILE_SIZE);
   const curGY = Math.floor(sasha.y / TILE_SIZE);
   const cellCenterX = (curGX + 0.5) * TILE_SIZE;
@@ -686,7 +702,7 @@ function update(dt) {
     const tile = maze[sasha.gridY][sasha.gridX];
     if (tile === 2) {
       maze[sasha.gridY][sasha.gridX] = 0;
-      score += 10;
+      score += 2;
       remainingMaracuyas--;
       playChompSound();
       addJuiceParticles(sasha.x, sasha.y, false);
@@ -694,9 +710,10 @@ function update(dt) {
       checkVictory();
     } else if (tile === 3) {
       maze[sasha.gridY][sasha.gridX] = 0;
-      score += 50;
+      score += 15;
       remainingMaracuyas--;
-      powerTimer = POWER_DURATION;
+      currentPowerDuration = getPowerDuration();
+      powerTimer = currentPowerDuration;
       maracuyaMultiplier = 1;
       reverseGhostDirections();
       document.getElementById('power-bar-wrap')?.classList.remove('hidden');
@@ -716,7 +733,7 @@ function update(dt) {
     if (colDist < TILE_SIZE * 0.8) {
       if (powerTimer > 0) {
         // ── SASHA CAPTURA EL MARACUJÀ! ──
-        const pts = 200 * maracuyaMultiplier;
+        const pts = 30 * maracuyaMultiplier;
         score += pts;
         maracuyaMultiplier *= 2;
         playEatMaracuyaSound();
@@ -978,7 +995,7 @@ async function checkVictory() {
     playVictorySound();
     launchConfetti(90);
 
-    const levelBonus = 500 * level;
+    const levelBonus = 100 * level;
     score += levelBonus;
     updateCounters();
 
@@ -1010,7 +1027,6 @@ async function gameOver() {
   }
 
   if (currentUser) {
-    await recordGamePlay(GAME_ID, currentUser.uid);
     await saveScore(GAME_ID, currentUser.uid, score, currentProfile);
     loadRanking();
   }
@@ -1077,7 +1093,7 @@ let currentProfile = null;
 
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAME_ID, 10);
+    const entries = await getGameRanking(GAME_ID);
     renderRankingTable(entries, 'ranking-container', currentUser?.uid);
   } catch (e) {
     const el = document.getElementById('ranking-container');

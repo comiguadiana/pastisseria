@@ -141,20 +141,20 @@ export const GAMES_INFO = {
 };
 
 const TAB_CONFIG = {
-  'general':           { label:'🏆 Rànquing General',        fn: () => getGeneralRanking(20), isGeneral: true },
-  'pasteblock':        { label:'🧩 PasteBlock',               fn: () => getGameRanking(GAMES.PASTEBLOCK, 20), gameId: GAMES.PASTEBLOCK },
-  'pastis-caigut':     { label:'🧺 Pastís Caigut',            fn: () => getGameRanking(GAMES.PASTIS_CAIGUT, 20), gameId: GAMES.PASTIS_CAIGUT },
-  'llanca-ensaimada':  { label:'🎯 Llança l\'Ensaïmada',      fn: () => getGameRanking(GAMES.LLANCA_ENSAIMADA, 20), gameId: GAMES.LLANCA_ENSAIMADA },
-  'memoria-pastissera':{ label:'🧠 Memòria Pastissera',       fn: () => getGameRanking(GAMES.MEMORIA_PASTISSERA, 20), gameId: GAMES.MEMORIA_PASTISSERA },
-  'pastis-perfecte':   { label:'🍰 Pastís Perfecte',          fn: () => getGameRanking(GAMES.PASTIS_PERFECTE, 20), gameId: GAMES.PASTIS_PERFECTE },
-  'caca-sasha':        { label:'<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;"> Caça la Sasha!', fn: () => getGameRanking(GAMES.CACA_SASHA, 20), gameId: GAMES.CACA_SASHA },
-  'raco-edurne':       { label: "🎸 El Racó de l'Edurne",     fn: () => getGameRanking(GAMES.RACO_EDURNE, 20), gameId: GAMES.RACO_EDURNE },
-  'fusio-pastissera':  { label:'🎂 Fusió Pastissera',         fn: () => getGameRanking(GAMES.FUSIO_PASTISSERA, 20), gameId: GAMES.FUSIO_PASTISSERA },
-  'pastis-blast':      { label:'🧱 Pastis Blast',             fn: () => getGameRanking(GAMES.PASTIS_BLAST, 20), gameId: GAMES.PASTIS_BLAST },
-  'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 20), gameId: GAMES.KART_PASTISSER },
-  'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 20), gameId: GAMES.SASHA_COMECOCOS },
-  'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 20), gameId: GAMES.MOTS_PASTISSERS },
-  'sasha-go':          { label:'🐾 Sasha GO: Safari de Sants', fn: () => getGameRanking(GAMES.SASHA_GO, 20), gameId: GAMES.SASHA_GO },
+  'general':           { label:'🏆 Rànquing General',        fn: () => getGeneralRanking(200), isGeneral: true },
+  'pasteblock':        { label:'🧩 PasteBlock',               fn: () => getGameRanking(GAMES.PASTEBLOCK, 200), gameId: GAMES.PASTEBLOCK },
+  'pastis-caigut':     { label:'🧺 Pastís Caigut',            fn: () => getGameRanking(GAMES.PASTIS_CAIGUT, 200), gameId: GAMES.PASTIS_CAIGUT },
+  'llanca-ensaimada':  { label:'🎯 Llança l\'Ensaïmada',      fn: () => getGameRanking(GAMES.LLANCA_ENSAIMADA, 200), gameId: GAMES.LLANCA_ENSAIMADA },
+  'memoria-pastissera':{ label:'🧠 Memòria Pastissera',       fn: () => getGameRanking(GAMES.MEMORIA_PASTISSERA, 200), gameId: GAMES.MEMORIA_PASTISSERA },
+  'pastis-perfecte':   { label:'🍰 Pastís Perfecte',          fn: () => getGameRanking(GAMES.PASTIS_PERFECTE, 200), gameId: GAMES.PASTIS_PERFECTE },
+  'caca-sasha':        { label:'<img src="assets/img/sasha.png" style="height: 1.2em; vertical-align: middle;"> Caça la Sasha!', fn: () => getGameRanking(GAMES.CACA_SASHA, 200), gameId: GAMES.CACA_SASHA },
+  'raco-edurne':       { label: "🎸 El Racó de l'Edurne",     fn: () => getGameRanking(GAMES.RACO_EDURNE, 200), gameId: GAMES.RACO_EDURNE },
+  'fusio-pastissera':  { label:'🎂 Fusió Pastissera',         fn: () => getGameRanking(GAMES.FUSIO_PASTISSERA, 200), gameId: GAMES.FUSIO_PASTISSERA },
+  'pastis-blast':      { label:'🧱 Pastis Blast',             fn: () => getGameRanking(GAMES.PASTIS_BLAST, 200), gameId: GAMES.PASTIS_BLAST },
+  'kart-pastisser':    { label:'🛒 Kart Pastisser',           fn: () => getGameRanking(GAMES.KART_PASTISSER, 200), gameId: GAMES.KART_PASTISSER },
+  'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 200), gameId: GAMES.SASHA_COMECOCOS },
+  'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 200), gameId: GAMES.MOTS_PASTISSERS },
+  'sasha-go':          { label:'🐾 Sasha GO: Safari de Sants', fn: () => getGameRanking(GAMES.SASHA_GO, 200), gameId: GAMES.SASHA_GO },
 };
 
 let currentTab = 'general';
@@ -360,7 +360,7 @@ async function loadTab(tabId) {
 
   try {
     const entries = await config.fn();
-    renderRankingTable(entries, 'ranking-body', myUid);
+    renderRankingTable(entries, 'ranking-body', myUid, { pageSize: 10, resetPage: true });
   } catch(e) {
     bodyEl.innerHTML = '<p style="text-align:center;padding:1.5rem;color:var(--gray-400)">Configura Firebase per veure el rànquing</p>';
   }

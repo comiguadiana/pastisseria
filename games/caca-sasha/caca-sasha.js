@@ -437,7 +437,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.CACA_SASHA, uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.CACA_SASHA, 10);
+        const ranking = await getGameRanking(GAMES.CACA_SASHA);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.CACA_SASHA, uid);
@@ -450,7 +450,7 @@ async function endGame() {
 /* ── Ranking ── */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.CACA_SASHA, 10);
+    const entries = await getGameRanking(GAMES.CACA_SASHA);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =

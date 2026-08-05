@@ -461,6 +461,117 @@
   padding-right: 0.5rem;
 }
 
+/* Paginació de rànquings */
+.ranking-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0.5rem 0.25rem;
+  flex-wrap: wrap;
+  border-top: 2px solid rgba(92, 51, 23, 0.12);
+  margin-top: 0.5rem;
+}
+
+.pagination-info {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--choco-light);
+}
+
+.pagination-info strong {
+  color: var(--chocolate);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+}
+
+.pagination-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--white);
+  color: var(--chocolate);
+  border: 2px solid var(--chocolate);
+  box-shadow: 2px 2px 0px var(--chocolate);
+  cursor: pointer;
+  border-radius: 0;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--pink-light);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--chocolate);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--chocolate);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+  box-shadow: none;
+  color: var(--gray-500);
+}
+
+.pagination-pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-page-btn {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  color: var(--chocolate);
+  border: 2px solid var(--chocolate);
+  box-shadow: 2px 2px 0px var(--chocolate);
+  cursor: pointer;
+  border-radius: 0;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+}
+
+.pagination-page-btn:hover:not(.active) {
+  background: var(--pink-light);
+  transform: translate(-1px, -1px);
+}
+
+.pagination-page-btn.active {
+  background: var(--chocolate);
+  color: var(--gold);
+  border-color: var(--black);
+  box-shadow: 2px 2px 0px var(--black);
+  font-weight: 800;
+  cursor: default;
+}
+
+.pagination-ellipsis {
+  padding: 0 0.25rem;
+  font-weight: 700;
+  color: var(--choco-light);
+  font-size: 0.9rem;
+}
+
 /* ══════════════════════════════════════════════
    AVATAR SELECTOR (DiceBear)
    ══════════════════════════════════════════════ */

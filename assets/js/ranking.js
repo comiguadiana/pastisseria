@@ -27,8 +27,16 @@ export const GAMES = {
   RACO_EDURNE:       'raco-edurne',
 };
 
+// Evita inflar partides de Sasha GO en una mateixa sessió
+const sashaGoRecordedSessions = new Set();
+
 /* ─── Registrar partida jugada (globals i d'usuari) ─── */
 export async function recordGamePlay(gameId, uid) {
+  if (gameId === GAMES.SASHA_GO && uid) {
+    if (sashaGoRecordedSessions.has(uid)) return;
+    sashaGoRecordedSessions.add(uid);
+  }
+
   // 1. Guardar a localStorage per a persistència local
   try {
     localStorage.setItem('obrador_last_played_game', gameId);
@@ -42,12 +50,21 @@ export async function recordGamePlay(gameId, uid) {
   if (uid) {
     try {
       const userRef = doc(db, 'users', uid);
-      await setDoc(userRef, {
-        gamesPlayed: increment(1),
-        lastPlayedGame: gameId,
-        lastPlayedAt: serverTimestamp(),
-        [`gamePlays.${gameId}`]: increment(1)
-      }, { merge: true });
+      if (gameId === GAMES.SASHA_GO) {
+        // A Sasha GO és una única aventura contínua per usuari
+        await setDoc(userRef, {
+          lastPlayedGame: gameId,
+          lastPlayedAt: serverTimestamp(),
+          [`gamePlays.${gameId}`]: 1
+        }, { merge: true });
+      } else {
+        await setDoc(userRef, {
+          gamesPlayed: increment(1),
+          lastPlayedGame: gameId,
+          lastPlayedAt: serverTimestamp(),
+          [`gamePlays.${gameId}`]: increment(1)
+        }, { merge: true });
+      }
     } catch (err) {
       console.warn('Avís actualitzant partides a users:', err);
     }
@@ -55,16 +72,23 @@ export async function recordGamePlay(gameId, uid) {
     // 3. Comptador al document individual del jugador a scores/{gameId}/players/{uid}
     try {
       const playerRef = doc(db, 'scores', gameId, 'players', uid);
-      await setDoc(playerRef, {
-        playsCount: increment(1),
-        lastPlayedAt: serverTimestamp()
-      }, { merge: true });
+      if (gameId === GAMES.SASHA_GO) {
+        await setDoc(playerRef, {
+          playsCount: 1,
+          lastPlayedAt: serverTimestamp()
+        }, { merge: true });
+      } else {
+        await setDoc(playerRef, {
+          playsCount: increment(1),
+          lastPlayedAt: serverTimestamp()
+        }, { merge: true });
+      }
     } catch (err) {
       console.warn('Avís actualitzant partides a scores/players:', err);
     }
   }
 
-  // 4. Intentar actualitzar stats/games si els permisos ho permeten (sense fallar la resta)
+  // 4. Intentar actualitzar stats/games si els permisos ho permeten
   try {
     const statsRef = doc(db, 'stats', 'games');
     await setDoc(statsRef, {
@@ -73,7 +97,7 @@ export async function recordGamePlay(gameId, uid) {
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch (err) {
-    // Silenciós: si les regles de Firestore no permeten escriure a 'stats', continuem
+    // Silenciós si les regles de Firestore no permeten escriure a 'stats'
   }
 }
 
@@ -90,11 +114,14 @@ export async function getGamesStats() {
       const u = docSnap.data();
       const uTotal = Number(u.gamesPlayed) || 0;
       
-      // Si té el mapa detallat de gamePlays
       if (u.gamePlays && typeof u.gamePlays === 'object') {
         let sumUser = 0;
         Object.entries(u.gamePlays).forEach(([gId, cnt]) => {
-          const count = Number(cnt) || 0;
+          let count = Number(cnt) || 0;
+          // Normalitzar Sasha GO a 1 partida màxim per usuari
+          if (gId === GAMES.SASHA_GO) {
+            count = count > 0 ? 1 : 0;
+          }
           if (byGame[gId] !== undefined) {
             byGame[gId] += count;
             sumUser += count;
@@ -104,7 +131,8 @@ export async function getGamesStats() {
       } else if (uTotal > 0) {
         totalPlays += uTotal;
         if (u.lastPlayedGame && byGame[u.lastPlayedGame] !== undefined) {
-          byGame[u.lastPlayedGame] += uTotal;
+          const gAdd = (u.lastPlayedGame === GAMES.SASHA_GO) ? 1 : uTotal;
+          byGame[u.lastPlayedGame] += gAdd;
         }
       }
     });
@@ -120,7 +148,8 @@ export async function getGamesStats() {
         let gameSum = 0;
         scoresSnap.forEach(docSnap => {
           const data = docSnap.data();
-          const pCount = Number(data.playsCount) || (data.score ? 1 : 0);
+          let pCount = Number(data.playsCount) || (data.score ? 1 : 0);
+          if (gameId === GAMES.SASHA_GO) pCount = 1; // 1 partida per jugador a Sasha GO
           gameSum += pCount;
         });
         if (gameSum > (byGame[gameId] || 0)) {
@@ -134,22 +163,22 @@ export async function getGamesStats() {
     console.warn('Avís obtenint estadístiques des de scores:', err);
   }
 
-  // 3. Comprova també doc('stats', 'games') per si de cas està disponible i té més dades
+  // 3. Comprova també doc('stats', 'games') si està disponible
   try {
     const statsRef = doc(db, 'stats', 'games');
     const snap = await getDoc(statsRef);
     if (snap.exists()) {
       const data = snap.data();
       Object.values(GAMES).forEach(g => {
-        if (data[g]) byGame[g] = Math.max(byGame[g] || 0, Number(data[g]) || 0);
+        if (data[g] && g !== GAMES.SASHA_GO) {
+          byGame[g] = Math.max(byGame[g] || 0, Number(data[g]) || 0);
+        }
       });
       if (data.totalPlays) {
         totalPlays = Math.max(totalPlays, Number(data.totalPlays) || 0);
       }
     }
-  } catch (e) {
-    // Silenciós per si no hi ha permisos a stats
-  }
+  } catch (e) {}
 
   // 4. Sumatori final de seguretat
   let sumAll = 0;
@@ -173,12 +202,13 @@ export async function getGamesStats() {
   return { totalPlays, byGame };
 }
 
-/* ─── Desar score (desa rècord i enregistra la partida jugada) ─── */
-export async function saveScore(gameId, uid, score, profile) {
-  // Sempre comptabilitzem la partida jugada primer
-  await recordGamePlay(gameId, uid);
+/* ─── Desar score (desa rècord i opcionalment enregistra la partida jugada) ─── */
+export async function saveScore(gameId, uid, score, profile, skipRecordPlay = false) {
+  if (!skipRecordPlay) {
+    await recordGamePlay(gameId, uid);
+  }
 
-  const ref  = doc(db, 'scores', gameId, 'players', uid);
+  const ref = doc(db, 'scores', gameId, 'players', uid);
   let prevScore = 0;
   let prevSnap = null;
   try {
@@ -233,8 +263,8 @@ async function recalcTotalScore(uid) {
   } catch (e) {}
 }
 
-/* ─── Obtenir ranking d'un joc (top N) ─── */
-export async function getGameRanking(gameId, topN = 10) {
+/* ─── Obtenir ranking d'un joc (permet obtenir tots els jugadors) ─── */
+export async function getGameRanking(gameId, topN = 200) {
   const q = query(
     collection(db, 'scores', gameId, 'players'),
     orderBy('score', 'desc'),
@@ -244,7 +274,9 @@ export async function getGameRanking(gameId, topN = 10) {
   return snap.docs.map((d, i) => {
     const data = d.data();
     let plays = Number(data.playsCount);
-    if (isNaN(plays) || plays <= 0) {
+    if (gameId === GAMES.SASHA_GO) {
+      plays = 1;
+    } else if (isNaN(plays) || plays <= 0) {
       plays = (data.score > 0) ? 1 : 0;
     }
     return {
@@ -257,8 +289,8 @@ export async function getGameRanking(gameId, topN = 10) {
   });
 }
 
-/* ─── Obtenir ranking general (top N per totalScore) ─── */
-export async function getGeneralRanking(topN = 20) {
+/* ─── Obtenir ranking general (tots els jugadors per totalScore) ─── */
+export async function getGeneralRanking(topN = 200) {
   const q = query(
     collection(db, 'users'),
     orderBy('totalScore', 'desc'),
@@ -283,7 +315,8 @@ export async function getGeneralRanking(topN = 20) {
           const pUid = docSnap.id;
           if (userUids.has(pUid)) {
             const data = docSnap.data();
-            const pCount = Number(data.playsCount) || (data.score > 0 ? 1 : 0);
+            let pCount = Number(data.playsCount) || (data.score > 0 ? 1 : 0);
+            if (gameId === GAMES.SASHA_GO) pCount = 1;
             userScoresPlaysMap[pUid] = (userScoresPlaysMap[pUid] || 0) + pCount;
           }
         });
@@ -295,16 +328,32 @@ export async function getGeneralRanking(topN = 20) {
 
   return users.map(u => {
     const playsFromScores = userScoresPlaysMap[u.uid] || 0;
-    const playsFromUserDoc = Number(u.gamesPlayed) || 0;
+    let playsFromUserDoc = Number(u.gamesPlayed) || 0;
     let playsFromGamePlays = 0;
+    let hasInflatedSashaGo = false;
+
     if (u.gamePlays && typeof u.gamePlays === 'object') {
-      playsFromGamePlays = Object.values(u.gamePlays).reduce((a, b) => a + (Number(b) || 0), 0);
+      Object.entries(u.gamePlays).forEach(([gId, cnt]) => {
+        let count = Number(cnt) || 0;
+        if (gId === GAMES.SASHA_GO) {
+          if (count > 1) hasInflatedSashaGo = true;
+          count = count > 0 ? 1 : 0;
+        }
+        playsFromGamePlays += count;
+      });
     }
 
-    const calculatedPlays = Math.max(playsFromScores, playsFromUserDoc, playsFromGamePlays, (u.totalScore > 0 ? 1 : 0));
+    const calculatedPlays = Math.max(playsFromScores, playsFromGamePlays, (u.totalScore > 0 ? 1 : 0));
 
-    // Auto-curació a Firestore si les dades d'usuari eren antigues
-    if (calculatedPlays > playsFromUserDoc && u.uid) {
+    // Auto-curació a Firestore si les dades de Sasha GO estaven inflades
+    if (hasInflatedSashaGo && u.uid) {
+      try {
+        setDoc(doc(db, 'users', u.uid), {
+          gamesPlayed: calculatedPlays,
+          'gamePlays.sasha-go': 1
+        }, { merge: true }).catch(() => {});
+      } catch (e) {}
+    } else if (calculatedPlays > playsFromUserDoc && u.uid) {
       try {
         setDoc(doc(db, 'users', u.uid), { gamesPlayed: calculatedPlays }, { merge: true }).catch(() => {});
       } catch (e) {}
@@ -319,26 +368,74 @@ export async function getGeneralRanking(topN = 20) {
 
 /* ─── Obtenir posició de l'usuari en un joc ─── */
 export async function getUserRank(gameId, uid) {
-  const ranking = await getGameRanking(gameId, 100);
+  const ranking = await getGameRanking(gameId, 200);
   const pos = ranking.findIndex(r => r.uid === uid);
   return pos >= 0 ? pos + 1 : null;
 }
 
-/* ─── Renderitzar taula de ranking ─── */
-export function renderRankingTable(entries, containerId, highlight = null) {
+/* ─── Estat intern de paginació per contenidor ─── */
+const tablePaginationState = new Map();
+
+/* ─── Renderitzar taula de ranking paginable ─── */
+export function renderRankingTable(entries, containerId, highlight = null, options = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  if (!entries.length) {
+  if (!entries || !entries.length) {
     container.innerHTML = `
-      <div class="text-center" style="padding:2rem;color:var(--gray-400);">
-        <div style="font-size:3rem">🎂</div>
-        <p>Encara no hi ha puntuacions. Sigues el primer!</p>
+      <div class="text-center" style="padding:2.5rem 1rem;color:var(--choco-light);">
+        <div style="font-size:3.5rem;margin-bottom:0.5rem">🎂</div>
+        <p style="font-family:var(--font-display);font-size:1rem;color:var(--chocolate)">Encara no hi ha puntuacions registrades.</p>
+        <p style="font-size:0.9rem;opacity:0.8">Sigues el primer pastisser a deixar la teva empremta!</p>
       </div>`;
     return;
   }
 
+  // Estat de paginació
+  const pageSize = options.pageSize || 10;
+  let state = tablePaginationState.get(containerId);
+  if (!state || options.page !== undefined || options.resetPage) {
+    state = {
+      page: options.page || 1,
+      pageSize
+    };
+    tablePaginationState.set(containerId, state);
+  }
+
+  const totalEntries = entries.length;
+  const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
+  let currentPage = Math.max(1, Math.min(state.page, totalPages));
+  state.page = currentPage;
+
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = Math.min(totalEntries, startIdx + pageSize);
+  const pageEntries = entries.slice(startIdx, endIdx);
+
   const medals = ['🥇', '🥈', '🥉'];
+
+  // Generar botons de pàgina
+  const generatePageButtons = () => {
+    let pages = [];
+    if (totalPages <= 7) {
+      for (let p = 1; p <= totalPages; p++) pages.push(p);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let p = start; p <= end; p++) pages.push(p);
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+
+    return pages.map(p => {
+      if (p === '...') {
+        return `<span class="pagination-ellipsis">…</span>`;
+      }
+      const isActive = p === currentPage;
+      return `<button class="pagination-page-btn ${isActive ? 'active' : ''}" data-page="${p}" ${isActive ? 'aria-current="page"' : ''}>${p}</button>`;
+    }).join('');
+  };
 
   container.innerHTML = `
     <div class="ranking-table-responsive">
@@ -353,10 +450,11 @@ export function renderRankingTable(entries, containerId, highlight = null) {
           </tr>
         </thead>
         <tbody>
-          ${entries.map(e => {
+          ${pageEntries.map(e => {
             const plays = e.gamesPlayed ?? e.playsCount ?? (e.score ? 1 : 0);
+            const isHighlighted = e.uid === highlight;
             return `
-            <tr class="rank-${e.rank} ${e.uid === highlight ? 'highlight' : ''}">
+            <tr class="rank-${e.rank} ${isHighlighted ? 'highlight' : ''}">
               <td class="rank-number">${medals[e.rank - 1] || e.rank}</td>
               <td class="td-avatar">
                 <img class="rank-avatar"
@@ -372,7 +470,53 @@ export function renderRankingTable(entries, containerId, highlight = null) {
           }).join('')}
         </tbody>
       </table>
-    </div>`;
+    </div>
+
+    ${totalPages > 1 ? `
+    <div class="ranking-pagination">
+      <div class="pagination-info">
+        Mostrant <strong>${startIdx + 1}–${endIdx}</strong> de <strong>${totalEntries}</strong> jugadors
+      </div>
+      <div class="pagination-controls">
+        <button class="pagination-btn pagination-prev" data-page="${currentPage - 1}" ${currentPage <= 1 ? 'disabled' : ''}>◀ Anterior</button>
+        <div class="pagination-pages">
+          ${generatePageButtons()}
+        </div>
+        <button class="pagination-btn pagination-next" data-page="${currentPage + 1}" ${currentPage >= totalPages ? 'disabled' : ''}>Següent ▶</button>
+      </div>
+    </div>` : `
+    <div class="ranking-pagination" style="justify-content:flex-end">
+      <div class="pagination-info" style="font-size:0.85rem">
+        Total: <strong>${totalEntries}</strong> jugadors registrats
+      </div>
+    </div>`}
+  `;
+
+  // Afegir listeners als botons de paginació
+  if (totalPages > 1) {
+    const prevBtn = container.querySelector('.pagination-prev');
+    const nextBtn = container.querySelector('.pagination-next');
+    const pageBtns = container.querySelectorAll('.pagination-page-btn');
+
+    const goToPage = (p) => {
+      renderRankingTable(entries, containerId, highlight, { pageSize, page: p });
+    };
+
+    if (prevBtn && !prevBtn.disabled) {
+      prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    }
+    if (nextBtn && !nextBtn.disabled) {
+      nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+    }
+    pageBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = parseInt(btn.dataset.page, 10);
+        if (!isNaN(p) && p !== currentPage) {
+          goToPage(p);
+        }
+      });
+    });
+  }
 }
 
 /* ─── Confeti de victòria ─── */

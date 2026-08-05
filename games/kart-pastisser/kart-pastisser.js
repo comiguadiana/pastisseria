@@ -27,23 +27,23 @@ const PASTRY_IMG_BASE     = '../../assets/img/pasteles/';
 const SASHA_IMG_SRC       = '../../assets/img/sasha.png';
 const LANES               = 3;
 const SPEED_INITIAL       = 240;   // px/s (coordenades virtuals)
-const SPEED_INCREMENT     = 24;    // px/s per nivell
-const LEVEL_INTERVAL      = 22;    // segons per pujar de nivell
-const SASHA_SCORE_TRIGGER = 500;   // punts entre aparicions de la Sasha
-const INVINCIBLE_DURATION = 3.0;   // segons d'estrella
-const TURBO_DURATION      = 2.8;   // segons de turbo boost
-const MAGNET_DURATION     = 6.0;   // segons d'imant
+const SPEED_INCREMENT     = 28;    // px/s per nivell
+const LEVEL_INTERVAL      = 14;    // segons per pujar de nivell (més ràpid)
+const SASHA_SCORE_TRIGGER = 300;   // punts entre aparicions de la Sasha
+const INVINCIBLE_DURATION = 2.8;   // segons d'estrella
+const TURBO_DURATION      = 2.5;   // segons de turbo boost
+const MAGNET_DURATION     = 5.0;   // segons d'imant
 const HIT_INVINCIBLE_DUR  = 1.8;   // segons d'invulnerabilitat post-impacte
 const VIRTUAL_W           = 360;   // amplada virtual del joc
 const VIRTUAL_H           = 600;   // alçada virtual del joc
 
 const PASTRIES = [
-  { id: 'cruasan',   img: 'cruasan.png',   label: 'Croissant',  value: 15 },
-  { id: 'magdalena', img: 'magdalena.png', label: 'Magdalena', value: 20 },
-  { id: 'donut',     img: 'donut.png',     label: 'Dònut',     value: 10 },
-  { id: 'pastis',    img: 'pastis.png',    label: 'Pastís',    value: 50 },
-  { id: 'ensaimada', img: 'ensaimada.png', label: 'Ensaïmada', value: 25 },
-  { id: 'cunya',     img: 'cunya.png',     label: 'Cunya',     value: 30 },
+  { id: 'cruasan',   img: 'cruasan.png',   label: 'Croissant',  value: 4 },
+  { id: 'magdalena', img: 'magdalena.png', label: 'Magdalena', value: 6 },
+  { id: 'donut',     img: 'donut.png',     label: 'Dònut',     value: 4 },
+  { id: 'pastis',    img: 'pastis.png',    label: 'Pastís',    value: 12 },
+  { id: 'ensaimada', img: 'ensaimada.png', label: 'Ensaïmada', value: 8 },
+  { id: 'cunya',     img: 'cunya.png',     label: 'Cunya',     value: 10 },
 ];
 
 const SASHA_MSGS = [
@@ -582,8 +582,8 @@ function update(dt) {
   state.spawnTimer -= dt;
   if (state.spawnTimer <= 0) {
     spawnItems();
-    const minI  = 0.45;
-    const baseI = 1.25 - (state.level - 1) * 0.06;
+    const minI  = 0.38;
+    const baseI = 1.15 - (state.level - 1) * 0.08;
     state.spawnTimer = Math.max(minI, baseI);
   }
 
@@ -591,11 +591,11 @@ function update(dt) {
   state.rivalTimer -= dt;
   if (state.rivalTimer <= 0) {
     spawnRivalCart();
-    state.rivalTimer = Math.max(2.2, 4.5 - state.level * 0.3 + Math.random() * 1.5);
+    state.rivalTimer = Math.max(1.4, 3.8 - state.level * 0.45 + Math.random() * 1.2);
   }
 
-  // Puntuació per distància
-  state.score += spd * dt * 0.06;
+  // Puntuació per distància (calibrada perquè >1000 sigui un gran repte)
+  state.score += spd * dt * 0.03;
 
   // Pujada de nivell
   state.levelTimer += dt;
@@ -692,24 +692,27 @@ function spawnItems() {
     while (usedLanes.has(lane) && tries < 8);
     usedLanes.add(lane);
 
-    // Taula de probabilitats d'elements
+    // Taula de probabilitats d'elements (més bombes/obstacles a nivells superiors)
     const r = Math.random();
     let type, pastryId;
 
-    if (r < 0.06) {
-      type = 'star';       // 6% ⭐ Estrella
-    } else if (r < 0.13) {
-      type = 'turbo';      // 7% ⚡ Turbo pad
-    } else if (r < 0.19) {
-      type = 'magnet';     // 6% 🧲 Imant
-    } else if (r < 0.27) {
-      type = 'puddle';     // 8% 💧 Taca d'aigua
-    } else if (r < 0.35) {
-      type = 'banana';     // 8% 🍌 Plàtan
-    } else if (r < 0.52) {
-      type = 'bomb';       // 17% 💣 Bomba
+    const bombProb = Math.min(0.30, 0.15 + (state.level - 1) * 0.03);
+    const hazardProb = bombProb + 0.16; // bombes + taques + plàtans
+
+    if (r < 0.05) {
+      type = 'star';       // 5% ⭐ Estrella
+    } else if (r < 0.10) {
+      type = 'turbo';      // 5% ⚡ Turbo pad
+    } else if (r < 0.15) {
+      type = 'magnet';     // 5% 🧲 Imant
+    } else if (r < 0.15 + (hazardProb - bombProb) * 0.5) {
+      type = 'puddle';     // 💧 Taca d'aigua
+    } else if (r < 0.15 + (hazardProb - bombProb)) {
+      type = 'banana';     // 🍌 Plàtan
+    } else if (r < 0.15 + hazardProb) {
+      type = 'bomb';       // 💣 Bomba
     } else {
-      type = 'pastry';     // 48% 🥐 Dolç pastisser
+      type = 'pastry';     // Dolç pastisser
       pastryId = PASTRIES[Math.floor(Math.random() * PASTRIES.length)].id;
     }
 
@@ -1868,7 +1871,7 @@ function setupControls() {
     body.innerHTML = '<div class="flex-center"><div class="spinner"></div></div>';
     modal.classList.remove('hidden');
     try {
-      const entries = await getGameRanking(GAMES.KART_PASTISSER, 20);
+      const entries = await getGameRanking(GAMES.KART_PASTISSER);
       renderRankingTable(entries, 'ranking-modal-body', uid);
     } catch(e) {
       body.innerHTML = '<p class="text-center" style="padding:1rem">Configura Firebase per veure el rànquing</p>';
@@ -1917,7 +1920,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.KART_PASTISSER, uid, finalScore, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.KART_PASTISSER, 10);
+        const ranking = await getGameRanking(GAMES.KART_PASTISSER);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(finalScore, myRank);
         await unlockNextGame(GAMES.KART_PASTISSER, uid);
@@ -1932,7 +1935,7 @@ async function endGame() {
    ══════════════════════════════════════════ */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.KART_PASTISSER, 10);
+    const entries = await getGameRanking(GAMES.KART_PASTISSER);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     const el = document.getElementById('ranking-container');

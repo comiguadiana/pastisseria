@@ -1,7 +1,8 @@
 /**
  * pastis-caigut.js — Joc de recollir pastissos que cauen
- * Mecànica: mou la cistella per recollir pastissos (60s)
- * Vides: perds una si en cau un a terra
+ * Mecànica: Mou la cistella per recollir dolços sense temporitzador.
+ * Dificultat progressiva: Puja de nivell cada 8 pastissos, accelerant la caiguda i augmentant obstacles!
+ * Vides: 3 vides. Perds una si en cau un a terra o toques una bomba.
  */
 
 import { requireAuth, renderNavbarUser, getDiceBearUrl, showToast }
@@ -13,33 +14,32 @@ import { db } from '../../assets/js/firebase-config.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ── Configuració ── */
-const GAME_TIME  = 60;   // segons
-const MAX_LIVES  = 3;
-const BASE_SPEED = 150;  // px/s
-const SPAWN_INTERVAL = 1200; // ms
+const MAX_LIVES   = 3;
+const BASE_SPEED  = 180;  // px/s inicial
+const BASE_SPAWN  = 1100; // ms inicial
 
 const PASTRIES = [
-  { emoji:'🥐', pts:10, label:'Croissant' },
-  { emoji:'🍩', pts:15, label:'Dònut'     },
-  { emoji:'🧁', pts:20, label:'Magdalena' },
-  { emoji:'🎂', pts:30, label:'Pastís'    },
-  { emoji:'🍪', pts:10, label:'Galeta'    },
-  { emoji:'💣', pts:-50, label:'Bomba!'   }, // obstacle
+  { emoji:'🥐', pts:4,  label:'Croissant' },
+  { emoji:'🍩', pts:6,  label:'Dònut'     },
+  { emoji:'🧁', pts:8,  label:'Magdalena' },
+  { emoji:'🎂', pts:12, label:'Pastís'    },
+  { emoji:'🍪', pts:4,  label:'Galeta'    },
+  { emoji:'💣', pts:-30, label:'Bomba!'   }, // obstacle
 ];
 
 let canvas = document.getElementById('pc-canvas');
 let ctx    = canvas ? canvas.getContext('2d') : null;
 let score = 0, bestScore = 0, lives = MAX_LIVES;
-let timeLeft = GAME_TIME;
+let level = 1;
+let caughtCount = 0;
 let gameRunning = false;
 let animFrame   = null;
 let spawnTimer  = null;
-let countdownTimer = null;
 let lastTime    = 0;
 let uid = null, profile = null;
 
-let basket = { x: 200, w: 100, h: 50 };
-let falling = []; // { x, y, type, speed }
+let basket = { x: 200, y: 0, w: 100, h: 50 };
+let falling = []; // { x, y, type, speed, vx }
 let particles = []; // efectes visuals
 
 const BASKET_Y_OFFSET = 80; // des de baix del canvas
@@ -52,7 +52,7 @@ requireAuth('../../login.html')
     try {
       const ref = doc(db, 'scores', GAMES.PASTIS_CAIGUT, 'players', uid);
       const snap = await getDoc(ref);
-      if (snap.exists()) bestScore = snap.data().score;
+      if (snap.exists()) bestScore = snap.data().score || 0;
     } catch(e) {}
     const bestEl = document.getElementById('best');
     if (bestEl) bestEl.textContent = bestScore.toLocaleString();
@@ -66,18 +66,31 @@ function initGame() {
   ctx     = canvas.getContext('2d');
   resizeCanvas();
 
-  score   = 0; lives = MAX_LIVES; timeLeft = GAME_TIME;
-  falling = []; particles = [];
+  score       = 0;
+  lives       = MAX_LIVES;
+  level       = 1;
+  caughtCount = 0;
+  falling     = [];
+  particles   = [];
   gameRunning = true;
 
+  updateBasketSize();
   basket.x = canvas.width / 2 - basket.w / 2;
-  basket.w = Math.min(canvas.width * 0.25, 120);
 
   document.getElementById('pc-overlay').classList.add('hidden');
   updateHUD();
-  startTimers();
+  restartSpawnTimer();
   lastTime = performance.now();
   requestAnimationFrame(loop);
+}
+
+function updateBasketSize() {
+  if (!canvas) return;
+  const baseW = Math.min(canvas.width * 0.25, 115);
+  // Reducció suau de l'amplada de la cistella amb el nivell
+  basket.w = Math.max(65, baseW - (level - 1) * 3);
+  basket.y = canvas.height - BASKET_Y_OFFSET;
+  basket.x = Math.max(0, Math.min(canvas.width - basket.w, basket.x));
 }
 
 function resizeCanvas() {
@@ -90,13 +103,11 @@ function resizeCanvas() {
 
   canvas.width  = maxW;
   canvas.height = Math.max(260, Math.min(availH, 520));
-  basket.y = canvas.height - BASKET_Y_OFFSET;
-  basket.w = Math.min(canvas.width * 0.25, 120);
-  basket.x = Math.max(0, Math.min(canvas.width - basket.w, basket.x));
+  updateBasketSize();
 }
 
 window.addEventListener('resize', () => {
-  resizeCanvas();
+  if (canvas) resizeCanvas();
 });
 
 /* ── Game loop ── */
@@ -113,10 +124,15 @@ function loop(ts) {
 /* ── Update ── */
 function update(dt) {
   // Mou els pastissos
-  const speed = BASE_SPEED + (GAME_TIME - timeLeft) * 2;
   for (let i = falling.length - 1; i >= 0; i--) {
     const f = falling[i];
     f.y += f.speed * dt;
+    if (f.vx) {
+      f.x += f.vx * dt;
+      // Rebot suau a parets
+      if (f.x < 25) { f.x = 25; f.vx = Math.abs(f.vx); }
+      if (f.x > canvas.width - 25) { f.x = canvas.width - 25; f.vx = -Math.abs(f.vx); }
+    }
 
     // Col·lisió amb la cistella
     if (f.y + 30 >= basket.y &&
@@ -127,12 +143,24 @@ function update(dt) {
       const p = PASTRIES[f.type];
       if (p.pts > 0) {
         score += p.pts;
+        caughtCount++;
         addParticle(f.x, f.y, p.emoji, '#5DBB63');
-        showToast(`+${p.pts} ${p.emoji}`, 'success', 700);
+        showToast(`+${p.pts} ${p.emoji}`, 'success', 600);
+
+        // Pujada de nivell cada 8 pastissos recollits
+        const newLevel = Math.floor(caughtCount / 8) + 1;
+        if (newLevel > level) {
+          level = newLevel;
+          updateBasketSize();
+          restartSpawnTimer();
+          addParticle(canvas.width / 2, canvas.height / 2, '⚡', '#FFD700');
+          showToast(`🚀 NIVELL ${level}! Més velocitat!`, 'warning', 1500);
+        }
       } else {
         lives = Math.max(0, lives - 1);
+        score = Math.max(0, score + p.pts);
         addParticle(f.x, f.y, '💥', '#FF4444');
-        showToast('💣 Autsch!', 'error', 1000);
+        showToast('💣 Bomba! -1 Vida', 'error', 1000);
         if (lives === 0) { endGame(); return; }
       }
       falling.splice(i, 1);
@@ -146,6 +174,7 @@ function update(dt) {
       if (PASTRIES[f.type].pts > 0) {
         lives = Math.max(0, lives - 1);
         addParticle(f.x, canvas.height - 20, '💔', '#FF8FAB');
+        showToast('💔 Se t\'ha escapat!', 'error', 700);
         if (lives === 0) { endGame(); return; }
         updateHUD();
       }
@@ -188,7 +217,7 @@ function draw() {
 
   // Partícules
   for (const p of particles) {
-    ctx.globalAlpha = p.life;
+    ctx.globalAlpha = Math.max(0, p.life);
     ctx.font = '28px serif';
     ctx.fillText(p.emoji, p.x, p.y - (1 - p.life) * 50);
   }
@@ -229,36 +258,54 @@ function addParticle(x, y, emoji, color) {
   particles.push({ x, y, emoji, color, life: 1 });
 }
 
-/* ── Spawn de pastissos ── */
-function spawnPastry() {
-  if (!gameRunning) return;
-  const x    = 30 + Math.random() * (canvas.width - 60);
-  // Bomba cada 8-12 pastissos
+/* ── Spawn de pastissos amb dificultat progressiva ── */
+function spawnSinglePastry(forcedOffset = 0) {
+  const margin = 35;
+  const x = margin + Math.random() * (canvas.width - margin * 2) + forcedOffset;
+  const clampedX = Math.max(margin, Math.min(canvas.width - margin, x));
+
+  // Probabilitat de bomba segons nivell (8% nivell 1 fins a 25% nivell 7+)
+  const bombChance = Math.min(0.25, 0.08 + (level - 1) * 0.025);
   let type;
-  if (Math.random() < 0.12) {
+  if (Math.random() < bombChance) {
     type = 5; // bomba
   } else {
     type = Math.floor(Math.random() * 5);
   }
-  const speed = BASE_SPEED + (GAME_TIME - timeLeft) * 2 + Math.random() * 50;
-  falling.push({ x, y: -30, type, speed });
+
+  // Velocitat segons nivell
+  const speed = BASE_SPEED + (level - 1) * 35 + (type === 5 ? 30 : 0) + Math.random() * 30;
+  // A nivells alts, petit balanceig horitzontal
+  const vx = level >= 4 && Math.random() < 0.35 ? (Math.random() - 0.5) * 60 : 0;
+
+  falling.push({ x: clampedX, y: -30, type, speed, vx });
+}
+
+function spawnWave() {
+  if (!gameRunning) return;
+
+  // Determinar quants dolços cauen alhora
+  let count = 1;
+  if (level >= 6 && Math.random() < 0.20) {
+    count = 3;
+  } else if (level >= 3 && Math.random() < 0.35) {
+    count = 2;
+  }
+
+  for (let i = 0; i < count; i++) {
+    const offset = (count > 1) ? (i - (count - 1) / 2) * (canvas.width * 0.3) : 0;
+    setTimeout(() => {
+      if (gameRunning) spawnSinglePastry(offset);
+    }, i * 160);
+  }
 }
 
 /* ── Timers ── */
-function startTimers() {
+function restartSpawnTimer() {
   clearInterval(spawnTimer);
-  clearInterval(countdownTimer);
-
-  spawnTimer = setInterval(spawnPastry, SPAWN_INTERVAL);
-
-  countdownTimer = setInterval(() => {
-    timeLeft--;
-    document.getElementById('timer').textContent = timeLeft;
-    if (timeLeft <= 10) {
-      document.getElementById('timer').style.color = '#FF8FAB';
-    }
-    if (timeLeft <= 0) { endGame(); }
-  }, 1000);
+  // Interval de spawn es redueix amb el nivell
+  const interval = Math.max(380, BASE_SPAWN - (level - 1) * 75);
+  spawnTimer = setInterval(spawnWave, interval);
 }
 
 /* ── Fi del joc ── */
@@ -266,25 +313,23 @@ async function endGame() {
   gameRunning = false;
   cancelAnimationFrame(animFrame);
   clearInterval(spawnTimer);
-  clearInterval(countdownTimer);
 
   const isNew = score > bestScore;
   if (isNew) { bestScore = score; }
 
   document.getElementById('pc-emoji').textContent  = isNew ? '🏆' : '🧺';
   document.getElementById('pc-title').textContent  = isNew ? 'Nou Rècord!' : 'Fi del joc!';
-  document.getElementById('pc-score').textContent  = score.toLocaleString() + ' punts';
+  document.getElementById('pc-score').textContent  = `${score.toLocaleString()} punts (Nivell ${level})`;
   document.getElementById('pc-overlay').classList.remove('hidden');
 
   if (uid && profile) {
     try {
       const isRecord = await saveScore(GAMES.PASTIS_CAIGUT, uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.PASTIS_CAIGUT, 10);
+        const ranking = await getGameRanking(GAMES.PASTIS_CAIGUT);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.PASTIS_CAIGUT, uid);
-        
       }
     } catch(e) {}
   }
@@ -294,9 +339,9 @@ async function endGame() {
 // Teclat
 document.addEventListener('keydown', (e) => {
   if (!gameRunning) return;
-  const step = 20;
-  if (e.key === 'ArrowLeft')  basket.x = Math.max(0, basket.x - step);
-  if (e.key === 'ArrowRight') basket.x = Math.min(canvas.width - basket.w, basket.x + step);
+  const step = 24;
+  if (e.key === 'ArrowLeft' || e.key === 'KeyA')  basket.x = Math.max(0, basket.x - step);
+  if (e.key === 'ArrowRight' || e.key === 'KeyD') basket.x = Math.min(canvas.width - basket.w, basket.x + step);
 });
 
 // Ratolí
@@ -321,13 +366,15 @@ canvas.addEventListener('touchmove', (e) => {
 /* ── HUD ── */
 function updateHUD() {
   document.getElementById('score').textContent = score.toLocaleString();
+  const levelEl = document.getElementById('level');
+  if (levelEl) levelEl.textContent = level;
   document.getElementById('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(MAX_LIVES - lives);
 }
 
 /* ── Ranking ── */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.PASTIS_CAIGUT, 10);
+    const entries = await getGameRanking(GAMES.PASTIS_CAIGUT);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =
@@ -339,7 +386,6 @@ async function loadRanking() {
 document.getElementById('btn-restart').addEventListener('click', () => {
   cancelAnimationFrame(animFrame);
   clearInterval(spawnTimer);
-  clearInterval(countdownTimer);
   initGame();
 });
 document.getElementById('btn-play-again').addEventListener('click', () => {

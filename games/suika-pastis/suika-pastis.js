@@ -304,7 +304,7 @@ async function endGame() {
       // Nota: asumeixo que la variable FUSIO_PASTISSERA existeix al ranking.js que he modificat per separat
       const isRecord = await saveScore('fusio-pastissera', uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking('fusio-pastissera', 10);
+        const ranking = await getGameRanking(GAMES.FUSIO_PASTISSERA);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.FUSIO_PASTISSERA, uid);
@@ -323,7 +323,7 @@ function updateHUD() {
 /* ─── Rànquing ─── */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking('fusio-pastissera', 10);
+    const entries = await getGameRanking(GAMES.FUSIO_PASTISSERA);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =

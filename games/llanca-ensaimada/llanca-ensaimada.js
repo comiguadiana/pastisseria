@@ -570,7 +570,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.LLANCA_ENSAIMADA, uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.LLANCA_ENSAIMADA, 10);
+        const ranking = await getGameRanking(GAMES.LLANCA_ENSAIMADA);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.LLANCA_ENSAIMADA, uid);
@@ -583,7 +583,7 @@ async function endGame() {
 /* ── Ranking ── */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.LLANCA_ENSAIMADA, 10);
+    const entries = await getGameRanking(GAMES.LLANCA_ENSAIMADA);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =

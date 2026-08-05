@@ -153,7 +153,7 @@ async function endGame(won) {
     try {
       const isRecord = await saveScore(GAMES.MEMORIA_PASTISSERA, uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.MEMORIA_PASTISSERA, 10);
+        const ranking = await getGameRanking(GAMES.MEMORIA_PASTISSERA);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.MEMORIA_PASTISSERA, uid);
@@ -165,7 +165,7 @@ async function endGame(won) {
 
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.MEMORIA_PASTISSERA, 10);
+    const entries = await getGameRanking(GAMES.MEMORIA_PASTISSERA);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =

@@ -120,7 +120,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.PASTIS_PERFECTE, uid, score, currentProfile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.PASTIS_PERFECTE, 10);
+        const ranking = await getGameRanking(GAMES.PASTIS_PERFECTE);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.PASTIS_PERFECTE, uid);

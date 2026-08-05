@@ -962,7 +962,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.PASTIS_BLAST, uid, score, profile);
       if (isRecord) {
-        const ranking = await getGameRanking(GAMES.PASTIS_BLAST, 10);
+        const ranking = await getGameRanking(GAMES.PASTIS_BLAST);
         const myRank  = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.PASTIS_BLAST, uid);
@@ -990,7 +990,7 @@ function updateHUD() {
 
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.PASTIS_BLAST, 10);
+    const entries = await getGameRanking(GAMES.PASTIS_BLAST);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =
@@ -1025,7 +1025,7 @@ document.getElementById('btn-ranking').addEventListener('click', async () => {
   body.innerHTML = '<div class="flex-center"><div class="spinner"></div></div>';
   modal.classList.remove('hidden');
   try {
-    const entries = await getGameRanking(GAMES.PASTIS_BLAST, 20);
+    const entries = await getGameRanking(GAMES.PASTIS_BLAST);
     renderRankingTable(entries, 'ranking-modal-body', uid);
   } catch(e) {
     body.innerHTML = '<p class="text-center" style="padding:1rem">Configura Firebase per veure el rànquing</p>';

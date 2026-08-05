@@ -1051,6 +1051,7 @@ function setupAuth() {
       console.log('🐾 Usuari autenticat a Sasha GO:', user.displayName || user.email, user.uid);
       // 1. Sincronitzar i fusionar dades del núvol (Firestore)
       await syncDataWithFirestore(user.uid, profile);
+      recordGamePlay(GAMES.SASHA_GO, user.uid).catch(() => {});
 
       // 2. Escoltar canvis en temps real (per mantenir sincronitzats mòbil i PC alhora)
       if (unsubscribeSnapshot) {
@@ -1232,9 +1233,9 @@ async function uploadDataToFirestore() {
       updatedAt: serverTimestamp()
     }, { merge: true });
 
-    // 3. Registrar al rànquing general de jugadors
+    // 3. Registrar al rànquing general de jugadors (skipRecordPlay = true per no inflar comptador de partides)
     if (currentProfile) {
-      await saveScore(GAMES.SASHA_GO, uid, score, currentProfile);
+      await saveScore(GAMES.SASHA_GO, uid, score, currentProfile, true);
     }
   } catch (err) {
     console.warn('Error guardant Sasha GO a Firebase:', err);
@@ -1273,7 +1274,6 @@ function saveData() {
 
   if (currentUser) {
     uploadDataToFirestore();
-    recordGamePlay(GAMES.SASHA_GO, currentUser.uid).catch(() => {});
   }
 }
 

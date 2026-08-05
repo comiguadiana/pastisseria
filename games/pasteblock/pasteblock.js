@@ -337,7 +337,7 @@ async function endGame() {
     try {
       const isRecord = await saveScore(GAMES.PASTEBLOCK, uid, score, profile);
       if (isRecord) {
-        const ranking  = await getGameRanking(GAMES.PASTEBLOCK, 10);
+        const ranking  = await getGameRanking(GAMES.PASTEBLOCK);
         const myRank   = ranking.findIndex(r => r.uid === uid) + 1;
         showNewRecordModal(score, myRank);
         await unlockNextGame(GAMES.PASTEBLOCK, uid);
@@ -358,7 +358,7 @@ function updateHUD() {
 /* ── Ranking ── */
 async function loadRanking() {
   try {
-    const entries = await getGameRanking(GAMES.PASTEBLOCK, 10);
+    const entries = await getGameRanking(GAMES.PASTEBLOCK);
     renderRankingTable(entries, 'ranking-container', uid);
   } catch(e) {
     document.getElementById('ranking-container').innerHTML =
@@ -401,7 +401,7 @@ document.getElementById('btn-ranking').addEventListener('click', async () => {
   body.innerHTML = '<div class="flex-center"><div class="spinner"></div></div>';
   modal.classList.remove('hidden');
   try {
-    const entries = await getGameRanking(GAMES.PASTEBLOCK, 20);
+    const entries = await getGameRanking(GAMES.PASTEBLOCK);
     renderRankingTable(entries, 'ranking-modal-body', uid);
   } catch(e) {
     body.innerHTML = '<p class="text-center" style="padding:1rem">Configura Firebase per veure el rànquing</p>';
