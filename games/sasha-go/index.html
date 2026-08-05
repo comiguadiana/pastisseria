@@ -99,40 +99,69 @@
 
     <!-- Bossa de Munició Flotant Inferior -->
     <footer class="go-footer">
-      <div class="ammo-inventory">
+      <div class="ammo-inventory" id="ammo-inventory-list">
+        <!-- Renderitzat dinàmicament o estàticament amb tots els dolços i fruites -->
         <div class="ammo-item active" data-ammo="croissant" id="ammo-croissant">
           <div class="ammo-icon">🥐</div>
           <div class="ammo-info">
             <span class="ammo-name">Croissant</span>
-            <span class="ammo-count" id="count-croissant">10</span>
+            <span class="ammo-count" id="count-croissant">12</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="donut" id="ammo-donut">
+          <div class="ammo-icon">🍩</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Donut</span>
+            <span class="ammo-count" id="count-donut">6</span>
           </div>
         </div>
         <div class="ammo-item" data-ammo="ensaimada" id="ammo-ensaimada">
           <div class="ammo-icon">🍥</div>
           <div class="ammo-info">
             <span class="ammo-name">Ensaimada</span>
-            <span class="ammo-count" id="count-ensaimada">5</span>
+            <span class="ammo-count" id="count-ensaimada">4</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="magdalena" id="ammo-magdalena">
+          <div class="ammo-icon">🧁</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Magdalena</span>
+            <span class="ammo-count" id="count-magdalena">2</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="maracuja" id="ammo-maracuja">
+          <div class="ammo-icon">🥭</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Maracujà</span>
+            <span class="ammo-count" id="count-maracuja">2</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="te_maracuja" id="ammo-te_maracuja">
+          <div class="ammo-icon">🧋</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Te Maracujà</span>
+            <span class="ammo-count" id="count-te_maracuja">1</span>
+          </div>
+        </div>
+        <div class="ammo-item" data-ammo="cunya" id="ammo-cunya">
+          <div class="ammo-icon">🍰</div>
+          <div class="ammo-info">
+            <span class="ammo-name">Cuixa Crema</span>
+            <span class="ammo-count" id="count-cunya">1</span>
           </div>
         </div>
         <div class="ammo-item" data-ammo="pastis" id="ammo-pastis">
           <div class="ammo-icon">🎂</div>
           <div class="ammo-info">
             <span class="ammo-name">Pastís Guadiana</span>
-            <span class="ammo-count" id="count-pastis">2</span>
-          </div>
-        </div>
-        <div class="ammo-item" data-ammo="maracuja" id="ammo-maracuja">
-          <div class="ammo-icon">🫐</div>
-          <div class="ammo-info">
-            <span class="ammo-name">Te Maracujà</span>
-            <span class="ammo-count" id="count-maracuja">1</span>
+            <span class="ammo-count" id="count-pastis">1</span>
           </div>
         </div>
       </div>
     </footer>
 
     <!-- ══════════════════════════════════════════════════════════
-         PANTALLA DE CAPTURA (ESTIL POKÉMON GO)
+         PANTALLA DE CAPTURA (ESTIL POKÉMON GO AMB BARRA DE VIDA)
     ══════════════════════════════════════════════════════════ -->
     <div id="catch-screen" class="catch-overlay hidden">
       <!-- Fons de captura -->
@@ -144,21 +173,48 @@
       <!-- Botó sortir de la trobada -->
       <button id="catch-escape-btn" class="catch-escape-btn">✕ Fugir</button>
 
-      <!-- Fitxa superior de la Sasha trobada -->
+      <!-- Fitxa superior de la Sasha trobada + Barra de Vida + Intents -->
       <div class="encounter-header">
         <div class="encounter-badge" id="encounter-rarity">COMUNA</div>
         <h2 id="encounter-name">Sasha Xef</h2>
         <div class="encounter-sub" id="encounter-profession">Obrador de Sants</div>
+
+        <!-- Barra de Vida (HP) Interactiva -->
+        <div class="sasha-hp-container" id="sasha-hp-container">
+          <div class="hp-info-row">
+            <span class="hp-label">❤️ VIDA</span>
+            <span class="hp-values" id="encounter-hp-text"><b>100 / 100 HP</b> (100%)</span>
+          </div>
+          <div class="hp-bar-track">
+            <div class="hp-bar-damage-ghost" id="encounter-hp-ghost" style="width: 100%;"></div>
+            <div class="hp-bar-fill hp-high" id="encounter-hp-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Indicador d'Intents Restants -->
+        <div class="catch-attempts-tracker" id="catch-attempts-tracker">
+          <span class="attempts-label">🎯 Intents:</span>
+          <div class="attempts-pills" id="encounter-attempts-dots">
+            <span class="attempt-dot active"></span>
+            <span class="attempt-dot active"></span>
+            <span class="attempt-dot active"></span>
+            <span class="attempt-dot active"></span>
+            <span class="attempt-dot active"></span>
+          </div>
+          <span class="attempts-count-text" id="encounter-attempts-text">5/5</span>
+        </div>
       </div>
 
-      <!-- Zona Central: La Sasha alienígena amb anell de captura -->
-      <div class="encounter-arena" id="encounter-arena">
+      <!-- Zona Central: La Sasha alienígena amb anell de captura i popups de dany -->
+      <div class="encounter-arena" id="catch-arena">
         <div class="sasha-target-wrap" id="sasha-target">
           <!-- Anell de dificultat de captura (verd/groc/vermell) -->
           <div class="catch-ring" id="catch-ring"></div>
           <!-- Imatge de la Sasha -->
           <img src="../../assets/img/sashas/sasha_xef_gourmet.png" alt="Sasha" id="encounter-sasha-img" class="encounter-sasha-sprite" />
           <div class="sasha-shadow"></div>
+          <!-- Popups de dany flotant i efectes -->
+          <div class="damage-popups-layer" id="damage-popups-layer"></div>
           <!-- Cors / efectes -->
           <div class="sasha-emotes" id="sasha-emotes"></div>
         </div>
@@ -166,7 +222,7 @@
 
       <!-- Zona Inferior: Llançador de pastissos -->
       <div class="throw-zone" id="throw-zone">
-        <div class="throw-instruction">👆 Llisca cap amunt o fes clic per llançar el pastís!</div>
+        <div class="throw-instruction" id="throw-instruction">👆 Llisca cap amunt o fes clic per llançar el dolç!</div>
         
         <!-- Projectil pastís que es llança -->
         <div class="throwable-pastry" id="active-pastry">
@@ -191,6 +247,11 @@
             <h2>SashaDex: Col·lecció Guadiana</h2>
           </div>
           <button class="dex-close-btn" id="close-dex-btn">✕</button>
+        </div>
+
+        <div class="dex-cloud-status" id="dex-cloud-status">
+          <span class="dex-cloud-icon">☁️</span>
+          <span id="dex-cloud-text">Sincronitzant amb Firebase...</span>
         </div>
 
         <div class="dex-stats-bar">

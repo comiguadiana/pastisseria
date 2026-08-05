@@ -5,12 +5,15 @@
 
 import { onAuthReady, renderNavbarUser, logout, showToast, getDiceBearUrl } from '../../assets/js/auth.js';
 import { saveScore, recordGamePlay, GAMES } from '../../assets/js/ranking.js';
+import { db } from '../../assets/js/firebase-config.js';
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ── CONFIGURACIÓ I CONSTANTS ────────────────────────────── */
 const GUADIANA_COORDS = { lat: 41.37445, lng: 2.13920 }; // Carrer Guadiana (entre Sant Crist i Rei Martí), Sants
 const INTERACTION_RADIUS_METERS = 35; // Distància d'interacció ajustada (35 metres)
-const RADAR_VISION_RADIUS_METERS = 250; // Radi de visió nítida al mapa de Sants
-const TARGET_TOTAL_SPAWNS = 14; // Quantitat objectiu d'elements actius a Sants
+const RADAR_VISION_RADIUS_METERS = 360; // Radi de visió nítida al mapa de Sants
+const TARGET_TOTAL_SPAWNS = 26; // Nombre moderat i equilibrat d'elements (1/3 menys que abans)
+const MAX_MAP_SASHAS = 5; // Màxim de Sashes simultànies al mapa (els dolços predominen)
 
 /* ── XARXA DE CARRERS I PLACES DE SANTS ─────────────────── */
 // Totes les coordenades representen eixos de carrers, voreres i places públiques per garantir
@@ -79,6 +82,41 @@ const SANTS_STREETS = [
     isGuadianaZone: true,
     weight: 4,
     points: [[41.37495, 2.13710], [41.37380, 2.13670], [41.37260, 2.13620]]
+  },
+  {
+    id: 'carrer_almeria',
+    name: 'Carrer d\'Almeria',
+    isGuadianaZone: true,
+    weight: 5,
+    points: [[41.37410, 2.13750], [41.37320, 2.13790], [41.37220, 2.13830]]
+  },
+  {
+    id: 'carrer_ferreria',
+    name: 'Carrer de la Ferreria',
+    isGuadianaZone: true,
+    weight: 4,
+    points: [[41.37310, 2.13980], [41.37270, 2.14050], [41.37230, 2.14120]]
+  },
+  {
+    id: 'carrer_cicero',
+    name: 'Carrer de Ciceró',
+    isGuadianaZone: false,
+    weight: 4,
+    points: [[41.37620, 2.13850], [41.37650, 2.13920], [41.37680, 2.14000]]
+  },
+  {
+    id: 'carrer_watt',
+    name: 'Carrer de Watt',
+    isGuadianaZone: false,
+    weight: 4,
+    points: [[41.37580, 2.14020], [41.37660, 2.14060], [41.37740, 2.14100]]
+  },
+  {
+    id: 'carrer_masnou',
+    name: 'Carrer del Masnou',
+    isGuadianaZone: false,
+    weight: 4,
+    points: [[41.37630, 2.14080], [41.37660, 2.14180], [41.37690, 2.14280]]
   },
 
   // ── TOT EL BARRI DE SANTS I PUNTS D'INTERÈS ───────────────
@@ -697,39 +735,103 @@ const SASHAS_DATABASE = [
   }
 ];
 
-/* ── MUNICIÓ I DOLÇOS ────────────────────────────────────── */
+/* ── MUNICIÓ, DOLÇOS I FRUITES ───────────────────────────── */
 const AMMO_TYPES = {
   croissant: {
     id: 'croissant',
     name: 'Croissant',
     icon: '🥐',
     img: '../../assets/img/pasteles/cruasan.png',
+    damage: 15,
     multiplier: 1.0,
-    effect: 'none'
+    effect: 'none',
+    spawnWeight: 38,
+    pickupAmount: 3,
+    description: 'Brioix clàssic. Dany bàsic de 15 HP.'
+  },
+  donut: {
+    id: 'donut',
+    name: 'Donut Glacejat',
+    icon: '🍩',
+    img: '../../assets/img/pasteles/donut.png',
+    damage: 25,
+    multiplier: 1.2,
+    effect: 'none',
+    spawnWeight: 26,
+    pickupAmount: 2,
+    description: 'Sucre i xocolata. Dany lleuger de 25 HP.'
   },
   ensaimada: {
     id: 'ensaimada',
     name: 'Ensaimada',
     icon: '🍥',
     img: '../../assets/img/pasteles/ensaimada.png',
+    damage: 40,
     multiplier: 1.45,
-    effect: 'none'
+    effect: 'none',
+    spawnWeight: 16,
+    pickupAmount: 2,
+    description: 'Espolsada de sucre fi. Dany mitjà de 40 HP.'
+  },
+  magdalena: {
+    id: 'magdalena',
+    name: 'Magdalena d\'Or',
+    icon: '🧁',
+    img: '../../assets/img/pasteles/magdalena.png',
+    damage: 55,
+    multiplier: 1.6,
+    effect: 'none',
+    spawnWeight: 10,
+    pickupAmount: 2,
+    description: 'Farcida de crema suau. Dany notable de 55 HP.'
+  },
+  maracuja: {
+    id: 'maracuja',
+    name: 'Fruita Maracujà',
+    icon: '🥭',
+    img: '../../assets/img/pasteles/maracuja.png',
+    damage: 75,
+    multiplier: 1.85,
+    effect: 'calm',
+    spawnWeight: 5,
+    pickupAmount: 1,
+    description: 'Fruita tropical àcida. Calma la Sasha i fa 75 HP de dany!'
+  },
+  te_maracuja: {
+    id: 'te_maracuja',
+    name: 'Te Maracujà',
+    icon: '🧋',
+    img: '../../assets/img/pasteles/te_maracuja.png',
+    damage: 45,
+    multiplier: 1.5,
+    effect: 'super_calm',
+    spawnWeight: 3,
+    pickupAmount: 1,
+    description: 'Infusió sedant. Calma completament la Sasha i fa 45 HP de dany.'
+  },
+  cunya: {
+    id: 'cunya',
+    name: 'Cuixa de Crema',
+    icon: '🍰',
+    img: '../../assets/img/pasteles/cunya.png',
+    damage: 100,
+    multiplier: 2.2,
+    effect: 'crit',
+    spawnWeight: 1.5,
+    pickupAmount: 1,
+    description: 'Tall artesà de crema. Dany massiu de 100 HP amb probabilitat de crític!'
   },
   pastis: {
     id: 'pastis',
     name: 'Pastís Guadiana',
     icon: '🎂',
     img: '../../assets/img/pasteles/pastis.png',
-    multiplier: 2.4,
-    effect: 'none'
-  },
-  maracuja: {
-    id: 'maracuja',
-    name: 'Te Maracujà',
-    icon: '🫐',
-    img: '../../assets/img/pasteles/te_maracuja.png',
-    multiplier: 1.35,
-    effect: 'calm'
+    damage: 160,
+    multiplier: 2.8,
+    effect: 'mega',
+    spawnWeight: 0.5,
+    pickupAmount: 1,
+    description: 'L\'obra mestra de l\'obrador. Dany demolidor de 160 HP!'
   }
 };
 
@@ -741,15 +843,21 @@ let playerMarker = null;
 let playerCircle = null;
 
 let playerPos = { lat: GUADIANA_COORDS.lat, lng: GUADIANA_COORDS.lng };
+let lastSpawnPlayerPos = { lat: GUADIANA_COORDS.lat, lng: GUADIANA_COORDS.lng };
+let accumulatedWalkedMeters = 0;
 let isSimulatorMode = false;
 let gpsWatchId = null;
 
 let score = 0;
 let ammoInventory = {
   croissant: 12,
-  ensaimada: 6,
-  pastis: 2,
-  maracuja: 2
+  donut: 6,
+  ensaimada: 4,
+  magdalena: 2,
+  maracuja: 2,
+  te_maracuja: 1,
+  cunya: 1,
+  pastis: 1
 };
 let selectedAmmo = 'croissant';
 
@@ -799,6 +907,40 @@ class SoundEngine {
     osc.stop(this.ctx.currentTime + 0.08);
   }
 
+  playHit() {
+    this.init();
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.12);
+  }
+
+  playCrit() {
+    this.init();
+    if (!this.ctx) return;
+    const notes = [587.33, 880.00, 1174.66]; // D5, A5, D6
+    notes.forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.04);
+      gain.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.04);
+      gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.04 + 0.18);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(this.ctx.currentTime + i * 0.04);
+      osc.stop(this.ctx.currentTime + i * 0.04 + 0.18);
+    });
+  }
+
   playWhoosh() {
     this.init();
     if (!this.ctx) return;
@@ -831,6 +973,22 @@ class SoundEngine {
       osc.start(this.ctx.currentTime + i * 0.1);
       osc.stop(this.ctx.currentTime + i * 0.1 + 0.25);
     });
+  }
+
+  playFlee() {
+    this.init();
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.35);
+    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.35);
   }
 
   playPickup() {
@@ -873,9 +1031,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ── AUTENTICACIÓ I DADES ────────────────────────────────── */
+/* ── AUTENTICACIÓ I SINCRONITZACIÓ AMB FIREBASE ────────────── */
+let unsubscribeSnapshot = null;
+let isSyncingFromRemote = false;
+
 function setupAuth() {
-  onAuthReady((user, profile) => {
+  onAuthReady(async (user, profile) => {
     currentUser = user;
     currentProfile = profile;
     renderNavbarUser(profile, user);
@@ -885,6 +1046,36 @@ function setupAuth() {
     if (playerImg) {
       playerImg.src = getDiceBearUrl(profile?.avatarStyle || 'adventurer', profile?.avatarSeed || profile?.username || 'guadiana_explorer', 64);
     }
+
+    if (user) {
+      console.log('🐾 Usuari autenticat a Sasha GO:', user.displayName || user.email, user.uid);
+      // 1. Sincronitzar i fusionar dades del núvol (Firestore)
+      await syncDataWithFirestore(user.uid, profile);
+
+      // 2. Escoltar canvis en temps real (per mantenir sincronitzats mòbil i PC alhora)
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+      try {
+        const playerRef = doc(db, 'scores', GAMES.SASHA_GO, 'players', user.uid);
+        unsubscribeSnapshot = onSnapshot(playerRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            mergeRemoteData(data, false);
+          }
+        }, (err) => {
+          console.warn('Avís escoltant canvis en temps real de Sasha GO:', err);
+        });
+      } catch (err) {
+        console.warn('Error configurant onSnapshot a Firestore:', err);
+      }
+    } else {
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+    }
   });
 
   document.getElementById('nav-logout-btn')?.addEventListener('click', async () => {
@@ -893,13 +1084,177 @@ function setupAuth() {
   });
 }
 
+async function syncDataWithFirestore(uid, profile) {
+  try {
+    const playerRef = doc(db, 'scores', GAMES.SASHA_GO, 'players', uid);
+    const userRef = doc(db, 'users', uid);
+
+    const [playerSnap, userSnap] = await Promise.all([
+      getDoc(playerRef).catch(() => null),
+      getDoc(userRef).catch(() => null)
+    ]);
+
+    let remoteDex = null;
+    let remoteAmmo = null;
+    let remoteScore = 0;
+
+    if (playerSnap && playerSnap.exists()) {
+      const pData = playerSnap.data();
+      remoteDex = pData.caughtSashas || pData.sashas || null;
+      remoteAmmo = pData.ammoInventory || pData.ammo || null;
+      remoteScore = Number(pData.score) || 0;
+    }
+
+    if (userSnap && userSnap.exists()) {
+      const uData = userSnap.data();
+      if (!remoteDex && uData.sashago_dex) remoteDex = uData.sashago_dex;
+      if (!remoteAmmo && uData.sashago_ammo) remoteAmmo = uData.sashago_ammo;
+      if (!remoteScore && uData.sashago_score) remoteScore = Number(uData.sashago_score) || 0;
+    }
+
+    // Fusionem dades del dispositiu amb el núvol (prenent la millor col·lecció de tots dos)
+    mergeRemoteData({
+      caughtSashas: remoteDex,
+      ammoInventory: remoteAmmo,
+      score: remoteScore
+    }, true); // true = pujar l'estat fusionat a Firestore
+  } catch (err) {
+    console.warn('Error sincronitzant SashaDex amb Firebase:', err);
+  }
+}
+
+function mergeRemoteData(remoteData, shouldUploadMerged = false) {
+  if (!remoteData) return;
+
+  isSyncingFromRemote = true;
+  let hasLocalChanges = false;
+  let hasRemoteChanges = false;
+
+  // 1. Fusionar SashaDex (Unió de captures)
+  if (remoteData.caughtSashas && typeof remoteData.caughtSashas === 'object') {
+    Object.entries(remoteData.caughtSashas).forEach(([id, count]) => {
+      const currentCount = caughtSashas[id] || 0;
+      const rCount = Number(count) || 0;
+      if (rCount > currentCount) {
+        caughtSashas[id] = rCount;
+        hasLocalChanges = true;
+      } else if (currentCount > rCount) {
+        hasRemoteChanges = true;
+      }
+    });
+  }
+
+  // Comprovar si tenim captures locals que no estan al núvol
+  Object.entries(caughtSashas).forEach(([id, count]) => {
+    const rCount = Number(remoteData.caughtSashas?.[id]) || 0;
+    if (count > rCount) {
+      hasRemoteChanges = true;
+    }
+  });
+
+  // 2. Fusionar Dolços / Munició
+  if (remoteData.ammoInventory && typeof remoteData.ammoInventory === 'object') {
+    Object.entries(remoteData.ammoInventory).forEach(([key, count]) => {
+      if (AMMO_TYPES[key]) {
+        const currentCount = ammoInventory[key] || 0;
+        const rCount = Number(count) || 0;
+        if (rCount > currentCount) {
+          ammoInventory[key] = rCount;
+          hasLocalChanges = true;
+        } else if (currentCount > rCount) {
+          hasRemoteChanges = true;
+        }
+      }
+    });
+  }
+
+  // 3. Fusionar Puntuació
+  if (remoteData.score !== undefined) {
+    const rScore = Number(remoteData.score) || 0;
+    if (rScore > score) {
+      score = rScore;
+      hasLocalChanges = true;
+    } else if (score > rScore) {
+      hasRemoteChanges = true;
+    }
+  }
+
+  // Guardar a localStorage
+  try {
+    localStorage.setItem('sashago_dex', JSON.stringify(caughtSashas));
+    localStorage.setItem('sashago_ammo', JSON.stringify(ammoInventory));
+    localStorage.setItem('sashago_score', score.toString());
+  } catch (e) {}
+
+  updateHUD();
+
+  // Si el modal de SashaDex està obert, actualitzar la graella
+  const dexModal = document.getElementById('sashadex-modal');
+  if (dexModal && !dexModal.classList.contains('hidden')) {
+    renderSashaDex();
+  }
+
+  isSyncingFromRemote = false;
+
+  // Si cal pujar l'estat combinat al núvol perquè el núvol estigui actualitzat
+  if ((shouldUploadMerged || hasRemoteChanges) && currentUser) {
+    uploadDataToFirestore();
+  }
+}
+
+async function uploadDataToFirestore() {
+  if (!currentUser || isSyncingFromRemote) return;
+  try {
+    const uid = currentUser.uid;
+    const caughtCount = Object.keys(caughtSashas).length;
+
+    // 1. Guardar a scores/sasha-go/players/{uid}
+    const playerRef = doc(db, 'scores', GAMES.SASHA_GO, 'players', uid);
+    await setDoc(playerRef, {
+      uid,
+      score,
+      displayName: currentProfile?.displayName || 'Jugador',
+      avatarStyle: currentProfile?.avatarStyle || 'adventurer',
+      avatarSeed: currentProfile?.avatarSeed || uid,
+      caughtSashas,
+      caughtCount,
+      ammoInventory,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    // 2. Guardar còpia sincronitzada a users/{uid}
+    const userRef = doc(db, 'users', uid);
+    await setDoc(userRef, {
+      sashago_dex: caughtSashas,
+      sashago_ammo: ammoInventory,
+      sashago_score: score,
+      sashago_caught_count: caughtCount,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    // 3. Registrar al rànquing general de jugadors
+    if (currentProfile) {
+      await saveScore(GAMES.SASHA_GO, uid, score, currentProfile);
+    }
+  } catch (err) {
+    console.warn('Error guardant Sasha GO a Firebase:', err);
+  }
+}
+
 function loadSavedData() {
   try {
     const savedDex = localStorage.getItem('sashago_dex');
     if (savedDex) caughtSashas = JSON.parse(savedDex);
 
     const savedAmmo = localStorage.getItem('sashago_ammo');
-    if (savedAmmo) ammoInventory = JSON.parse(savedAmmo);
+    if (savedAmmo) {
+      const parsed = JSON.parse(savedAmmo);
+      Object.keys(AMMO_TYPES).forEach(k => {
+        if (parsed[k] !== undefined) {
+          ammoInventory[k] = parsed[k];
+        }
+      });
+    }
 
     const savedScore = localStorage.getItem('sashago_score');
     if (savedScore) score = parseInt(savedScore, 10) || 0;
@@ -916,13 +1271,9 @@ function saveData() {
     localStorage.setItem('sashago_score', score.toString());
   } catch (e) {}
 
-  if (currentUser && currentProfile) {
-    try {
-      saveScore(GAMES.SASHA_GO, currentUser.uid, score, currentProfile);
-      recordGamePlay(GAMES.SASHA_GO, currentUser.uid);
-    } catch (err) {
-      console.warn('Error saving score to Firebase:', err);
-    }
+  if (currentUser) {
+    uploadDataToFirestore();
+    recordGamePlay(GAMES.SASHA_GO, currentUser.uid).catch(() => {});
   }
 }
 
@@ -1052,6 +1403,17 @@ function updatePlayerPosition() {
   playerCircle.setLatLng([playerPos.lat, playerPos.lng]);
   updateFogOfWar();
   checkNearbySpawns();
+
+  // Comprovar si el jugador s'ha mogut per generar nous elements en explorar el barri
+  const distMoved = getDistanceMeters(lastSpawnPlayerPos.lat, lastSpawnPlayerPos.lng, playerPos.lat, playerPos.lng);
+  accumulatedWalkedMeters += distMoved;
+  lastSpawnPlayerPos = { lat: playerPos.lat, lng: playerPos.lng };
+
+  // Cada ~25-30 metres caminats/desplaçats, apareixen nous dolços/fruites en explorar
+  if (accumulatedWalkedMeters >= 25) {
+    accumulatedWalkedMeters = 0;
+    onPlayerMovedSpawn();
+  }
 }
 
 /* ── BOIRA DE GUERRA (FOG OF WAR) I VISIBILITAT PER PROXIMITAT ── */
@@ -1171,24 +1533,24 @@ function getObradorPoint() {
   };
 }
 
-/* ── ASSEGURAR SEMPRE SASHES I DOLÇOS A L'OBRADOR ─────────── */
+/* ── ASSEGURAR PRESÈNCIA EQUILIBRADA A L'OBRADOR ─────────── */
 function ensureObradorSpawns() {
-  // Compta quants elements hi ha a menys de 75 metres de l'Obrador (el radi de generació és fins a 70m)
+  // Compta quants elements hi ha a menys de 90 metres de l'Obrador
   const obradorSashas = activeSpawns.filter(s => 
-    s.type === 'sasha' && getDistanceMeters(GUADIANA_COORDS.lat, GUADIANA_COORDS.lng, s.lat, s.lng) <= 75
+    s.type === 'sasha' && getDistanceMeters(GUADIANA_COORDS.lat, GUADIANA_COORDS.lng, s.lat, s.lng) <= 90
   );
   const obradorPastries = activeSpawns.filter(s => 
-    s.type === 'pastry' && getDistanceMeters(GUADIANA_COORDS.lat, GUADIANA_COORDS.lng, s.lat, s.lng) <= 75
+    s.type === 'pastry' && getDistanceMeters(GUADIANA_COORDS.lat, GUADIANA_COORDS.lng, s.lat, s.lng) <= 90
   );
 
-  // Garantir sempre 5 Sashes per capturar al voltant de l'Obrador
-  const neededSashas = Math.max(0, 5 - obradorSashas.length);
+  // Mantenir fins a 2 Sashes a l'Obrador
+  const neededSashas = Math.max(0, 2 - obradorSashas.length);
   for (let i = 0; i < neededSashas; i++) {
     spawnWildSasha(getObradorPoint());
   }
 
-  // Garantir sempre 2 dolços per recollir al voltant de l'Obrador (menys freqüència)
-  const neededPastries = Math.max(0, 2 - obradorPastries.length);
+  // Mantenir fins a 4 dolços/fruites a l'Obrador
+  const neededPastries = Math.max(0, 4 - obradorPastries.length);
   for (let i = 0; i < neededPastries; i++) {
     spawnWildPastry(getObradorPoint());
   }
@@ -1196,28 +1558,54 @@ function ensureObradorSpawns() {
 
 /* ── GESTIÓ I CICLE DE VIDA DE SPAWNS (APARICIÓ / DESAPARICIÓ) ── */
 function startSpawnCycle() {
-  // Generar lot inicial de 14 elements a tot Sants
+  // Generar lot inicial equilibrat (1/3 menys que abans)
   spawnInitialBatch();
 
-  // Bucle de manteniment dinàmic cada 2.5 segons
+  // Bucle suau de manteniment de caducitat cada 5 segons
   if (spawnLoopTimer) clearInterval(spawnLoopTimer);
   spawnLoopTimer = setInterval(() => {
     updateSpawnsLifecycle();
-  }, 2500);
+  }, 5000);
 }
 
 function spawnInitialBatch() {
-  // 1. Garantir immediatament presència permanent a l'Obrador Guadiana
-  ensureObradorSpawns();
+  // 50% dels elements a prop de l'Obrador (C/ Guadiana i voltants) i 50% per la resta del barri de Sants
+  const halfCount = Math.floor(TARGET_TOTAL_SPAWNS / 2); // 13 a l'Obrador, 13 al barri
 
-  // 2. Generar la resta de Sashes (5) i dolços (2) per la resta del barri (lluny de l'obrador)
-  for (let i = 0; i < 5; i++) {
-    spawnWildSasha(null, false);
+  // 1. Zona Obrador (2 Sashes + 11 Dolços/Fruites)
+  spawnWildSasha(null, true);
+  spawnWildSasha(null, true);
+  for (let i = 0; i < halfCount - 2; i++) {
+    spawnWildPastry(null, true);
   }
-  for (let i = 0; i < 2; i++) {
+
+  // 2. Resta del Barri de Sants (2 Sashes + 11 Dolços/Fruites)
+  spawnWildSasha(null, false);
+  spawnWildSasha(null, false);
+  for (let i = 0; i < (TARGET_TOTAL_SPAWNS - halfCount) - 2; i++) {
     spawnWildPastry(null, false);
   }
+
   updateFogOfWar();
+}
+
+/* ── GENERACIÓ DINÀMICA PER MOVIMENT DEL JUGADOR ─────────── */
+function onPlayerMovedSpawn() {
+  if (activeSpawns.length >= TARGET_TOTAL_SPAWNS) return;
+
+  const currentSashas = activeSpawns.filter(s => s.type === 'sasha').length;
+  const currentPastries = activeSpawns.filter(s => s.type === 'pastry').length;
+
+  // Exactament 50% de probabilitat a prop de l'Obrador / Guadiana, 50% per la resta del barri
+  const isNearObrador = Math.random() < 0.5;
+
+  // Quan el jugador es mou i explora, apareixen nous dolços/fruites
+  if (currentSashas < MAX_MAP_SASHAS && currentPastries >= currentSashas * 3.5 && Math.random() < 0.25) {
+    spawnWildSasha(null, isNearObrador);
+  } else {
+    spawnWildPastry(null, isNearObrador);
+  }
+  updateMarkersVisibility();
 }
 
 function spawnWildSasha(customCoords = null, preferGuadiana = false) {
@@ -1283,11 +1671,22 @@ function spawnWildSasha(customCoords = null, preferGuadiana = false) {
   activeSpawns.push(spawnObj);
 }
 
+// Funció per triar un dolç o fruita ponderat segons spawnWeight (més mal = més rar)
+function getRandomAmmoKey() {
+  const ammoList = Object.values(AMMO_TYPES);
+  const totalWeight = ammoList.reduce((sum, item) => sum + (item.spawnWeight || 1), 0);
+  let r = Math.random() * totalWeight;
+  for (const item of ammoList) {
+    r -= (item.spawnWeight || 1);
+    if (r <= 0) return item.id;
+  }
+  return 'croissant';
+}
+
 function spawnWildPastry(customCoords = null, preferGuadiana = false) {
   const loc = customCoords || getRandomPointOnStreet(preferGuadiana);
-  const types = ['croissant', 'croissant', 'ensaimada', 'ensaimada', 'pastis', 'maracuja'];
-  const ammoKey = types[Math.floor(Math.random() * types.length)];
-  const ammoObj = AMMO_TYPES[ammoKey];
+  const ammoKey = getRandomAmmoKey();
+  const ammoObj = AMMO_TYPES[ammoKey] || AMMO_TYPES.croissant;
   const spawnId = 'pastry_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
 
   // Evitar solapament exactament a sobre d'un altre marcador existent
@@ -1307,15 +1706,17 @@ function spawnWildPastry(customCoords = null, preferGuadiana = false) {
   const icon = L.divIcon({
     className: 'custom-pastry-pin',
     html: `
-      <div class="pastry-pin spawn-appearing" title="Recollir ${ammoObj.name} al ${loc.streetName}">
-        <span>${ammoObj.icon}</span>
+      <div class="pastry-pin spawn-appearing" title="Recollir ${ammoObj.name} (+${ammoObj.pickupAmount || 2}) (${ammoObj.damage} DMG) al ${loc.streetName}">
+        <div class="pastry-pin-aura"></div>
+        <span class="pastry-pin-emoji">${ammoObj.icon}</span>
+        <span class="pastry-pin-badge">+${ammoObj.pickupAmount || 2}</span>
       </div>
     `,
-    iconSize: [38, 38],
-    iconAnchor: [19, 19]
+    iconSize: [46, 46],
+    iconAnchor: [23, 23]
   });
 
-  const marker = L.marker([spawnLat, spawnLng], { icon, zIndexOffset: 1000 });
+  const marker = L.marker([spawnLat, spawnLng], { icon, zIndexOffset: 950 });
 
   const isObradorSpawn = loc.isGuadiana || getDistanceMeters(GUADIANA_COORDS.lat, GUADIANA_COORDS.lng, spawnLat, spawnLng) <= 120;
   const dist = getDistanceMeters(playerPos.lat, playerPos.lng, spawnLat, spawnLng);
@@ -1378,17 +1779,9 @@ function updateSpawnsLifecycle() {
 
   activeSpawns = remainingSpawns;
 
-  // Assegurar sempre la presència d'elements a l'Obrador Guadiana
-  ensureObradorSpawns();
-
-  // Si hi ha menys elements del límit, anar fent aparèixer nous (lluny de l'obrador)
-  while (activeSpawns.length < TARGET_TOTAL_SPAWNS) {
-    const currentSashas = activeSpawns.filter(s => s.type === 'sasha').length;
-    if (currentSashas < 10) {
-      spawnWildSasha(null, false);
-    } else {
-      spawnWildPastry(null, false);
-    }
+  // Si el total de spawns baixa de 8 per haver recollit molt sense moure's, generar un dolç suau
+  if (activeSpawns.length < 8) {
+    spawnWildPastry(null, false);
   }
 
   updateMarkersVisibility();
@@ -1419,19 +1812,20 @@ function handleSpawnClick(spawn) {
       playerPos = { lat: spawn.lat, lng: spawn.lng };
       updatePlayerPosition();
     } else {
-      const name = spawn.type === 'sasha' ? spawn.data.name : AMMO_TYPES[spawn.data].name;
+      const name = spawn.type === 'sasha' ? spawn.data.name : (AMMO_TYPES[spawn.data]?.name || spawn.data);
       showToast(`📍 ${name} a ${Math.round(dist)}m al ${spawn.streetName}. Apropa't a menys de 35m per interactuar!`);
       return;
     }
   }
 
   if (spawn.type === 'pastry') {
-    // Recollir dolç
+    // Recollir dolç o fruita
     const ammoKey = spawn.data;
-    const amount = ammoKey === 'croissant' ? 3 : ammoKey === 'ensaimada' ? 2 : 1;
-    ammoInventory[ammoKey] += amount;
+    const ammoObj = AMMO_TYPES[ammoKey] || AMMO_TYPES.croissant;
+    const amount = ammoObj.pickupAmount || 1;
+    ammoInventory[ammoKey] = (ammoInventory[ammoKey] || 0) + amount;
     sounds.playPickup();
-    showToast(`+${amount} ${AMMO_TYPES[ammoKey].name} recollit al ${spawn.streetName}! ${AMMO_TYPES[ammoKey].icon}`);
+    showToast(`+${amount} ${ammoObj.name} recollit al ${spawn.streetName}! ${ammoObj.icon} (${ammoObj.damage} DMG)`);
 
     // Eliminar marcador
     if (spawn.isOnMap && map) {
@@ -1479,14 +1873,31 @@ function checkNearbySpawns() {
 }
 
 /* ══════════════════════════════════════════════════════════
-   PANTALLA DE TROBADA, MOVIMENT DINÀMIC I CAPTURA
+   PANTALLA DE TROBADA, COMBAT I CAPTURA
 ══════════════════════════════════════════════════════════ */
+function getRarityHp(rarity) {
+  switch (rarity) {
+    case 'Mítica': return 280;
+    case 'Èpica':  return 200;
+    case 'Rara':   return 130;
+    default:       return 75; // Comuna
+  }
+}
+
 function openEncounter(spawn) {
   sounds.playPop();
   
+  const sasha = spawn.data;
+  const maxHp = sasha.hp || getRarityHp(sasha.rarity);
+  const maxAttempts = 5;
+
   currentEncounter = {
     spawn: spawn,
-    sasha: spawn.data,
+    sasha: sasha,
+    maxHp: maxHp,
+    currentHp: maxHp,
+    maxAttempts: maxAttempts,
+    attemptsLeft: maxAttempts,
     isCalmed: false,
     isCatching: false,
     ringScale: 1.0,
@@ -1496,12 +1907,11 @@ function openEncounter(spawn) {
     posY: 0,
     targetPosX: 0,
     targetPosY: 0,
-    moveSpeed: getRarityMoveSpeed(spawn.data.rarity),
+    moveSpeed: getRarityMoveSpeed(sasha.rarity),
     lastShiftTime: Date.now(),
-    shiftInterval: getRarityShiftInterval(spawn.data.rarity)
+    shiftInterval: getRarityShiftInterval(sasha.rarity)
   };
 
-  const sasha = spawn.data;
   document.getElementById('encounter-name').textContent = sasha.name;
   document.getElementById('encounter-profession').textContent = sasha.profession;
   const badge = document.getElementById('encounter-rarity');
@@ -1511,6 +1921,19 @@ function openEncounter(spawn) {
   const sashaImg = document.getElementById('encounter-sasha-img');
   sashaImg.src = sasha.img;
   sashaImg.className = 'encounter-sasha-sprite';
+
+  // Netejar popups anteriors
+  document.querySelectorAll('.damage-popup').forEach(el => el.remove());
+
+  // Actualitzar HUD de combat (Barra de Vida i Intents)
+  updateEncounterHealthBar(false);
+  updateEncounterAttemptsTracker();
+
+  // Assegurar selecció d'un dolç amb estoc si l'actual està buit
+  if ((ammoInventory[selectedAmmo] || 0) <= 0) {
+    const availableKey = Object.keys(AMMO_TYPES).find(k => (ammoInventory[k] || 0) > 0);
+    if (availableKey) selectedAmmo = availableKey;
+  }
 
   renderCatchAmmoBar();
   updateActivePastryVisual();
@@ -1530,8 +1953,98 @@ function closeEncounter() {
   const targetWrap = document.getElementById('sasha-target');
   if (targetWrap) targetWrap.style.transform = '';
   
+  // Netejar popups
+  document.querySelectorAll('.damage-popup').forEach(el => el.remove());
+
   document.getElementById('catch-screen').classList.add('hidden');
   currentEncounter = null;
+}
+
+/* ── HUD DE COMBAT: BARRA DE VIDA I INTENTS ───────────────── */
+function updateEncounterHealthBar(animateGhost = true) {
+  if (!currentEncounter) return;
+
+  const fillEl = document.getElementById('encounter-hp-fill');
+  const ghostEl = document.getElementById('encounter-hp-ghost');
+  const textEl = document.getElementById('encounter-hp-text');
+  if (!fillEl || !textEl) return;
+
+  const current = Math.max(0, currentEncounter.currentHp);
+  const max = currentEncounter.maxHp;
+  const pct = Math.max(0, Math.min(100, Math.round((current / max) * 100)));
+
+  fillEl.style.width = `${pct}%`;
+  
+  // Classe de color segons % de vida
+  fillEl.classList.remove('hp-high', 'hp-medium', 'hp-low');
+  if (pct > 50) {
+    fillEl.classList.add('hp-high');
+  } else if (pct > 25) {
+    fillEl.classList.add('hp-medium');
+  } else {
+    fillEl.classList.add('hp-low');
+  }
+
+  // Ghost bar animada
+  if (ghostEl) {
+    if (animateGhost) {
+      setTimeout(() => {
+        if (ghostEl) ghostEl.style.width = `${pct}%`;
+      }, 250);
+    } else {
+      ghostEl.style.width = `${pct}%`;
+    }
+  }
+
+  if (current <= 0) {
+    textEl.innerHTML = `<b>0 / ${max} HP</b> (DEBILITAT! 💫)`;
+  } else {
+    textEl.innerHTML = `<b>${current} / ${max} HP</b> (${pct}%)`;
+  }
+}
+
+function updateEncounterAttemptsTracker() {
+  if (!currentEncounter) return;
+
+  const dotsWrap = document.getElementById('encounter-attempts-dots');
+  const textEl = document.getElementById('encounter-attempts-text');
+  if (!dotsWrap || !textEl) return;
+
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < currentEncounter.maxAttempts; i++) {
+    const dot = document.createElement('span');
+    dot.className = `attempt-dot ${i < currentEncounter.attemptsLeft ? 'active' : 'used'}`;
+    dotsWrap.appendChild(dot);
+  }
+
+  textEl.textContent = `${currentEncounter.attemptsLeft}/${currentEncounter.maxAttempts}`;
+  if (currentEncounter.attemptsLeft <= 1) {
+    textEl.style.color = '#ef4444';
+    textEl.style.fontWeight = '800';
+  } else {
+    textEl.style.color = 'inherit';
+    textEl.style.fontWeight = '600';
+  }
+}
+
+function spawnDamagePopup(text, isCrit = false, isStatus = false) {
+  const arena = document.getElementById('catch-arena');
+  if (!arena) return;
+
+  const popup = document.createElement('div');
+  popup.className = `damage-popup ${isCrit ? 'crit' : ''} ${isStatus ? 'status' : ''}`;
+  popup.textContent = text;
+
+  // Desplaçament aleatori suau al voltant del centre
+  const offsetX = (Math.random() - 0.5) * 50;
+  const offsetY = (Math.random() - 0.5) * 30;
+  popup.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+
+  arena.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 1000);
 }
 
 /* ── CONFIGURACIÓ DE DIFICULTAT I MOVIMENT PER RARESA ──────── */
@@ -1546,7 +2059,7 @@ function getRarityMoveSpeed(rarity) {
 
 function getRarityShiftInterval(rarity) {
   switch (rarity) {
-    case 'Mítica': return 1200; // Canvia de direcció molt ràpid
+    case 'Mítica': return 1200; // Canvia de direcció ràpid
     case 'Èpica':  return 1700;
     case 'Rara':   return 2400;
     default:       return 3500;
@@ -1575,7 +2088,7 @@ function startSashaMovementLoop() {
     const sasha = currentEncounter.sasha;
     const now = Date.now();
 
-    // Si està calmada amb Te de Maracujà, es queda al centre
+    // Si està calmada amb Te de Maracujà o Fruita, es queda al centre
     if (currentEncounter.isCalmed) {
       currentEncounter.targetPosX = 0;
       currentEncounter.targetPosY = 0;
@@ -1614,7 +2127,7 @@ function startCatchRingLoop() {
     if (!currentEncounter) return;
 
     const sasha = currentEncounter.sasha;
-    const ammo = AMMO_TYPES[selectedAmmo];
+    const ammo = AMMO_TYPES[selectedAmmo] || AMMO_TYPES.croissant;
     const difficulty = (sasha ? sasha.catchDifficulty : 0.5) / (ammo.multiplier * (currentEncounter.isCalmed ? 1.4 : 1.0));
 
     // Color de l'anell segons dificultat actual
@@ -1647,9 +2160,25 @@ function renderCatchAmmoBar() {
   Object.values(AMMO_TYPES).forEach(ammo => {
     const count = ammoInventory[ammo.id] || 0;
     const btn = document.createElement('button');
-    btn.className = `catch-ammo-btn ${selectedAmmo === ammo.id ? 'active' : ''}`;
-    btn.innerHTML = `<span>${ammo.icon}</span> <span>${ammo.name} (${count})</span>`;
+    btn.className = `catch-ammo-btn ${selectedAmmo === ammo.id ? 'active' : ''} ${count === 0 ? 'empty-stock' : ''}`;
+    btn.title = `${ammo.description} (${count} disponibles)`;
+    
+    btn.innerHTML = `
+      <span class="ammo-btn-icon">${ammo.icon}</span>
+      <span class="ammo-btn-info">
+        <span class="ammo-btn-name">${ammo.name}</span>
+        <span class="ammo-btn-meta">
+          <span class="ammo-dmg-tag">⚔️ ${ammo.damage}</span>
+          <span class="ammo-count-tag">${count}</span>
+        </span>
+      </span>
+    `;
+
     btn.addEventListener('click', () => {
+      if (count <= 0) {
+        showToast(`⚠️ No et queden ${ammo.name}! Recull-ne més a Sants.`);
+        return;
+      }
       selectedAmmo = ammo.id;
       renderCatchAmmoBar();
       updateActivePastryVisual();
@@ -1661,7 +2190,7 @@ function renderCatchAmmoBar() {
 
 function updateActivePastryVisual() {
   const img = document.getElementById('throwable-img');
-  const ammo = AMMO_TYPES[selectedAmmo];
+  const ammo = AMMO_TYPES[selectedAmmo] || AMMO_TYPES.croissant;
   if (img && ammo) {
     img.src = ammo.img;
   }
@@ -1725,16 +2254,25 @@ function setupThrowInteraction() {
 function executeThrow(dx, dy) {
   if (!currentEncounter || currentEncounter.isCatching) return;
 
-  // Comprovar munició
-  if ((ammoInventory[selectedAmmo] || 0) <= 0) {
-    showToast(`No et queden ${AMMO_TYPES[selectedAmmo].name}! Recull-ne més als carrers de Sants.`);
+  // Comprovar intents restants
+  if (currentEncounter.attemptsLeft <= 0) {
+    handleSashaEscape(currentEncounter.sasha);
     return;
   }
 
-  // Descomptar munició
+  // Comprovar munició
+  if ((ammoInventory[selectedAmmo] || 0) <= 0) {
+    showToast(`No et queden ${AMMO_TYPES[selectedAmmo]?.name || 'dolços'}! Tria'n un altre de la barra.`);
+    return;
+  }
+
+  // Descomptar munició i intent
   ammoInventory[selectedAmmo]--;
+  currentEncounter.attemptsLeft--;
+  
   updateHUD();
   renderCatchAmmoBar();
+  updateEncounterAttemptsTracker();
   saveData();
 
   currentEncounter.isCatching = true;
@@ -1757,57 +2295,116 @@ function executeThrow(dx, dy) {
     pastry.style.transform = 'translateX(-50%)';
     pastry.style.opacity = '1';
 
+    if (!currentEncounter) return;
+
     const sasha = currentEncounter.sasha;
-    const ammo = AMMO_TYPES[selectedAmmo];
+    const ammo = AMMO_TYPES[selectedAmmo] || AMMO_TYPES.croissant;
 
-    // Efecte de Te de Maracujà (calma la Sasha)
-    if (ammo.effect === 'calm') {
-      currentEncounter.isCalmed = true;
-      showToast('🫐 La Sasha s\'ha calmat amb el Te de Maracujà!');
-    }
-
-    // Probabilitat de salt/esquiva depenent de la raresa i si està calmada
-    let dodgeBaseChance = sasha.catchDifficulty * 0.75;
-    if (sasha.rarity === 'Mítica') dodgeBaseChance = 0.88;
-    if (sasha.rarity === 'Èpica')  dodgeBaseChance = 0.75;
-    if (currentEncounter.isCalmed) dodgeBaseChance = 0.15;
+    // Probabilitat d'esquiva depenent de la raresa i si està calmada
+    let dodgeBaseChance = 0.18;
+    if (sasha.rarity === 'Rara')   dodgeBaseChance = 0.32;
+    if (sasha.rarity === 'Èpica')  dodgeBaseChance = 0.45;
+    if (sasha.rarity === 'Mítica') dodgeBaseChance = 0.58;
+    if (currentEncounter.isCalmed) dodgeBaseChance = 0.08;
 
     if (Math.random() < dodgeBaseChance) {
-      // Esquiva àgil!
+      // Esquiva àgil de la Sasha!
       targetWrap.classList.add('sasha-jump');
-      showToast(`🐾 La ${sasha.name} ha esquivat el pastís d'un salt!`);
+      spawnDamagePopup('ESQUIVAT! 💨', false, true);
+      showToast(`🐾 La ${sasha.name} ha esquivat el tir d'un salt!`);
+      
       setTimeout(() => {
         targetWrap.classList.remove('sasha-jump');
-        if (currentEncounter) currentEncounter.isCatching = false;
+        if (!currentEncounter) return;
+
+        if (currentEncounter.attemptsLeft <= 0) {
+          handleSashaEscape(sasha);
+        } else {
+          currentEncounter.isCatching = false;
+        }
       }, 700);
       return;
     }
 
-    // La Sasha s'engoleix el pastís!
+    // IMPACTE I DEGUSTACIÓ!
     sashaImg.classList.add('sasha-eat');
-    sounds.playPop();
+    sounds.playHit();
 
-    // Càlcul de captura reeixida MÉS DIFÍCIL
-    const ringPrecisionBonus = (1.25 - (currentEncounter.ringScale || 1.0)) * 0.15;
-    const baseCatchRate = Math.max(0.01, 1.0 - (sasha.catchDifficulty * 1.25));
-    const totalCatchProbability = Math.min(0.92, (baseCatchRate * ammo.multiplier) + ringPrecisionBonus + (currentEncounter.isCalmed ? 0.1 : 0));
+    // Efectes especials de dolços / fruites
+    if (ammo.effect === 'calm' || ammo.effect === 'super_calm') {
+      currentEncounter.isCalmed = true;
+      spawnDamagePopup('CALMADA! 🫐', false, true);
+      showToast(`🫐 La ${sasha.name} s'ha calmat amb la fruita!`);
+    }
 
-    const isCaught = Math.random() < totalCatchProbability;
+    // Càlcul de dany exacte amb bonificacions
+    // Precisió de l'anell (més centrat = més dany)
+    const ringAccuracy = Math.max(0, 1.25 - (currentEncounter.ringScale || 1.0)); // 0.0 a 0.85
+    const accuracyMultiplier = 1.0 + (ringAccuracy * 0.35); // Fins a +30% dany
+    
+    // Roda de cop crític
+    const critChance = ammo.effect === 'crit' ? 0.40 : 0.12;
+    const isCrit = Math.random() < critChance;
+    const critMultiplier = isCrit ? (ammo.effect === 'crit' ? 1.85 : 1.5) : 1.0;
+
+    const rawDamage = Math.round(ammo.damage * accuracyMultiplier * critMultiplier);
+    const finalDamage = Math.max(5, rawDamage);
+
+    // Aplicar dany a la vida de la Sasha
+    currentEncounter.currentHp = Math.max(0, currentEncounter.currentHp - finalDamage);
+    updateEncounterHealthBar(true);
+
+    if (isCrit) {
+      sounds.playCrit();
+      spawnDamagePopup(`CRÍTIC! -${finalDamage} HP 💥`, true);
+    } else {
+      spawnDamagePopup(`-${finalDamage} HP`, false);
+    }
+
+    // REGLA ESTRICTA: NOMÉS es captura si es redueix la vida a 0 HP (tota la vida treta)
+    const isDefeatedAndCaught = currentEncounter.currentHp <= 0;
 
     setTimeout(() => {
       sashaImg.classList.remove('sasha-eat');
+      if (!currentEncounter) return;
 
-      if (isCaught) {
-        // Captura completada!
+      if (isDefeatedAndCaught) {
+        // Vida a 0! Sasha completament debilitada i capturada amb èxit!
+        spawnDamagePopup('CAPTURADA! ⭐', true);
+        showToast(`🎉 Has reduït la vida a 0 HP! Has capturat la ${sasha.name}!`);
         handleCatchSuccess(sasha);
+      } else if (currentEncounter.attemptsLeft <= 0) {
+        // S'han esgotat els 5 intents sense treure-li tota la vida: la Sasha fuig
+        handleSashaEscape(sasha);
       } else {
-        // Encara té gana
-        showToast(`😋 A la ${sasha.name} li ha encantat el dolç, però encara en vol més!`);
-        if (currentEncounter) currentEncounter.isCatching = false;
+        // La Sasha encara té vida restant i queden intents
+        showToast(`😋 -${finalDamage} HP! Queden ${currentEncounter.currentHp} HP i ${currentEncounter.attemptsLeft} intents.`);
+        currentEncounter.isCatching = false;
       }
     }, 750);
 
   }, 600);
+}
+
+function handleSashaEscape(sasha) {
+  sounds.playFlee();
+  
+  const sashaImg = document.getElementById('encounter-sasha-img');
+  if (sashaImg) sashaImg.classList.add('sasha-flee');
+
+  showToast(`💨 S'han esgotat els intents! La ${sasha.name} s'ha escapat corrent pels carrers de Sants.`);
+
+  // Eliminar el spawn del mapa perquè ha fugit
+  if (currentEncounter?.spawn) {
+    try {
+      map.removeLayer(currentEncounter.spawn.marker);
+    } catch (e) {}
+    activeSpawns = activeSpawns.filter(s => s.id !== currentEncounter.spawn.id);
+  }
+
+  setTimeout(() => {
+    closeEncounter();
+  }, 850);
 }
 
 function handleCatchSuccess(sasha) {
@@ -1889,6 +2486,19 @@ function renderSashaDex() {
   document.getElementById('dex-discovered-num').textContent = `${discoveredCount}/${SASHAS_DATABASE.length}`;
   document.getElementById('dex-total-caught-num').textContent = totalCaughtSum;
   document.getElementById('dex-completion-pct').textContent = `${Math.round((discoveredCount / SASHAS_DATABASE.length) * 100)}%`;
+
+  // Estat de sincronització al núvol
+  const cloudStatusEl = document.getElementById('dex-cloud-status');
+  const cloudTextEl = document.getElementById('dex-cloud-text');
+  if (cloudStatusEl && cloudTextEl) {
+    if (currentUser) {
+      cloudStatusEl.classList.remove('offline');
+      cloudTextEl.textContent = `☁️ Sincronitzat amb Firebase (${currentProfile?.displayName || currentUser.email || 'Usuari'})`;
+    } else {
+      cloudStatusEl.classList.add('offline');
+      cloudTextEl.textContent = `⚠️ Mode local. Inicia sessió per desar les captures al teu compte.`;
+    }
+  }
 }
 
 function showSashaDetail(sasha, count) {
@@ -2054,8 +2664,11 @@ function setupUIEvents() {
   document.getElementById('btn-move-right')?.addEventListener('click', () => movePlayer(0, STEP));
   document.getElementById('btn-spawn-nearby')?.addEventListener('click', () => {
     spawnWildSasha();
-    spawnWildPastry();
-    showToast('✨ Nova Sasha i dolços apareguts als carrers propers!');
+    for (let i = 0; i < 4; i++) {
+      spawnWildPastry();
+    }
+    updateMarkersVisibility();
+    showToast('✨ 1 Sasha i 4 dolços/fruites apareguts als carrers propers!');
   });
 
   // Controls de Teclat (WASD / Fletxes) limitats al mode testing
