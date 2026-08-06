@@ -27,6 +27,7 @@ const GAME_ORDER = [
   'sasha-comecocos',
   'mots-pastissers',
   'sasha-go',
+  'bingo-musical',
 ];
 
 const GAME_URLS = {
@@ -42,6 +43,7 @@ const GAME_URLS = {
   'sasha-comecocos':    'games/sasha-comecocos/index.html',
   'mots-pastissers':    'games/mots-pastissers/index.html',
   'sasha-go':           'games/sasha-go/index.html',
+  'bingo-musical':      'games/bingo-musical/index.html',
   'raco-edurne':        'games/raco-edurne/index.html',
 };
 
@@ -59,7 +61,8 @@ const STOP_POSITIONS = {
   9: { left: '32.5%', top: 3200 }, // Sasha Menjamaracujàs
   10: { left: '65.1%', top: 3600 }, // Mots Pastissers
   11: { left: '32.5%', top: 4000 }, // Sasha GO (Safari de Sants)
-  12: { left: '50%',  top: 4400 }, // Fama (fi del recorregut)
+  12: { left: '65.1%', top: 4400 }, // Sasha DJ (Bingo Musical)
+  13: { left: '50%',   top: 4800 }, // Fama (fi del recorregut)
   'raco-edurne': { left: '15%', top: 1250 }, // Easter Egg
 };
 
@@ -78,6 +81,7 @@ function stopDomId(gameId) {
     'sasha-comecocos':    'sasha-comecocos',
     'mots-pastissers':    'mots-pastissers',
     'sasha-go':           'sasha-go',
+    'bingo-musical':      'bingo-musical',
     'raco-edurne':        'raco-edurne',
   };
   return m[gameId] || gameId;

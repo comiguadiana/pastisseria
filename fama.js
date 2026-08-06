@@ -138,6 +138,16 @@ export const GAMES_INFO = {
     url: 'games/sasha-go/index.html',
     color: '#FF4081',
   },
+  [GAMES.BINGO_MUSICAL]: {
+    id: GAMES.BINGO_MUSICAL,
+    tab: 'bingo-musical',
+    name: 'Sasha DJ: Bingo Musical',
+    icon: '🎧',
+    htmlLabel: '<img src="assets/img/sashas/sasha_dj_auriculars.png" style="height: 1.2em; vertical-align: middle;"> Bingo Musical',
+    desc: 'Endevina 10 cançons o artistes en 20 segons amb en Sasha DJ i les millors llistes de Deezer!',
+    url: 'games/bingo-musical/index.html',
+    color: '#9C27B0',
+  },
 };
 
 const TAB_CONFIG = {
@@ -155,6 +165,7 @@ const TAB_CONFIG = {
   'sasha-comecocos':   { label:'🍹 Sasha Menjamaracujàs',     fn: () => getGameRanking(GAMES.SASHA_COMECOCOS, 200), gameId: GAMES.SASHA_COMECOCOS },
   'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 200), gameId: GAMES.MOTS_PASTISSERS },
   'sasha-go':          { label:'🐾 Sasha GO: Safari de Sants', fn: () => getGameRanking(GAMES.SASHA_GO, 200), gameId: GAMES.SASHA_GO },
+  'bingo-musical':     { label:'🎧 Sasha DJ: Bingo Musical',  fn: () => getGameRanking(GAMES.BINGO_MUSICAL, 200), gameId: GAMES.BINGO_MUSICAL },
 };
 
 let currentTab = 'general';

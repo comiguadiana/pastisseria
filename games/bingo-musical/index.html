@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Sasha DJ: Bingo Musical · Obrador Màgic Guadiana</title>
+  <meta name="description" content="Bingo Musical amb en Sasha DJ! Endevina la cançó o l'artista en 20 segons amb les millors llistes de Deezer. Festa de Sants 2026!" />
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="bingo-musical.css" />
+</head>
+<body class="bg-cream">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="main-navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav">
+      <a href="../../mapa.html" class="nav-link">← Mapa</a>
+      <a href="../../fama.html" class="nav-link">🏆 Fama</a>
+    </div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Game Container -->
+  <main class="music-main">
+    <div class="container music-container">
+
+      <!-- ================= PANTALLA INICIAL (LOBBY / SELECCIÓ DE MODE) ================= -->
+      <section class="music-card lobby-section" id="lobby-section">
+        <div class="lobby-header text-center">
+          <div class="dj-badge animate-float">🎧 PISTA DE BALL GUADIANA 🪩</div>
+          <h1 class="music-title">Sasha DJ: Bingo Musical</h1>
+          <p class="music-subtitle">Escolta el ritme, afina l'oïda i endevina 10 temacles abans que s'acabin els 20 segons!</p>
+        </div>
+
+        <!-- Sasha DJ Presenter Booth -->
+        <div class="dj-booth">
+          <div class="dj-avatar-container">
+            <div class="speaker-left animate-pulse-scale">🔊</div>
+            <div class="sasha-dj-avatar">
+              <img src="../../assets/img/sashas/sasha_dj_auriculars.png" alt="Sasha DJ" class="dj-sasha-img animate-float" id="dj-sasha-img" />
+              <div class="dj-headphones-glow"></div>
+            </div>
+            <div class="speaker-right animate-pulse-scale">🔊</div>
+          </div>
+
+          <div class="sasha-speech-bubble" id="lobby-speech">
+            «Hola pastissers i balladors! Sóc en <strong>Sasha DJ</strong> als plats. Tria modalitat i demostra qui mana a la pista!»
+          </div>
+        </div>
+
+        <!-- Mode Selector Cards -->
+        <div class="mode-selection-grid">
+          <button class="mode-card mode-song" id="btn-mode-title" data-mode="title">
+            <div class="mode-icon">🎵</div>
+            <div class="mode-info">
+              <h3 class="mode-title">Endevina la Cançó</h3>
+              <p class="mode-desc">Sona el tema... saps quin és el títol de la cançó?</p>
+            </div>
+            <span class="mode-btn-pill">Jugar Cançó ▶</span>
+          </button>
+
+          <button class="mode-card mode-artist" id="btn-mode-artist" data-mode="artist">
+            <div class="mode-icon">🎤</div>
+            <div class="mode-info">
+              <h3 class="mode-title">Endevina l'Artista</h3>
+              <p class="mode-desc">Reconeixes la veu o el grup que està cantant?</p>
+            </div>
+            <span class="mode-btn-pill">Jugar Artista ▶</span>
+          </button>
+        </div>
+
+        <!-- Playlist Selector Bar -->
+        <div class="playlist-bar">
+          <div class="playlist-info-row">
+            <span class="playlist-label">Llista de reproducció Deezer:</span>
+            <div class="playlist-select-wrapper">
+              <select id="playlist-preset-select" class="playlist-select">
+                <option value="1116190041" selected>Top Hits España (Deezer)</option>
+                <option value="5852428522">Música & Pop Català</option>
+                <option value="1963962142">Èxits 80s & Disco Hits</option>
+                <option value="7680850362">Pop Espanyol & Festes</option>
+                <option value="custom">URL / ID Deezer Personalitzada...</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Custom Playlist Input (amagat per defecte) -->
+          <div class="custom-playlist-box hidden" id="custom-playlist-box">
+            <input type="text" id="custom-playlist-input" class="form-input custom-input" placeholder="Enganxa URL de Deezer (ex: deezer.com/playlist/123456)" />
+            <button class="btn btn-secondary btn-sm" id="btn-apply-custom-playlist">Carregar</button>
+          </div>
+        </div>
+
+        <!-- Lobby Actions & Help -->
+        <div class="lobby-actions flex-center gap-2 flex-wrap">
+          <button class="btn btn-outline btn-sm" id="btn-open-help">❓ Com jugar i tolerància d'errors</button>
+          <div class="best-score-badge" id="lobby-best-score">Rècord personal: <strong>0 pts</strong></div>
+        </div>
+      </section>
+
+      <!-- ================= PANTALLA DE JOC ACTIVA ================= -->
+      <section class="music-card game-section hidden" id="game-section">
+
+        <!-- HUD de Partida -->
+        <div class="game-hud">
+          <div class="hud-item">
+            <span class="hud-label">Ronda</span>
+            <span class="hud-value" id="hud-round">1/10</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Mode</span>
+            <span class="hud-value hud-mode-badge" id="hud-mode">🎵 CANÇÓ</span>
+          </div>
+          <div class="hud-item timer-item">
+            <span class="hud-label">Temps</span>
+            <span class="hud-value timer-val" id="hud-timer">20s</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Ràtxa</span>
+            <span class="hud-value streak-val" id="hud-streak">🔥 x0</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Punts</span>
+            <span class="hud-value score-val" id="hud-score">0</span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-exit-game" title="Sortir al menú">✕</button>
+        </div>
+
+        <!-- Barra de progrés del temps (20s) -->
+        <div class="timer-progress-container">
+          <div class="timer-progress-bar" id="timer-progress-bar" style="width: 100%;"></div>
+        </div>
+
+        <!-- Escenari DJ & Reproductor -->
+        <div class="stage-container">
+          
+          <!-- Sasha DJ Live Animation -->
+          <div class="stage-dj-booth">
+            <div class="turntable-deck">
+              <div class="vinyl-record" id="vinyl-record">
+                <div class="vinyl-grooves"></div>
+                <div class="vinyl-label">🎂</div>
+              </div>
+              <div class="tone-arm" id="tone-arm"></div>
+            </div>
+
+            <div class="stage-sasha-wrap">
+              <img src="../../assets/img/sashas/sasha_dj_auriculars.png" alt="Sasha DJ" class="stage-sasha-img" id="stage-sasha-img" />
+              <div class="audio-waves" id="audio-waves">
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+              </div>
+            </div>
+
+            <!-- Equalizer Graphic Bars -->
+            <div class="equalizer-container" id="equalizer">
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+              <div class="eq-col"><div class="eq-bar"></div></div>
+            </div>
+          </div>
+
+          <!-- Presenter Dialog Bubble -->
+          <div class="stage-dialog-bubble" id="stage-speech">
+            «Escolta atenta! Quin temacle és aquest?»
+          </div>
+        </div>
+
+        <!-- Hidden Audio Element -->
+        <audio id="audio-player" preload="auto"></audio>
+
+        <!-- Dynamic Question Area -->
+        <div class="question-box">
+          <div class="question-header">
+            <span class="question-icon" id="question-icon">🎧</span>
+            <span class="question-text" id="question-text">Quin és el nom de la cançó?</span>
+          </div>
+
+          <!-- Answer Form -->
+          <form class="answer-form" id="answer-form" onsubmit="return false;">
+            <div class="input-wrapper">
+              <input type="text" id="answer-input" class="form-input answer-input" placeholder="Escriu la teva resposta aquí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" class="btn-clear-input hidden" id="btn-clear-input" title="Esborrar">✕</button>
+            </div>
+            <div class="answer-actions">
+              <button type="submit" class="btn btn-primary btn-submit" id="btn-submit-answer">Comprovar ↵</button>
+              <button type="button" class="btn btn-outline btn-pass" id="btn-pass">Passar ⏩</button>
+            </div>
+          </form>
+
+          <!-- Feedback Box (revelat al comprovar o passar) -->
+          <div class="feedback-card hidden" id="feedback-card">
+            <div class="feedback-icon" id="feedback-icon">✅</div>
+            <div class="feedback-body">
+              <div class="feedback-title" id="feedback-title">Molt bé! +150 punts</div>
+              <div class="feedback-track-info" id="feedback-track-info">
+                <img src="" alt="Cover" class="feedback-cover" id="feedback-cover" />
+                <div class="feedback-track-details">
+                  <span class="track-title-revealed" id="feedback-song-name">Títol de la cançó</span>
+                  <span class="track-artist-revealed" id="feedback-artist-name">Artista</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-next" id="btn-next-track">Següent Cançó ▶</button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= OVERLAY DE FI DE PARTIDA ================= -->
+      <div class="game-overlay hidden" id="game-overlay">
+        <div class="overlay-card animate-bounce-in">
+          <div class="overlay-header text-center">
+            <div class="overlay-trophy" id="overlay-trophy">🏆</div>
+            <h2 class="overlay-title" id="overlay-title">Fi del Bingo Musical!</h2>
+            <p class="overlay-subtitle" id="overlay-subtitle">Has completat les 10 cançons de la sessió DJ</p>
+          </div>
+
+          <div class="overlay-score-box">
+            <span class="score-box-label">Puntuació Final:</span>
+            <div class="score-box-val" id="overlay-final-score">0 pts</div>
+            <div class="overlay-stats-pills">
+              <span class="stat-pill" id="pill-correct">🎯 8/10 Encerts</span>
+              <span class="stat-pill" id="pill-speed">⚡ 240 pts velocitat</span>
+              <span class="stat-pill" id="pill-streak">🔥 Màx ràtxa: 5</span>
+            </div>
+          </div>
+
+          <!-- Llista de cançons jugades a la sessió -->
+          <div class="played-tracks-summary">
+            <h4 class="summary-title">Cançons de la teva partida:</h4>
+            <div class="played-tracks-list" id="played-tracks-list">
+              <!-- Inserit dinàmicament per JS -->
+            </div>
+          </div>
+
+          <!-- Accions de fi de partida -->
+          <div class="overlay-actions">
+            <button class="btn btn-primary btn-lg" id="btn-play-again">Torna a jugar! ↺</button>
+            <button class="btn btn-secondary btn-lg" id="btn-change-mode">Canviar de Mode 🔀</button>
+            <a href="../../mapa.html" class="btn btn-outline btn-lg">← Tornar al Mapa</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MODAL D'INSTRUCCIONS ================= -->
+      <div class="modal-overlay hidden" id="modal-help">
+        <div class="modal animate-bounce-in">
+          <div class="modal-header">
+            <h2 class="modal-title">🎧 Com jugar al Bingo Musical?</h2>
+            <button class="modal-close" id="btn-close-help">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="help-box">
+              <p>🎵 <strong>10 cançons al ritme de Sants:</strong> En Sasha DJ posa 10 temacles triats a l'atzar de la llista de Deezer.</p>
+              <p>⏱️ <strong>20 segons per ronda:</strong> Com més ràpid responguis, més punts extra de velocitat aconseguiràs!</p>
+              <p>🔤 <strong>Tolerància d'errors:</strong> No et preocupis pels accents, majúscules ni si t'equivoques en alguna lletra (distància de Levenshtein). El sistema reconeix el títol o artista igualment!</p>
+              <p>🔥 <strong>Ràtxes de combo:</strong> Enllaça encerts consecutius per multiplicar la teva puntuació.</p>
+              <p>🎤 <strong>2 modalitats:</strong> Pots triar si vols endevinar el <em>Nom de la cançó</em> o l'<em>Artista</em>.</p>
+            </div>
+          </div>
+          <div class="modal-footer" style="justify-content:center">
+            <button class="btn btn-primary" id="btn-help-ok">HO HE ENTÈS! 🎧</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAULA DE RÀNQUINGS ================= -->
+      <div class="ranking-card-wrap mt-4">
+        <div class="card">
+          <div class="card-header flex-between flex-wrap gap-1">
+            <h3>🏆 Rànquing Sasha DJ: Bingo Musical</h3>
+          </div>
+          <div class="card-body" id="ranking-container">
+            <div class="flex-center"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script type="module" src="bingo-musical.js"></script>
+</body>
+</html>

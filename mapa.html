@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 4800" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 5200" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -71,7 +71,8 @@
                L 500,3000 L 250,3200
                L 250,3400 L 500,3600
                L 500,3800 L 250,4000
-               L 250,4200 L 384,4400"
+               L 250,4200 L 500,4400
+               L 500,4600 L 384,4800"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -248,10 +249,23 @@
           </div>
         </div>
 
-        <!-- 13. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-13 stop-end" id="stop-fama"
-             data-game="" data-index="12"
-             style="left:50%; top:4400px; transform: translate(-50%, -50%);"
+        <!-- 13. Sasha DJ: Bingo Musical -->
+        <div class="map-stop stop-13" id="stop-bingo-musical"
+             data-game="bingo-musical" data-index="12"
+             style="left:65.1%; top:4400px; transform: translate(-50%, -50%);"
+             onclick="goToGame('bingo-musical')">
+          <div class="stop-node" style="padding:0; overflow:hidden;"><img src="assets/img/sashas/sasha_dj_auriculars.png" style="width:100%;height:100%;object-fit:contain;transform:scale(1.15)"></div>
+          <div class="stop-label">
+            <div class="stop-name">Pista de Ball</div>
+            <div class="stop-desc">Bingo Musical</div>
+            <div class="stop-score" id="score-bingo-musical">–</div>
+          </div>
+        </div>
+
+        <!-- 14. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-14 stop-end" id="stop-fama"
+             data-game="" data-index="13"
+             style="left:50%; top:4800px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">
