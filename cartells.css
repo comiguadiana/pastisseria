@@ -1,0 +1,1012 @@
+/* =========================================================
+   CARTELLS.CSS — Cartells Imprimibles de l'Obrador Màgic
+   Festes de Sants 2026 · Carrer Guadiana
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@600;800;900&family=Nunito:wght@600;800;900&family=VT323&display=swap');
+
+:root {
+  --poster-w: 210mm;
+  --poster-h: 297mm;
+  --poster-border: #4a2810;
+  --gold-shiny: #f59e0b;
+  --pink-pastel: #ff8fab;
+  --cream-bg: #fff8f0;
+}
+
+/* ── Pantalla d'Eines / Panell Superior (no s'imprimeix) ── */
+.app-toolbar {
+  background: #2b1810;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toolbar-brand h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.toolbar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.url-input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  gap: 0.5rem;
+}
+
+.url-input-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffd6e5;
+  white-space: nowrap;
+}
+
+.url-input-group input {
+  background: #fff;
+  color: #333;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  min-width: 250px;
+}
+
+.btn-print {
+  background: #10b981;
+  color: #fff;
+  border: 3px solid #065f46;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #065f46;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-print:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-print-all {
+  background: #ec4899;
+  color: #fff;
+  border: 3px solid #831843;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #831843;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-print-all:hover {
+  background: #db2777;
+  transform: translateY(-2px);
+}
+
+.btn-back-web {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-back-web:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ── Selector de Pestanyes de Cartells ── */
+.poster-nav-container {
+  background: #3e2216;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  display: flex;
+  gap: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink) #2b1810;
+}
+
+.poster-tab-btn {
+  background: #5c3317;
+  color: #ffd6e5;
+  border: 2px solid #8b5e3c;
+  padding: 0.5rem 0.9rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.poster-tab-btn:hover {
+  background: #7a441e;
+  color: #fff;
+}
+
+.poster-tab-btn.active {
+  background: #f59e0b;
+  color: #2b1810;
+  border-color: #ffd6e5;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+/* ── Àrea de Previsualització ── */
+.posters-viewport {
+  padding: 2rem 1rem;
+  background: #472b1d;
+  min-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ESTRUCTURA DEL FULL CARTELL A4 (210mm x 297mm)
+   ══════════════════════════════════════════════════════════ */
+.poster-sheet {
+  width: 794px; /* A4 a 96 DPI screen */
+  height: 1123px; /* A4 a 96 DPI screen */
+  background: var(--cream-bg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 0 8px #fff;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.poster-sheet.active-sheet {
+  display: flex;
+}
+
+/* Fons del Mapa del Carrer Pixelat */
+.poster-map-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/img/mapa/carrer_vertical.png');
+  background-size: 100% auto;
+  background-position: center top;
+  background-repeat: repeat-y;
+  image-rendering: pixelated;
+  opacity: 0.32;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Vora pixelada decorativa */
+.poster-frame {
+  position: absolute;
+  inset: 12px;
+  border: 6px solid #4a2810;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.poster-frame::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 2px dashed #f59e0b;
+}
+
+/* ── 1. CARTELL GENERAL OFICIAL ── */
+.poster-general {
+  background: linear-gradient(180deg, rgba(255, 242, 224, 0.88) 0%, rgba(255, 223, 186, 0.82) 40%, rgba(255, 204, 213, 0.85) 100%);
+}
+
+.poster-general .poster-map-bg {
+  opacity: 0.38;
+}
+
+.general-header {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.poster-badge-top {
+  display: inline-block;
+  background: #5c3317;
+  color: #ffd6e5;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.62rem;
+  padding: 6px 16px;
+  border: 3px solid #f59e0b;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.general-main-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.7rem;
+  line-height: 1.3;
+  color: #4a2810;
+  text-shadow: 3px 3px 0px #ff8fab, 6px 6px 0px #f59e0b;
+  margin-bottom: 6px;
+}
+
+.general-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #7c2d12;
+  background: rgba(255,255,255,0.85);
+  display: inline-block;
+  padding: 4px 18px;
+  border-radius: 20px;
+  border: 2px solid #ea580c;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Imatge Hero Central */
+.general-hero-section {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.general-hero-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  height: 220px;
+  background: #3e2216;
+  border: 5px solid #5c3317;
+  box-shadow: 6px 6px 0px #f59e0b;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.general-hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  image-rendering: pixelated;
+}
+
+.general-sasha-overlay {
+  position: absolute;
+  right: 15px;
+  bottom: 0;
+  height: 190px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+  image-rendering: pixelated;
+}
+
+.general-hero-ribbon {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #5c3317;
+  padding: 6px 12px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.52rem;
+  color: #5c3317;
+  box-shadow: 3px 3px 0px #ea580c;
+  line-height: 1.4;
+}
+
+/* Grid Central: Minijocs + QR Code GEGANT */
+.general-middle-grid {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 14px;
+  align-items: stretch;
+  margin: 4px 0;
+}
+
+.features-box {
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #5c3317;
+  box-shadow: 5px 5px 0px #ff8fab;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 6px;
+  backdrop-filter: blur(2px);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px dashed #fcd34d;
+  padding-bottom: 5px;
+}
+
+.feature-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  width: 36px;
+  height: 36px;
+  background: #fff3e0;
+  border: 2px solid #5c3317;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-text h4 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.65rem;
+  color: #5c3317;
+  margin: 0 0 2px 0;
+}
+
+.feature-text p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Bloc QR Codi GEGANT */
+.qr-card-box {
+  background: rgba(255, 248, 240, 0.96);
+  border: 4px solid #5c3317;
+  box-shadow: 5px 5px 0px #10b981;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  backdrop-filter: blur(2px);
+}
+
+.qr-callout-top {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.72rem;
+  color: #b91c1c;
+  line-height: 1.25;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.qr-canvas-holder {
+  background: #fff;
+  padding: 6px;
+  border: 4px solid #1e1b4b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.qr-canvas-holder img,
+.qr-canvas-holder canvas {
+  width: 210px !important;
+  height: 210px !important;
+  display: block;
+}
+
+.qr-url-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  margin-top: 4px;
+  word-break: break-all;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.qr-free-tag {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.52rem;
+  color: #047857;
+  margin-top: 2px;
+}
+
+/* Miniatures de jocs al peu */
+.general-games-ticker {
+  position: relative;
+  z-index: 5;
+  background: #5c3317;
+  color: #fff;
+  border: 3px solid #f59e0b;
+  padding: 6px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticker-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.55rem;
+  color: #ffd6e5;
+}
+
+.ticker-badges {
+  display: flex;
+  gap: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.ticker-pill {
+  background: rgba(255,255,255,0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Footer oficial */
+.poster-footer {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  border-top: 2px solid #5c3317;
+  padding-top: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #5c3317;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.7);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. CARTELLS TEMÀTICS DE SASHAS (AMB MAPA DE FONS)
+   ══════════════════════════════════════════════════════════ */
+.poster-thematic {
+  background: var(--theme-bg, #fff8f0);
+}
+
+.poster-thematic .poster-map-bg {
+  opacity: 0.28;
+}
+
+.thematic-header {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.thematic-tag {
+  display: inline-block;
+  background: var(--theme-color, #5c3317);
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  padding: 6px 14px;
+  border: 3px solid #fff;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.thematic-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.45rem;
+  line-height: 1.35;
+  color: #2b1810;
+  text-shadow: 2px 2px 0px var(--theme-accent, #ff8fab);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.thematic-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #4a2810;
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.3;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2px 14px;
+  border-radius: 12px;
+}
+
+/* Sasha Showcase Central */
+.thematic-character-stage {
+  position: relative;
+  z-index: 5;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.character-sunburst {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--theme-accent, #ffd6e5) 0%, rgba(255,255,255,0) 70%);
+  z-index: 1;
+}
+
+.character-sunburst-rays {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, var(--theme-accent, #ffd6e5) 0deg 15deg, transparent 15deg 30deg);
+  opacity: 0.35;
+  z-index: 2;
+}
+
+.thematic-sasha-img {
+  position: relative;
+  z-index: 4;
+  height: 300px;
+  max-width: 360px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,0.35));
+}
+
+.character-name-plate {
+  position: absolute;
+  bottom: 6px;
+  z-index: 6;
+  background: #2b1810;
+  color: #fff;
+  border: 4px solid var(--theme-accent, #f59e0b);
+  padding: 6px 18px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.75rem;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.4);
+  letter-spacing: 0.5px;
+}
+
+/* Bafarada Sasha */
+.thematic-speech-bubble {
+  position: relative;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.96);
+  border: 4px solid #2b1810;
+  box-shadow: 5px 5px 0px var(--theme-color, #ea580c);
+  padding: 10px 16px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #2b1810;
+  line-height: 1.35;
+  margin-bottom: 10px;
+  text-align: center;
+  backdrop-filter: blur(2px);
+}
+
+/* Bloc d'Acció QR GRAN */
+.thematic-bottom-box {
+  position: relative;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #2b1810;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.thematic-cta-text {
+  flex: 1;
+}
+
+.thematic-cta-text h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.85rem;
+  color: var(--theme-color, #c2410c);
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.thematic-cta-text p {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 0 0 6px 0;
+  line-height: 1.25;
+}
+
+.thematic-bullets {
+  display: flex;
+  gap: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: #4b5563;
+}
+
+.thematic-qr-holder {
+  background: #fff;
+  border: 3px solid #2b1810;
+  padding: 6px;
+  box-shadow: 4px 4px 0px var(--theme-accent, #f59e0b);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.thematic-qr-holder img,
+.thematic-qr-holder canvas {
+  width: 140px !important;
+  height: 140px !important;
+  display: block;
+}
+
+.thematic-qr-holder span {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.48rem;
+  color: #2b1810;
+  margin-top: 4px;
+}
+
+.thematic-url-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: #1e3a8a;
+  margin-top: 2px;
+  background: #e0f2fe;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-align: center;
+  max-width: 140px;
+  word-break: break-all;
+  line-height: 1.1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. FULL DE 4 MINICARTELLS / FLYERS BINGO MUSICAL (2x2 A4)
+   ══════════════════════════════════════════════════════════ */
+.poster-minicards {
+  background: #f8fafc;
+  padding: 14px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+  position: relative;
+}
+
+.poster-minicards.active-sheet {
+  display: grid;
+}
+
+/* Línies de tall centrals */
+.cut-line-v {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  border-left: 2px dashed #94a3b8;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cut-line-h {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  border-top: 2px dashed #94a3b8;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cut-badge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #94a3b8;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  z-index: 12;
+}
+
+.minicard-box {
+  background: linear-gradient(145deg, #1e1035 0%, #3b1464 60%, #4c1d95 100%);
+  color: #fff;
+  border: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.minicard-map-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/img/mapa/carrer_vertical.png');
+  background-size: 100% auto;
+  background-position: center top;
+  image-rendering: pixelated;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.minicard-header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.minicard-badge {
+  background: #f59e0b;
+  color: #1e1b4b;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.48rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 3px;
+  font-weight: 900;
+}
+
+.minicard-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.95rem;
+  color: #fbbf24;
+  text-shadow: 2px 2px 0px #ec4899;
+  line-height: 1.25;
+  margin-bottom: 2px;
+}
+
+.minicard-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #e9d5ff;
+}
+
+.minicard-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.minicard-sasha-img {
+  height: 135px;
+  max-width: 120px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+}
+
+.minicard-qr-wrap {
+  background: #fff;
+  border: 3px solid #f59e0b;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+}
+
+.minicard-qr-wrap img,
+.minicard-qr-wrap canvas {
+  width: 120px !important;
+  height: 120px !important;
+  display: block;
+}
+
+.minicard-qr-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  color: #2e1065;
+  margin-top: 3px;
+}
+
+.minicard-footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  background: rgba(0,0,0,0.45);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.minicard-rules {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.76rem;
+  color: #fef08a;
+  margin-bottom: 2px;
+}
+
+.minicard-url {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: #a5f3fc;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. CARTELL ESPECIAL BINGO MUSICAL (PISTA DE BALL A4)
+   ══════════════════════════════════════════════════════════ */
+.poster-bingo-special {
+  background: linear-gradient(180deg, #180929 0%, #2e1065 40%, #581c87 100%);
+  color: #fff;
+}
+
+.poster-bingo-special .poster-map-bg {
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+
+.poster-bingo-special .poster-frame {
+  border-color: #f59e0b;
+}
+
+.poster-bingo-special .poster-frame::before {
+  border-color: #ec4899;
+}
+
+.poster-bingo-special .poster-footer {
+  border-top-color: #f59e0b;
+  color: #ffd6e5;
+  background: rgba(46, 16, 101, 0.7);
+}
+
+/* ══════════════════════════════════════════════════════════
+   REGLA D'OR: IMPRESSIÓ NETA A4 (SENSE TALLS)
+   ══════════════════════════════════════════════════════════ */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  .app-toolbar,
+  .poster-nav-container,
+  #toast-container {
+    display: none !important;
+  }
+
+  .posters-viewport {
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+    min-height: auto !important;
+    gap: 0 !important;
+  }
+
+  .poster-sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 16mm 14mm 14mm 14mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Si estem imprimint només el cartell seleccionat */
+  body.print-single .poster-sheet:not(.active-print) {
+    display: none !important;
+  }
+  body.print-single .poster-sheet.active-print {
+    display: flex !important;
+  }
+  body.print-single .poster-sheet.poster-minicards.active-print {
+    display: grid !important;
+  }
+
+  /* Si estem imprimint tots els cartells */
+  body:not(.print-single) .poster-sheet {
+    display: flex !important;
+  }
+  body:not(.print-single) .poster-sheet.poster-minicards {
+    display: grid !important;
+  }
+
+  .poster-sheet:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartells Oficials Imprimibles (A4) · Obrador Màgic Guadiana 2026</title>
+  <meta name="description" content="Cartell oficial i 10 cartells temàtics amb codi QR llestos per imprimir per al Carrer Guadiana a les Festes de Sants 2026." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@600;800;900&family=Nunito:wght@600;800;900&family=VT323&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="cartells.css" />
+</head>
+<body>
+
+  <!-- ================= BARRA D'EINES SUPERIOR (NO S'IMPRIMEIX) ================= -->
+  <header class="app-toolbar no-print">
+    <div class="toolbar-brand">
+      <a href="index.html" class="btn-back-web">← Tornar a la Web</a>
+      <h1>🖨️ CARTELLS IMPRIMIBLES (A4)</h1>
+    </div>
+
+    <div class="toolbar-controls">
+      <!-- Input per personalitzar la URL del QR -->
+      <div class="url-input-group" title="Canvia la URL a la qual apunta el codi QR">
+        <label for="qr-target-url">🔗 URL del Codi QR:</label>
+        <input type="text" id="qr-target-url" value="https://comiguadiana.github.io/pastisseria/" placeholder="https://el-teu-domini.com" />
+      </div>
+
+      <!-- Botons d'impressió -->
+      <button class="btn-print" id="btn-print-current" title="Imprimeix el cartell seleccionat en una pàgina A4">
+        🖨️ Imprimir Aquest Cartell
+      </button>
+
+      <button class="btn-print-all" id="btn-print-all" title="Imprimeix els 11 cartells en un sol document PDF de diverses pàgines">
+        📑 Imprimir Tots els 11
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= SELECTOR DE PESTANYES DE CARTELLS (NO S'IMPRIMEIX) ================= -->
+  <nav class="poster-nav-container no-print" id="poster-tabs-nav">
+    <!-- Inserit dinàmicament per JS -->
+  </nav>
+
+  <!-- ================= CONTENIDOR DELS CARTELLS IMPRIMIBLES ================= -->
+  <main class="posters-viewport" id="posters-viewport">
+    <!-- Inserit dinàmicament per JS -->
+  </main>
+
+  <!-- Llibreria QRCode autònoma i Script dels Cartells -->
+  <script src="assets/js/qrcode.min.js"></script>
+  <script src="cartells.js"></script>
+</body>
+</html>
