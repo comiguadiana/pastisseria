@@ -337,7 +337,7 @@ function renderAllPosters() {
   const minicardsSheet = document.createElement('div');
   minicardsSheet.className = 'poster-sheet poster-minicards';
   minicardsSheet.dataset.id = 'minicards-bingo';
-  minicardsSheet.style.display = 'none';
+  //minicardsSheet.style.display = 'none';
   minicardsSheet.innerHTML = `
     <div class="cut-line-v"></div>
     <div class="cut-line-h"></div>
@@ -433,7 +433,7 @@ function renderAllPosters() {
   const bingoSpecialSheet = document.createElement('div');
   bingoSpecialSheet.className = 'poster-sheet poster-bingo-special';
   bingoSpecialSheet.dataset.id = 'bingo-special';
-  bingoSpecialSheet.style.display = 'none';
+ // bingoSpecialSheet.style.display = 'none';
   bingoSpecialSheet.innerHTML = `
     <div class="poster-frame"></div>
     <div class="poster-map-bg"></div>
@@ -494,7 +494,7 @@ function renderAllPosters() {
     thematicSheet.style.setProperty('--theme-color', item.themeColor);
     thematicSheet.style.setProperty('--theme-accent', item.themeAccent);
     thematicSheet.style.setProperty('--theme-bg', item.themeBg);
-    thematicSheet.style.display = 'none';
+    //thematicSheet.style.display = 'none';
 
     thematicSheet.innerHTML = `
       <div class="poster-frame"></div>
