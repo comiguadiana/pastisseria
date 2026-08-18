@@ -1,105 +1,441 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Obrador Màgic Guadiana · Festa Major de Sants 2026</title>
-  <meta name="description" content="Benvinguts a l'Obrador Màgic Guadiana! Juga als minijocs de la Festa Major de Sants del Carrer Guadiana de Barcelona. Croissants, ensaïmades i molta diversió!" />
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="index.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GE Esports · Sasha Games 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:     #d00000;
+      --cream:   #fffaf4;
+      --choco:   #3d1a00;
+      --caramel: #c8760a;
+      --purple:  #7b2be2;
+    }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--cream);
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* ── PANTALLA INICIAL (tap to start) ── */
+    #start-screen {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0; cursor: pointer;
+      background: var(--cream);
+      -webkit-tap-highlight-color: transparent;
+      padding: 16px;
+    }
+
+    /* Títol petit a dalt */
+    .start-title-row {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 4px;
+    }
+    .start-ge {
+      font-family: 'Teko', 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: clamp(3rem, 12vw, 7rem);
+      color: var(--choco); line-height: 0.85;
+      letter-spacing: -6px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+      padding-right: 8px; user-select: none;
+    }
+    .start-esports {
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(1rem, 3.5vw, 2rem);
+      letter-spacing: 5px; color: var(--red);
+      user-select: none; margin-top: -6px;
+    }
+
+    /* Sasha DJ */
+    .sasha-dj-wrap {
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .sasha-dj-img {
+      width: clamp(160px, 40vw, 280px);
+      height: auto;
+      display: block;
+      animation: sashaFloat 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 12px 18px rgba(123,43,226,0.18));
+      user-select: none; pointer-events: none;
+    }
+    @keyframes sashaFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+
+    /* Globus de text — sobre la Sasha, fletxa cap avall */
+    .speech-bubble {
+      background: #fff;
+      border: 2px solid var(--purple);
+      border-radius: 18px;
+      padding: 10px 18px;
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(0.82rem, 2.5vw, 1rem);
+      font-weight: 800;
+      color: var(--purple);
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(123,43,226,0.18);
+      position: relative;
+      margin-bottom: 8px;
+      animation: bubblePop 0.45s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+    }
+    /* Fletxa cap avall, apunta a la Sasha */
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -12px; left: 50%; transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--purple);
+    }
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -9px; left: 50%; transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #fff;
+      z-index: 1;
+    }
+    @keyframes bubblePop {
+      0%  { transform: scale(0.6) translateY(6px); opacity: 0; }
+      100%{ transform: scale(1)   translateY(0);   opacity: 1; }
+    }
+
+    /* Botó principal */
+    .start-btn {
+      margin-top: 12px;
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      letter-spacing: 3px; text-transform: uppercase;
+      background: linear-gradient(135deg, var(--purple), #b06ff0);
+      color: #fff;
+      border: none; border-radius: 50px;
+      padding: clamp(10px,2.5vw,14px) clamp(28px,6vw,48px);
+      cursor: pointer;
+      box-shadow: 0 6px 0 #4a1098, 0 10px 24px rgba(123,43,226,0.35);
+      animation: btnBounce 1.8s ease-in-out infinite;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @keyframes btnBounce {
+      0%,100% { transform: translateY(0)   scale(1);    box-shadow: 0 6px 0 #4a1098, 0 10px 24px rgba(123,43,226,0.35); }
+      50%      { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 0 #4a1098, 0 16px 28px rgba(123,43,226,0.4); }
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+    /* ── INTRO ANIMADA ──────────────────────────────────── */
+    #intro-screen {
+      position: fixed; inset: 0; z-index: 40;
+      display: none;
+      align-items: center; justify-content: center; flex-direction: column;
+      background: var(--cream);
+    }
+    .logo-ge {
+      font-family: 'Teko', 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: clamp(6rem, 22vw, 14rem);
+      color: var(--choco); line-height: 0.8;
+      letter-spacing: -10px;
+      text-shadow: 5px 5px 0 rgba(0,0,0,0.08);
+      padding-right: 15px;
+      opacity: 0; transform: scale(4);
+    }
+    .logo-esports {
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      letter-spacing: 5px; color: var(--red);
+      opacity: 0; transform: translateY(-30px);
+      margin-top: -8px;
+    }
+    .slogan {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+      color: #bbb; margin-top: 28px; opacity: 0;
+    }
+    .anim-ge      { animation: slamIn   0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .anim-esports { animation: dropDown 0.35s ease-out 0.65s forwards; }
+    .anim-slogan  { animation: fadeUp   0.4s  ease-out 1.9s  forwards; }
+    @keyframes slamIn  { 0%{transform:scale(5);opacity:0} 55%{opacity:1} 100%{transform:scale(1);opacity:1} }
+    @keyframes dropDown{ 0%{transform:translateY(-30px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+    @keyframes fadeUp  { 0%{transform:translateY(12px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+
+    /* Flash subtil d'impacte */
+    #flash {
+      position: fixed; inset: 0; z-index: 90;
+      background: var(--choco); opacity: 0; pointer-events: none;
+      transition: opacity 0.08s;
+    }
+    #flash.on { opacity: 0.1; }
+
+    /* ── SELECCIÓ DE JOC ────────────────────────────────── */
+    #select-screen {
+      position: fixed; inset: 0; z-index: 30;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--cream);
+      padding: 24px 16px; gap: 20px;
+      overflow-y: auto;
+    }
+    .select-header {
+      text-align: center;
+      opacity: 0; animation: fadeUp 0.5s ease-out 0.1s forwards;
+    }
+    .select-badge {
+      display: inline-block;
+      font-family: 'Teko', sans-serif; font-size: 0.85rem;
+      letter-spacing: 3px; color: var(--red); text-transform: uppercase;
+      border: 1.5px solid var(--red); padding: 3px 14px;
+      border-radius: 20px; margin-bottom: 10px;
+    }
+    .select-title {
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      letter-spacing: 3px; color: var(--choco); text-transform: uppercase;
+    }
+    .select-sub {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.75rem, 2vw, 0.9rem);
+      color: #bbb; margin-top: 4px; letter-spacing: 1px;
+    }
+    .divider {
+      width: 48px; height: 3px;
+      background: linear-gradient(90deg, var(--caramel), var(--purple));
+      border-radius: 2px;
+      opacity: 0; animation: fadeUp 0.4s ease-out 0.25s forwards;
+    }
+    .games-grid {
+      display: flex; flex-direction: column;
+      gap: 16px; width: 100%; max-width: 520px;
+    }
+    @media (min-width: 500px) and (min-height: 480px) {
+      .games-grid { flex-direction: row; max-width: 820px; }
+    }
+    .game-card {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; padding: 28px 20px;
+      border-radius: 24px; border: 2px solid;
+      cursor: pointer; text-decoration: none;
+      opacity: 0;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .game-card:hover  { transform: translateY(-6px); }
+    .game-card:active { transform: translateY(1px); }
+    /* Pastisseria */
+    .card-pastis {
+      background: linear-gradient(145deg, #fff8ee, #ffefd0);
+      border-color: var(--caramel);
+      box-shadow: 0 6px 24px rgba(200,118,10,0.15);
+      animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+    }
+    .card-pastis:hover { box-shadow: 0 14px 36px rgba(200,118,10,0.28); border-color: #e8850a; }
+    /* Sasha Escape */
+    .card-company {
+      background: linear-gradient(145deg, #f5eeff, #ede0ff);
+      border-color: var(--purple);
+      box-shadow: 0 6px 24px rgba(123,43,226,0.12);
+      animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.48s forwards;
+    }
+    .card-company:hover { box-shadow: 0 14px 36px rgba(123,43,226,0.25); border-color: #6b1fd4; }
+    @keyframes cardIn {
+      0%  { opacity:0; transform:translateY(28px) scale(0.94); }
+      100%{ opacity:1; transform:translateY(0)    scale(1); }
+    }
+    .card-icon { font-size: clamp(2.5rem, 8vw, 3.5rem); line-height: 1; }
+
+    /* Dues Sashes com a icona de la card */
+    .card-icon-sashas {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0;
+    }
+    .card-icon-sashas img {
+      width: clamp(52px, 13vw, 72px);
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 6px rgba(123,43,226,0.2));
+      transition: transform 0.2s ease;
+    }
+    .card-icon-sashas img:first-child {
+      transform: rotate(-6deg) translateX(6px);
+    }
+    .card-icon-sashas img:last-child {
+      transform: rotate(6deg) translateX(-6px);
+    }
+    .card-company:hover .card-icon-sashas img:first-child {
+      transform: rotate(-10deg) translateX(4px) translateY(-4px);
+    }
+    .card-company:hover .card-icon-sashas img:last-child {
+      transform: rotate(10deg) translateX(-4px) translateY(-4px);
+    }
+
+    /* Hero image dins la card de la pastisseria */
+    .card-icon-hero {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .card-icon-hero img {
+      width: clamp(100px, 28vw, 150px);
+      height: clamp(100px, 28vw, 150px);
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(200,118,10,0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-pastis:hover .card-icon-hero img {
+      transform: scale(1.05);
+      box-shadow: 0 10px 24px rgba(200,118,10,0.35);
+    }
+    .card-name {
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      letter-spacing: 2px; text-transform: uppercase;
+      text-align: center; line-height: 1.1;
+    }
+    .card-pastis  .card-name { color: var(--choco); }
+    .card-company .card-name { color: #2d0060; }
+    .card-desc {
+      font-size: clamp(0.72rem, 1.8vw, 0.83rem);
+      text-align: center; line-height: 1.45;
+    }
+    .card-pastis  .card-desc { color: #7a4a1a; }
+    .card-company .card-desc { color: #4a1a80; }
+    .card-arrow {
+      font-family: 'Teko', sans-serif;
+      font-size: 0.82rem; letter-spacing: 2px; text-transform: uppercase;
+      padding: 6px 20px; border-radius: 30px; border: 1.5px solid;
+      margin-top: 4px; transition: background 0.2s;
+    }
+    .card-pastis  .card-arrow { color: var(--caramel); border-color: var(--caramel); }
+    .card-company .card-arrow { color: var(--purple);  border-color: var(--purple);  }
+    .card-pastis:hover  .card-arrow { background: rgba(200,118,10,0.10); }
+    .card-company:hover .card-arrow { background: rgba(123,43,226,0.10); }
+  </style>
 </head>
-<body class="bg-cream">
+<body>
+  <div id="flash"></div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <a href="index.html" class="navbar-brand">
-      🎂 <span>Obrador Màgic Guadiana</span>
-    </a>
-    <div class="navbar-nav">
-      <a href="mapa.html"  class="nav-link">🗺️ <span>Mapa</span></a>
-      <a href="fama.html"  class="nav-link">🏆 <span>Fama</span></a>
-      <a href="registro.html" class="nav-link" id="nav-profile-link">👤 <span>Perfil</span></a>
+  <!-- 1. Pantalla d'espera amb Sasha DJ -->
+  <div id="start-screen">
+    <div class="start-title-row">
+      <div class="start-ge">GE</div>
+      <div class="start-esports">ESPORTS</div>
     </div>
-    <div class="navbar-user">
-      <a href="login.html" class="btn btn-primary btn-sm" id="nav-login-btn">
-        Entrar 🎂
+
+    <div class="speech-bubble">🎵 Apreta aquí per entrar!</div>
+
+    <div class="sasha-dj-wrap">
+      <img class="sasha-dj-img"
+           src="assets/img/sashas/sasha_dj_auriculars.png"
+           alt="Sasha DJ" />
+    </div>
+
+    <button class="start-btn">▶ INICIAR</button>
+  </div>
+
+  <!-- 2. Intro animada -->
+  <div id="intro-screen">
+    <div class="logo-ge"      id="logo-ge">GE</div>
+    <div class="logo-esports" id="logo-esports">ESPORTS</div>
+    <div class="slogan"       id="slogan">Sasha games...</div>
+  </div>
+
+  <!-- 3. Selecció de joc -->
+  <div id="select-screen">
+    <div class="select-header">
+      <div class="select-badge">GE Esports · Sants 2026</div>
+      <div class="select-title">Tria el teu joc</div>
+      <div class="select-sub">Dos universos, una sola festa</div>
+    </div>
+    <div class="divider"></div>
+    <div class="games-grid">
+      <a href="entrada.html" class="game-card card-pastis">
+        <div class="card-icon card-icon-hero">
+          <img src="assets/img/login_pixel_bg.png" alt="Obrador Màgic Guadiana" />
+        </div>
+        <div class="card-name">Obrador Màgic<br>Guadiana</div>
+        <div class="card-desc">Minijocs de pastisseria, Sasha GO i el Saló de la Fama del Carrer Guadiana</div>
+        <div class="card-arrow">Jugar →</div>
       </a>
-      <div id="nav-user-area" class="flex flex-center gap-1 hidden">
-        <img class="navbar-avatar" id="nav-avatar" src="" alt="Avatar" />
-        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
-        <button class="btn btn-ghost btn-sm" id="nav-logout-btn">Sortir</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-bg">
-      <img src="assets/img/login_pixel_bg.png" alt="Portalada de pastís del Carrer Guadiana" class="hero-img" style="image-rendering: pixelated;" />
-      <div class="hero-overlay"></div>
-    </div>
-    <div class="container hero-content animate-slide-up">
-      <h1 class="hero-title">Obrador<br/>Màgic<br/>Guadiana</h1>
-      <p class="hero-subtitle">
-        La Festa Major de Sants 2026 · Carrer Guadiana<br/>
-        Pastissos, jocs i molta diversió!
-      </p>
-      <div class="hero-actions">
-        <a href="mapa.html" class="btn btn-primary btn-xl" id="btn-jugar">
-          🗺️ Entrar al Carrer!
-        </a>
-      </div>
-      <div class="hero-stats" id="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-num" id="stat-players">–</span>
-          <span class="hero-stat-label">Jugadors</span>
+      <a href="https://dsr20.itch.io/guadiana" target="_blank" rel="noopener" class="game-card card-company">
+        <div class="card-icon card-icon-sashas">
+          <img src="assets/img/sashas/sasha_rei_corona.png"  alt="Sasha Rei" />
+          <img src="assets/img/sashas/sasha_xef_gourmet.png" alt="Sasha Xef" />
         </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-num" id="stat-games">14</span>
-          <span class="hero-stat-label">Minijocs</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-num">∞</span>
-          <span class="hero-stat-label">Diversió</span>
-        </div>
-      </div>
+        <div class="card-name">Sasha<br>Escape</div>
+        <div class="card-desc">Guia la Sasha alienígena per escapar del laberint en aquest joc de la serp!</div>
+        <div class="card-arrow">Jugar →</div>
+      </a>
     </div>
-  </section>
+  </div>
 
-  <!-- CTA Saló de la Fama -->
-  <section class="section fame-cta-section">
-    <div class="container text-center">
-      <div class="fame-cta-card animate-float">
-        <div style="font-size:4rem;margin-bottom:1rem">🏆</div>
-        <h2 style="color:var(--white);margin-bottom:0.5rem">Saló de la Fama</h2>
-        <p style="color:rgba(255,248,240,0.85);margin-bottom:1.5rem">
-          Qui té la puntuació més alta de tots els jocs combinats?
-        </p>
-        <a href="fama.html" class="btn btn-secondary btn-lg">
-          Veure el Rànquing General 🏅
-        </a>
-      </div>
-    </div>
-  </section>
+  <audio id="audio-intro" src="intro.mp3" preload="auto"></audio>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p style="margin-bottom:0.5rem">&copy; 2026 Obrador Màgic Guadiana. Tots els drets reservats.</p>
-    <div class="footer-links">
-      <a href="privacitat.html">Política de Privacitat</a>
-      <a href="condicions.html">Condicions d'Ús</a>
-      <a href="cartells.html">🖨️ Cartells i QR per al Carrer</a>
-    </div>
-    <p style="font-family:var(--font-body); font-size:0.8rem; margin-top:0.5rem; opacity:0.6; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-      Aquesta web és un projecte lúdic per a la Festa Major de Sants. Les dades recopilades només s'utilitzen per al funcionament d'aquest joc i en cap cas es compartiran amb tercers.
-    </p>
-  </footer>
+  <script>
+    const startScreen  = document.getElementById('start-screen');
+    const introScreen  = document.getElementById('intro-screen');
+    const selectScreen = document.getElementById('select-screen');
+    const flash        = document.getElementById('flash');
+    const audio        = document.getElementById('audio-intro');
+    const INTRO_MS = 5000;
+    const FADE_MS  = 850;
 
-  <div id="toast-container"></div>
+    function startIntro() {
+      // Amaguem la pantalla inicial amb un fade ràpid
+      startScreen.style.transition = 'opacity 0.3s ease';
+      startScreen.style.opacity = '0';
+      setTimeout(() => { startScreen.style.display = 'none'; }, 300);
 
-  <script type="module" src="index.js"></script>
+      // Mostrem intro
+      introScreen.style.display = 'flex';
+
+      // Flash d'impacte
+      setTimeout(() => {
+        flash.classList.add('on');
+        setTimeout(() => flash.classList.remove('on'), 140);
+      }, 260);
+
+      // Àudio — ara tenim interacció garantida, sempre funcionarà
+      setTimeout(() => { audio.play().catch(() => {}); }, 300);
+
+      // Animacions
+      setTimeout(() => {
+        document.getElementById('logo-ge').classList.add('anim-ge');
+        document.getElementById('logo-esports').classList.add('anim-esports');
+        document.getElementById('slogan').classList.add('anim-slogan');
+      }, 50);
+
+      // Transició a selecció
+      setTimeout(goToSelect, INTRO_MS);
+    }
+
+    function goToSelect() {
+      introScreen.style.transition = `opacity ${FADE_MS}ms ease`;
+      introScreen.style.opacity = '0';
+      setTimeout(() => {
+        introScreen.style.display = 'none';
+        selectScreen.style.display = 'flex';
+        selectScreen.style.opacity = '0';
+        selectScreen.style.transition = `opacity ${FADE_MS}ms ease`;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          selectScreen.style.opacity = '1';
+        }));
+      }, FADE_MS);
+    }
+
+    // Un sol punt d'entrada: clic o toc a qualsevol lloc de la pantalla
+    startScreen.addEventListener('click',    startIntro, { once: true });
+    startScreen.addEventListener('touchend', startIntro, { once: true });
+  </script>
 </body>
 </html>

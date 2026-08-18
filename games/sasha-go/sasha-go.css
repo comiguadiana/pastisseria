@@ -1033,9 +1033,18 @@ body {
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 16px;
+  align-items: flex-start;
+  padding: 12px 12px env(safe-area-inset-bottom, 12px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: fadeIn 0.25s ease;
+}
+
+/* En pantalles prou altes, centrar verticalment */
+@media (min-height: 600px) {
+  .modal-overlay {
+    align-items: center;
+  }
 }
 
 .modal-overlay.hidden {
@@ -1238,14 +1247,27 @@ body {
 }
 
 /* ── MODAL BENVINGUDA & CELEBRACIÓ ── */
+
 .welcome-card, .celebration-card {
   background: white;
-  border-radius: 28px;
-  padding: 32px 28px;
+  border-radius: 24px;
+  padding: 20px 16px;
   max-width: 480px;
-  width: 92%;
+  width: 100%;
   text-align: center;
   box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  /* Permet scroll intern si l'alçada de pantalla és massa petita */
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: auto;
+}
+
+@media (min-height: 600px) {
+  .welcome-card, .celebration-card {
+    padding: 32px 28px;
+    border-radius: 28px;
+  }
 }
 
 .welcome-badge {
@@ -1256,64 +1278,120 @@ body {
   font-size: 0.72rem;
   padding: 5px 14px;
   border-radius: 20px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .welcome-icon {
-  font-size: 3.5rem;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+@media (min-height: 600px) {
+  .welcome-icon {
+    font-size: 3.5rem;
+    margin-bottom: 8px;
+  }
 }
 
 .welcome-card h1, .celebration-card h2 {
   font-family: var(--font-game);
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   color: var(--c-primary-dark);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+}
+
+@media (min-height: 600px) {
+  .welcome-card h1, .celebration-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
 }
 
 .welcome-desc {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: #555;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
+}
+
+@media (min-height: 600px) {
+  .welcome-desc {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
 }
 
 .rules-box {
   background: #fff8f0;
   border: 2px solid #ffe3d1;
-  border-radius: 18px;
-  padding: 14px 18px;
+  border-radius: 14px;
+  padding: 10px 12px;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: #5c3317;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
+}
+
+@media (min-height: 600px) {
+  .rules-box {
+    border-radius: 18px;
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
 }
 
 .rules-box strong {
   display: block;
   font-family: var(--font-game);
   color: var(--c-primary);
-  margin-bottom: 8px;
-  font-size: 0.95rem;
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+}
+
+@media (min-height: 600px) {
+  .rules-box strong {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
 }
 
 .rules-box ul {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+}
+
+@media (min-height: 600px) {
+  .rules-box ul {
+    gap: 6px;
+  }
 }
 
 .action-btn {
   font-family: var(--font-game);
-  font-size: 1.15rem;
+  font-size: 1rem;
   background: linear-gradient(135deg, #ff8fab, #ff477e);
   color: white;
   border: 3px solid white;
   border-radius: 30px;
-  padding: 14px 36px;
+  padding: 12px 28px;
   cursor: pointer;
   box-shadow: 0 6px 0 rgba(216, 27, 96, 0.4), 0 10px 20px rgba(255, 71, 126, 0.35);
   transition: transform 0.1s, box-shadow 0.1s;
+  /* Sempre visible i accessible */
+  width: 100%;
+  max-width: 320px;
+  display: block;
+  margin: 0 auto;
+}
+
+@media (min-height: 600px) {
+  .action-btn {
+    font-size: 1.15rem;
+    padding: 14px 36px;
+  }
 }
 
 .action-btn:hover {
@@ -1328,18 +1406,33 @@ body {
 
 /* ── CELEBRACIÓ ESPECÍFICA ── */
 .sparkles-burst {
-  font-size: 2.2rem;
-  margin-bottom: 6px;
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+@media (min-height: 600px) {
+  .sparkles-burst {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+  }
 }
 
 .sasha-caught-avatar-wrap {
-  width: 140px;
-  height: 140px;
-  margin: 0 auto 12px;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 8px;
   background: radial-gradient(circle, #fff0f3 0%, transparent 70%);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (min-height: 600px) {
+  .sasha-caught-avatar-wrap {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 12px;
+  }
 }
 
 .caught-modal-img {
