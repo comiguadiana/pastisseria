@@ -1,6 +1,6 @@
 /**
  * cartells.js — Lògica i generació dinàmica de cartells imprimibles A4
- * Festes de Sants 2026 · Carrer Guadiana
+ * Festa Major de Sants 2026 · Carrer Guadiana
  */
 
 // Llista dels 10 Cartells Temàtics de Sashes seleccionats (Sense Sasha Rei ni Easter Eggs)
@@ -110,7 +110,7 @@ const THEMATIC_SASHAS = [
     themeBg: 'linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%)',
     tag: '🚀 MISSIÓ ESPACIAL GUADIANA',
     title: "UNA FESTA D'UN ALTRE MÓN!",
-    subtitle: "Els extraterrestres més dolços han aterrat a les Festes de Sants 2026!",
+    subtitle: "Els extraterrestres més dolços han aterrat a la Festa Major de Sants 2026!",
     speech: "«Houston, no tenim cap problema! Només tenim tones de diversió i pastissos!»",
     ctaTitle: "DESPEGA CAP A LA DIVERSIÓ!",
     ctaDesc: "14 minijocs arcade gratuïts per jugar des del teu mòbil sense instal·lar res.",
@@ -251,7 +251,7 @@ function renderAllPosters() {
 
     <!-- Capçalera -->
     <div class="general-header">
-      <div class="poster-badge-top">★ FESTES DE SANTS 2026 · CARRER GUADIANA ★</div>
+      <div class="poster-badge-top">★ FESTA MAJOR DE SANTS 2026 · CARRER GUADIANA ★</div>
       <h1 class="general-main-title">OBRADOR MÀGIC<br/>GUADIANA</h1>
       <div class="general-subtitle">🎮 La Gran Plataforma de Minijocs del Nostre Carrer! 🍰</div>
     </div>
@@ -327,7 +327,7 @@ function renderAllPosters() {
     <!-- Peu del Cartell Oficial -->
     <div class="poster-footer">
       <span>Comissió de Festes del Carrer Guadiana</span>
-      <span>🍰 Festes de Sants 2026 🍰</span>
+      <span>🍰 Festa Major de Sants 2026 🍰</span>
       <span>Joc Web Oficial</span>
     </div>
   `;
@@ -347,7 +347,7 @@ function renderAllPosters() {
     <div class="minicard-box">
       <div class="minicard-map-bg"></div>
       <div class="minicard-header">
-        <span class="minicard-badge">★ FESTES DE SANTS 2026 ★</span>
+        <span class="minicard-badge">★ FESTA MAJOR DE SANTS 2026 ★</span>
         <div class="minicard-title">🎧 BINGO MUSICAL</div>
         <div class="minicard-subtitle">Carrer Guadiana · Pista de Ball</div>
       </div>
@@ -368,7 +368,7 @@ function renderAllPosters() {
     <div class="minicard-box">
       <div class="minicard-map-bg"></div>
       <div class="minicard-header">
-        <span class="minicard-badge">★ FESTES DE SANTS 2026 ★</span>
+        <span class="minicard-badge">★ FESTA MAJOR DE SANTS 2026 ★</span>
         <div class="minicard-title">🎧 BINGO MUSICAL</div>
         <div class="minicard-subtitle">Carrer Guadiana · Pista de Ball</div>
       </div>
@@ -389,7 +389,7 @@ function renderAllPosters() {
     <div class="minicard-box">
       <div class="minicard-map-bg"></div>
       <div class="minicard-header">
-        <span class="minicard-badge">★ FESTES DE SANTS 2026 ★</span>
+        <span class="minicard-badge">★ FESTA MAJOR DE SANTS 2026 ★</span>
         <div class="minicard-title">🎧 BINGO MUSICAL</div>
         <div class="minicard-subtitle">Carrer Guadiana · Pista de Ball</div>
       </div>
@@ -410,7 +410,7 @@ function renderAllPosters() {
     <div class="minicard-box">
       <div class="minicard-map-bg"></div>
       <div class="minicard-header">
-        <span class="minicard-badge">★ FESTES DE SANTS 2026 ★</span>
+        <span class="minicard-badge">★ FESTA MAJOR DE SANTS 2026 ★</span>
         <div class="minicard-title">🎧 BINGO MUSICAL</div>
         <div class="minicard-subtitle">Carrer Guadiana · Pista de Ball</div>
       </div>
@@ -480,7 +480,7 @@ function renderAllPosters() {
     <!-- Peu -->
     <div class="poster-footer">
       <span>Carrer Guadiana · Obrador Màgic</span>
-      <span>Festes de Sants 2026</span>
+      <span>Festa Major de Sants 2026</span>
       <span>Accés lliure i gratuït</span>
     </div>
   `;
@@ -502,7 +502,7 @@ function renderAllPosters() {
 
       <!-- Capçalera Temàtica -->
       <div class="thematic-header">
-        <div class="thematic-tag" style="background:${item.themeColor}">★ FESTES DE SANTS 2026 · CARRER GUADIANA ★</div>
+        <div class="thematic-tag" style="background:${item.themeColor}">★ FESTA MAJOR DE SANTS 2026 · CARRER GUADIANA ★</div>
         <h1 class="thematic-title" style="color:${item.themeColor}">${item.title}</h1>
         <div class="thematic-subtitle">${item.subtitle}</div>
       </div>
@@ -540,7 +540,7 @@ function renderAllPosters() {
       <!-- Peu Oficial -->
       <div class="poster-footer">
         <span>Carrer Guadiana · Obrador Màgic</span>
-        <span>Festes de Sants 2026</span>
+        <span>Festa Major de Sants 2026</span>
         <span>Accés lliure i gratuït</span>
       </div>
     `;

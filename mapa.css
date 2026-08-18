@@ -224,6 +224,12 @@
   animation: pulse-scale 3s ease-in-out infinite;
 }
 
+.map-stop.completed .easter-egg-node {
+  background: linear-gradient(135deg, var(--mint) 0%, var(--mint-dark) 100%) !important;
+  border-color: var(--mint-dark) !important;
+  box-shadow: 0 0 0 2px rgba(76,175,128,0.3) !important;
+}
+
 .easter-egg-label {
   min-width: auto;
   max-width: 120px;

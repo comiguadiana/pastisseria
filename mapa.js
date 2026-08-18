@@ -5,7 +5,7 @@
  *   - El primer joc sempre és accessible.
  *   - Un joc N és desbloquejat si el joc N-1 té alguna puntuació a Firebase.
  *   - Afegir nous jocs al mapa no obliga els jugadors a tornar a jugar.
- *   - L'Easter Egg sempre és accessible.
+ *   - L'Easter Egg (Racó de l'Edurne) es desbloqueja conjuntament amb «La Comissió» (Memòria Pastissera).
  */
 
 import { requireAuth, renderNavbarUser, logout, getDiceBearUrl }
@@ -121,9 +121,14 @@ document.getElementById('nav-logout-btn')?.addEventListener('click', async () =>
    ══════════════════════════════════════════════════════════ */
 function getAvatarStop(profile) {
   const lastPlayed = profile?.lastPlayedGame || localStorage.getItem('obrador_last_played_game');
-  if (lastPlayed === 'raco-edurne') return 'raco-edurne';
+  if (lastPlayed === 'raco-edurne') {
+    const isComissioUnlocked = (myScores['llanca-ensaimada'] !== undefined) || (myScores['memoria-pastissera'] !== undefined) || (myScores['raco-edurne'] !== undefined);
+    if (isComissioUnlocked) return 'raco-edurne';
+  }
   if (lastPlayed && GAME_ORDER.includes(lastPlayed)) {
-    return GAME_ORDER.indexOf(lastPlayed);
+    const idx = GAME_ORDER.indexOf(lastPlayed);
+    const isAccessible = idx === 0 || myScores[GAME_ORDER[idx - 1]] !== undefined || myScores[lastPlayed] !== undefined;
+    if (isAccessible) return idx;
   }
 
   // Si no tenim registre de l'últim joc jugat, fem servir l'últim completat (o el primer si no n'hi ha cap)
@@ -157,9 +162,10 @@ function initMapBase(profile) {
    CÀRREGA DE PUNTUACIONS I ACTUALITZACIÓ DEL MAPA
    ══════════════════════════════════════════════════════════ */
 async function loadMyScores(uid) {
-  // Carregar totes les puntuacions en paral·lel
+  // Carregar totes les puntuacions en paral·lel (inclosos jocs del camí i Easter Egg)
+  const allGameIds = [...GAME_ORDER, 'raco-edurne'];
   const results = await Promise.all(
-    GAME_ORDER.map(async (gameId) => {
+    allGameIds.map(async (gameId) => {
       try {
         const ref  = doc(db, 'scores', gameId, 'players', uid);
         const snap = await getDoc(ref);
@@ -201,6 +207,23 @@ async function loadMyScores(uid) {
     }
     // else: queda sense classe (bloquejat, aspecte per defecte)
   });
+
+  // Actualitzar estat del Racó de l'Edurne (Easter Egg vinculat a La Comissió)
+  const isComissioUnlocked = (myScores['llanca-ensaimada'] !== undefined) || (myScores['memoria-pastissera'] !== undefined);
+  const edurneStopEl  = document.getElementById('stop-raco-edurne');
+  const edurneScoreEl = document.getElementById('score-raco-edurne');
+  if (edurneStopEl) {
+    const hasEdurneScore = myScores['raco-edurne'] !== undefined;
+    if (edurneScoreEl && hasEdurneScore) {
+      edurneScoreEl.textContent = myScores['raco-edurne'].toLocaleString() + ' pts';
+    }
+    edurneStopEl.classList.remove('unlocked', 'completed');
+    if (hasEdurneScore) {
+      edurneStopEl.classList.add('completed');
+    } else if (isComissioUnlocked) {
+      edurneStopEl.classList.add('unlocked');
+    }
+  }
 
   // Calcular el joc desbloquejat per progressió
   const lastCompletedIdx = GAME_ORDER.reduce((acc, gId, idx) => {
@@ -260,9 +283,10 @@ function illuminateFog(indices) {
       `<circle cx="${pxLeft}" cy="${p.top}" r="350" fill="black" opacity="0.6"/>`;
   });
 
-  // L'Easter Egg sempre il·luminat
+  // L'Easter Egg (Racó de l'Edurne) només s'il·lumina si La Comissió està desbloquejada/il·luminada
+  const isComissioIlluminated = indices.includes(3) || indices.includes('raco-edurne') || myScores['raco-edurne'] !== undefined;
   const eg = STOP_POSITIONS['raco-edurne'];
-  if (eg) {
+  if (eg && isComissioIlluminated) {
     const pxLeft = parseFloat(eg.left) * 7.68;
     fogHoles.innerHTML +=
       `<circle cx="${pxLeft}" cy="${eg.top}" r="120" fill="black" opacity="0.95"/>` +
@@ -288,14 +312,24 @@ function scrollToPosition(stopIdx) {
  * Comprova si un joc és accessible:
  *   - El primer joc (idx 0) sempre ho és.
  *   - Un joc és accessible si el joc anterior té puntuació.
- *   - L'Easter Egg sempre ho és.
+ *   - L'Easter Egg es desbloqueja conjuntament amb «La Comissió».
  */
 window.goToGame = function(gameId) {
-  try {
-    localStorage.setItem('obrador_last_played_game', gameId);
-  } catch (e) {}
-
   if (gameId === 'raco-edurne') {
+    const isComissioUnlocked = (myScores['llanca-ensaimada'] !== undefined) || (myScores['memoria-pastissera'] !== undefined) || (myScores['raco-edurne'] !== undefined);
+    if (!isComissioUnlocked) {
+      const modal = document.getElementById('locked-modal');
+      const msg   = document.getElementById('locked-modal-msg');
+      if (msg) {
+        msg.textContent = `Primer has de desbloquejar «La Comissió» per accedir a aquest racó secret!`;
+      }
+      if (modal) modal.classList.remove('hidden');
+      return;
+    }
+
+    try {
+      localStorage.setItem('obrador_last_played_game', gameId);
+    } catch (e) {}
     window.location.href = GAME_URLS[gameId];
     return;
   }
@@ -315,6 +349,10 @@ window.goToGame = function(gameId) {
     if (modal) modal.classList.remove('hidden');
     return;
   }
+
+  try {
+    localStorage.setItem('obrador_last_played_game', gameId);
+  } catch (e) {}
 
   const url = GAME_URLS[gameId];
   if (url) window.location.href = url;

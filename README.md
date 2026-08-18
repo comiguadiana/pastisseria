@@ -1,1 +1,1 @@
-# Obrador Màgic Guadiana. Festes de Sants 2026
+# Obrador Màgic Guadiana. Festa Major de Sants 2026
