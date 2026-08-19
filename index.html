@@ -146,21 +146,30 @@
       padding-right: 15px;
       opacity: 0; transform: scale(4);
     }
+    .logo-ge-full {
+      font-family: 'Teko', sans-serif;
+      font-size: clamp(0.75rem, 2.2vw, 1.1rem);
+      letter-spacing: 6px; color: var(--choco);
+      text-transform: uppercase; opacity: 0;
+      transform: translateY(-10px);
+      margin-top: 2px;
+    }
     .logo-esports {
       font-family: 'Teko', sans-serif;
       font-size: clamp(2rem, 6vw, 3.5rem);
       letter-spacing: 5px; color: var(--red);
       opacity: 0; transform: translateY(-30px);
-      margin-top: -8px;
+      margin-top: 4px;
     }
     .slogan {
       font-family: 'Courier New', monospace;
       font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-      color: #bbb; margin-top: 28px; opacity: 0;
+      color: #222; margin-top: 28px; opacity: 0;
     }
-    .anim-ge      { animation: slamIn   0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
-    .anim-esports { animation: dropDown 0.35s ease-out 0.65s forwards; }
-    .anim-slogan  { animation: fadeUp   0.4s  ease-out 1.9s  forwards; }
+    .anim-ge       { animation: slamIn   0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .anim-ge-full  { animation: fadeUp   0.35s ease-out 0.6s  forwards; }
+    .anim-esports  { animation: dropDown 0.35s ease-out 0.85s forwards; }
+    .anim-slogan   { animation: fadeUp   0.4s  ease-out 2.1s  forwards; }
     @keyframes slamIn  { 0%{transform:scale(5);opacity:0} 55%{opacity:1} 100%{transform:scale(1);opacity:1} }
     @keyframes dropDown{ 0%{transform:translateY(-30px);opacity:0} 100%{transform:translateY(0);opacity:1} }
     @keyframes fadeUp  { 0%{transform:translateY(12px);opacity:0} 100%{transform:translateY(0);opacity:1} }
@@ -346,6 +355,7 @@
   <!-- 2. Intro animada -->
   <div id="intro-screen">
     <div class="logo-ge"      id="logo-ge">GE</div>
+    <div class="logo-ge-full" id="logo-ge-full">Guadiana Electronics</div>
     <div class="logo-esports" id="logo-esports">ESPORTS</div>
     <div class="slogan"       id="slogan">Sasha games...</div>
   </div>
@@ -411,6 +421,7 @@
       // Animacions
       setTimeout(() => {
         document.getElementById('logo-ge').classList.add('anim-ge');
+        document.getElementById('logo-ge-full').classList.add('anim-ge-full');
         document.getElementById('logo-esports').classList.add('anim-esports');
         document.getElementById('slogan').classList.add('anim-slogan');
       }, 50);
