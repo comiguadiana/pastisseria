@@ -148,6 +148,16 @@ export const GAMES_INFO = {
     url: 'games/bingo-musical/index.html',
     color: '#9C27B0',
   },
+  [GAMES.TRIVIAL_PASTISSERIES]: {
+    id: GAMES.TRIVIAL_PASTISSERIES,
+    tab: 'trivial-pastisseries',
+    name: 'Trivial Pastisseries del Barri',
+    icon: '📖',
+    htmlLabel: '📖 Trivial Pastisseries',
+    desc: 'Respon 6 preguntes a l\'atzar sobre la història de les pastisseries del Carrer Guadiana!',
+    url: 'games/trivial-pastisseries/index.html',
+    color: '#795548',
+  },
 };
 
 const TAB_CONFIG = {
@@ -166,6 +176,7 @@ const TAB_CONFIG = {
   'mots-pastissers':   { label:'🔠 Mots Pastissers',          fn: () => getGameRanking(GAMES.MOTS_PASTISSERS, 200), gameId: GAMES.MOTS_PASTISSERS },
   'sasha-go':          { label:'🐾 Sasha GO: Safari de Sants', fn: () => getGameRanking(GAMES.SASHA_GO, 200), gameId: GAMES.SASHA_GO },
   'bingo-musical':     { label:'🎧 Sasha DJ: Bingo Musical',  fn: () => getGameRanking(GAMES.BINGO_MUSICAL, 200), gameId: GAMES.BINGO_MUSICAL },
+  'trivial-pastisseries': { label:'📖 Trivial Pastisseries',  fn: () => getGameRanking(GAMES.TRIVIAL_PASTISSERIES, 200), gameId: GAMES.TRIVIAL_PASTISSERIES },
 };
 
 let currentTab = 'general';

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivial Pastisseries · Obrador Màgic Guadiana</title>
+  <link rel="stylesheet" href="../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <link rel="stylesheet" href="trivial-pastisseries.css" />
+</head>
+<body class="bg-cream">
+  <nav class="navbar">
+    <a href="../../index.html" class="navbar-brand">🎂 <span>Obrador Màgic Guadiana</span></a>
+    <div class="navbar-nav"><a href="../../mapa.html" class="nav-link">← Mapa</a></div>
+    <div class="navbar-user">
+      <div id="nav-user-area" class="flex flex-center gap-1">
+        <img class="navbar-avatar" id="nav-avatar" src="" alt="" />
+        <span id="nav-username" style="font-weight:700;font-size:0.9rem"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="game-page">
+    <div class="container">
+
+      <!-- HUD -->
+      <div class="game-hud">
+        <div class="hud-item"><span class="hud-label">Pregunta</span><span class="hud-value" id="q-counter">1/6</span></div>
+        <div class="hud-item"><span class="hud-label">Punts</span><span class="hud-value" id="score">0</span></div>
+        <div class="hud-item"><span class="hud-label">Temps</span><span class="hud-value" id="timer">10</span></div>
+        <button class="btn btn-outline btn-sm" id="btn-restart">↺</button>
+      </div>
+
+      <!-- Tauler de quesits + pregunta -->
+      <div class="trivial-board">
+
+        <!-- Quesits -->
+        <div class="quesits-wrap">
+          <svg class="quesits-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path class="quesit" id="q0" d="M100,100 L100,10 A90,90 0 0,1 178,55 Z" />
+            <path class="quesit" id="q1" d="M100,100 L178,55 A90,90 0 0,1 178,145 Z" />
+            <path class="quesit" id="q2" d="M100,100 L178,145 A90,90 0 0,1 100,190 Z" />
+            <path class="quesit" id="q3" d="M100,100 L100,190 A90,90 0 0,1 22,145 Z" />
+            <path class="quesit" id="q4" d="M100,100 L22,145 A90,90 0 0,1 22,55 Z" />
+            <path class="quesit" id="q5" d="M100,100 L22,55 A90,90 0 0,1 100,10 Z" />
+            <circle cx="100" cy="100" r="22" class="quesit-center" />
+            <text x="100" y="107" class="quesit-center-text">📖</text>
+          </svg>
+        </div>
+
+        <!-- Zona pregunta i respostes -->
+        <div class="trivial-question-area" id="question-area">
+          <div class="trivial-question-card">
+            <p class="trivial-question-text" id="question-text">Prepara't per al trivial!</p>
+          </div>
+          <div class="trivial-answers" id="answers-grid"></div>
+        </div>
+
+      </div>
+
+      <!-- Feedback -->
+      <div class="trivial-feedback hidden" id="feedback">
+        <span id="feedback-icon">✅</span>
+        <span id="feedback-text">Correcte!</span>
+      </div>
+
+      <!-- Overlay fi de joc -->
+      <div class="mem-overlay hidden" id="end-overlay">
+        <div class="mem-overlay-content animate-bounce-in">
+          <div id="end-emoji" style="font-size:4rem">🧀</div>
+          <h2 id="end-title" class="mem-overlay-title">Fi del Trivial!</h2>
+          <p id="end-score" class="mem-overlay-score">0 punts</p>
+          <p id="end-detail" style="color:rgba(255,248,240,0.8);margin-bottom:1rem"></p>
+          <div class="end-quesits" id="end-quesits"></div>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
+            <button class="btn btn-primary btn-lg" id="btn-play-again">Torna a jugar!</button>
+            <a href="../../mapa.html" class="btn btn-outline btn-lg">← Mapa</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Ranking -->
+    <div class="container mt-3">
+      <div class="card">
+        <div class="card-header"><h3>🏆 Rànquing Trivial Pastisseries</h3></div>
+        <div class="card-body" id="ranking-container"><div class="flex-center"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script type="module" src="trivial-pastisseries.js"></script>
+</body>
+</html>

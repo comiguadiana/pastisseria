@@ -14,3 +14,4 @@ npm-debug.log*
 # Variables d'entorn
 .env
 .env.*
+trivial_pastisseries_sants.csv

@@ -57,7 +57,7 @@
         </svg>
 
         <!-- Camí del mapa (Vertical, de baix a dalt) -->
-        <svg class="map-path-svg" viewBox="0 0 768 5200" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
+        <svg class="map-path-svg" viewBox="0 0 768 5600" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
           <path class="map-path-track"
             d="M 384,200 
                L 384,400 L 250,500
@@ -72,7 +72,8 @@
                L 250,3400 L 500,3600
                L 500,3800 L 250,4000
                L 250,4200 L 500,4400
-               L 500,4600 L 384,4800"
+               L 500,4600 L 250,4800
+               L 250,5000 L 384,5200"
             fill="none" />
           
           <!-- Easter Egg Branch -->
@@ -262,10 +263,23 @@
           </div>
         </div>
 
-        <!-- 14. Contraportada / Saló de la Fama -->
-        <div class="map-stop stop-14 stop-end" id="stop-fama"
-             data-game="" data-index="13"
-             style="left:50%; top:4800px; transform: translate(-50%, -50%);"
+        <!-- 14. Trivial Pastisseries del Barri -->
+        <div class="map-stop stop-14" id="stop-trivial-pastisseries"
+             data-game="trivial-pastisseries" data-index="13"
+             style="left:32.5%; top:4800px; transform: translate(-50%, -50%);"
+             onclick="goToGame('trivial-pastisseries')">
+          <div class="stop-node">📖</div>
+          <div class="stop-label">
+            <div class="stop-name">Els Plafons</div>
+            <div class="stop-desc">Trivial Pastisseries</div>
+            <div class="stop-score" id="score-trivial-pastisseries">–</div>
+          </div>
+        </div>
+
+        <!-- 15. Contraportada / Saló de la Fama -->
+        <div class="map-stop stop-15 stop-end" id="stop-fama"
+             data-game="" data-index="14"
+             style="left:50%; top:5200px; transform: translate(-50%, -50%);"
              onclick="window.location.href='fama.html'">
           <div class="stop-node stop-special">🏆</div>
           <div class="stop-label">

@@ -15,10 +15,10 @@ const THEMATIC_SASHAS = [
     tag: '🎧 PISTA DE BALL & BINGO MUSICAL',
     title: 'BALLA AL RITME DE SANTS!',
     subtitle: "Posa a prova la teva oïda musical al nou minijoc d'en Sasha DJ!",
-    speech: "«Tinc els plats preparats i els millors temacles a punt! Endevinaràs la cançó abans que s'acabin els 20 segons?»",
+    speech: "«Tinc els plats preparats i les millors cançons a punt! Endevinaràs la cançó abans que s'acabin els 20 segons?»",
     ctaTitle: "ESCANEJA I VINE A LA PISTA!",
     ctaDesc: "Juga al Bingo Musical, encadena ràtxes i guanya la copa de millor oïda del carrer.",
-    bullets: ["🎵 10 Temacles", "⏱️ 20 Segons", "🏆 Rànquing DJ"],
+    bullets: ["🎵 10 Cançons", "⏱️ 20 Segons", "🏆 Rànquing DJ"],
     navLabel: "🎧 Sasha DJ"
   },
   {
@@ -199,6 +199,13 @@ function renderNavTabs() {
   btnMinicards.addEventListener('click', () => switchTab('minicards-bingo'));
   navContainer.appendChild(btnMinicards);
 
+  // Tab NEW: 8 Flyers Minijocs B/N (per imprimir DN4 en B/N)
+  const btnFlyers8BN = document.createElement('button');
+  btnFlyers8BN.className = `poster-tab-btn ${currentActiveTab === 'flyers-8-bn' ? 'active' : ''}`;
+  btnFlyers8BN.innerHTML = `🎮 8 Flyers Minijocs (B/N)`;
+  btnFlyers8BN.addEventListener('click', () => switchTab('flyers-8-bn'));
+  navContainer.appendChild(btnFlyers8BN);
+
   // Tab 3: Cartell Especial Bingo Musical A4
   const btnBingoSpecial = document.createElement('button');
   btnBingoSpecial.className = `poster-tab-btn ${currentActiveTab === 'bingo-special' ? 'active' : ''}`;
@@ -253,7 +260,7 @@ function renderAllPosters() {
     <div class="general-header">
       <div class="poster-badge-top">★ FESTA MAJOR DE SANTS 2026 · CARRER GUADIANA ★</div>
       <h1 class="general-main-title">OBRADOR MÀGIC<br/>GUADIANA</h1>
-      <div class="general-subtitle">🎮 La Gran Plataforma de Minijocs del Nostre Carrer! 🍰</div>
+      <div class="general-subtitle">🏠 Escape Sasha · 🎮 14 Minijocs · 🐾 Sasha GO 🍰</div>
     </div>
 
     <!-- Imatge Hero amb Portalada Pixelada i Sasha -->
@@ -272,6 +279,13 @@ function renderAllPosters() {
       
       <!-- Caixa de Característiques -->
       <div class="features-box">
+        <div class="feature-item feature-item--highlight">
+          <div class="feature-icon">🏠</div>
+          <div class="feature-text">
+            <h4>ESCAPE SASHA</h4>
+            <p>Resol els enigmes i escapa de l'Obrador Màgic!</p>
+          </div>
+        </div>
         <div class="feature-item">
           <div class="feature-icon">🎮</div>
           <div class="feature-text">
@@ -314,13 +328,16 @@ function renderAllPosters() {
 
     <!-- Ticker de jocs disponibles -->
     <div class="general-games-ticker">
-      <span class="ticker-title">🎂 14 MINIJOCS DISPONIBLES:</span>
+      <span class="ticker-title">🎂 TOTES LES OPCIONS:</span>
       <div class="ticker-badges">
+        <span class="ticker-pill ticker-pill--escape">🏠 Escape Sasha</span>
         <span class="ticker-pill">🎧 Bingo Musical</span>
         <span class="ticker-pill">🧩 PasteBlock</span>
         <span class="ticker-pill">🧺 Pastís Caigut</span>
         <span class="ticker-pill">🛒 Kart</span>
         <span class="ticker-pill">🔠 Mots</span>
+        <span class="ticker-pill">🐾 Sasha GO</span>
+        <span class="ticker-pill">👾 Comecocos</span>
       </div>
     </div>
 
@@ -455,7 +472,7 @@ function renderAllPosters() {
 
     <!-- Bafarada DJ -->
     <div class="thematic-speech-bubble" style="border-color:#fbbf24; background:#2e1065; color:#fff; box-shadow: 4px 4px 0px #ec4899;">
-      «Tinc 10 temacles a punt! Endevina el títol o l'artista en menys de 20 segons!»
+      «Tinc 10 cançons a punt! Endevina el títol o l'artista en menys de 20 segons!»
     </div>
 
     <!-- Bloc d'Acció & QR GEGANT -->
@@ -485,6 +502,112 @@ function renderAllPosters() {
     </div>
   `;
   viewport.appendChild(bingoSpecialSheet);
+
+  // 3b. FULL DE 8 FLYERS MINIJOCS EN BLANC I NEGRE (2×4 A4 — DIN A4/8 per flyer)
+  const flyers8BnSheet = document.createElement('div');
+  flyers8BnSheet.className = 'poster-sheet poster-flyers8bn';
+  flyers8BnSheet.dataset.id = 'flyers-8-bn';
+
+  const MINIGAMES_FLYERS = [
+    {
+      sasha: 'sasha_rei_corona.png',
+      title: 'ESCAPE SASHA',
+      subtitle: 'Obrador Màgic',
+      desc: 'Resol els enigmes i escapa de la pastisseria!',
+      tip: 'Contra rellotge · Joc de la Serp'
+    },
+    {
+      sasha: 'sasha_dj_auriculars.png',
+      title: 'BINGO MUSICAL',
+      subtitle: 'Pista de Ball',
+      desc: 'Endevina la cançó en menys de 20 segons!',
+      tip: '10 cançons · Rànquing en directe'
+    },
+    {
+      sasha: 'sasha_ninja_shuriken.png',
+      title: 'COMECOCOS',
+      subtitle: 'Menjamaracuyas',
+      desc: 'Menja maracuyes i evita els fantasmes pastissers!',
+      tip: 'Clàssic arcade · Dolços especials'
+    },
+    {
+      sasha: 'sasha_mecanic_mono.png',
+      title: 'KART PASTISSER',
+      subtitle: 'Circuit Guadiana',
+      desc: 'Condueix el teu kart i recull pastissos a tota velocitat!',
+      tip: '3 circuits · Millor temps'
+    },
+    {
+      sasha: 'sasha_arquitecte_planols.png',
+      title: 'PASTEBLOCK',
+      subtitle: 'BlockBlast Dolç',
+      desc: 'Encasta els blocs de pastís i forma combos màgics!',
+      tip: 'Punts dobles · Combos de 3+'
+    },
+    {
+      sasha: 'sasha_xef_gourmet.png',
+      title: 'UNIR DOLÇOS',
+      subtitle: 'Suika Pastissera',
+      desc: 'Fusiona fruites i dolços fins al gran pastís!',
+      tip: 'Fusiona igual · Pastís perfecte'
+    },
+    {
+      sasha: 'sasha_explorador_safari.png',
+      title: 'SASHA GO',
+      subtitle: 'Safari GPS',
+      desc: 'Atrapa les 42 Sashes amagades pel barri amb GPS!',
+      tip: 'GPS real · 42 Sashes · Llança!'
+    },
+    {
+      sasha: 'sasha_mestre_escola.png',
+      title: 'MOTS PASTISSERS',
+      subtitle: 'Wordle Dolç',
+      desc: 'Endevina la paraula secreta del dia en 6 intents!',
+      tip: 'Paraula de 6 lletres · Un repte diari'
+    },
+    {
+      sasha: 'sasha_bomber_extintor.png',
+      title: 'PASTÍS CAIGUT',
+      subtitle: 'Recull Pastissos',
+      desc: 'Recull tots els pastissos al teu cistell abans que caiguin!',
+      tip: 'Velocitat màxima · Combos de caiguda'
+    },
+    {
+      sasha: 'sasha_cassador_tresors.png',
+      title: 'LLANÇA ENSAÏMADA',
+      subtitle: 'Punteria Dolça',
+      desc: 'Llança ensaïmades i encerta els objectius del carrer!',
+      tip: 'Punteria · Ensaïmades infinites'
+    }
+  ];
+
+  flyers8BnSheet.innerHTML = `
+    <!-- Línies de tall: 1 vertical + 4 horitzontals per fer 10 flyers 2×5 -->
+    <div class="flyerbn-cut-v"></div>
+    <div class="flyerbn-cut-h flyerbn-cut-h--1"></div>
+    <div class="flyerbn-cut-h flyerbn-cut-h--2"></div>
+    <div class="flyerbn-cut-h flyerbn-cut-h--3"></div>
+    <div class="flyerbn-cut-h flyerbn-cut-h--4"></div>
+    <div class="flyerbn-cut-center">✂️</div>
+
+    ${MINIGAMES_FLYERS.map((g, i) => `
+    <div class="flyerbn-card">
+      <div class="flyerbn-top">
+        <div class="flyerbn-title">${g.title}</div>
+        <div class="flyerbn-subtitle">${g.subtitle}</div>
+      </div>
+      <div class="flyerbn-body">
+        <img src="assets/img/sashas/${g.sasha}" alt="${g.title}" class="flyerbn-sasha-img" />
+        <div class="flyerbn-desc">${g.desc}<div class="flyerbn-tip">${g.tip}</div></div>
+        <div class="flyerbn-qr-wrap">
+          <div class="flyerbn-qr-box" id="qr-flyerbn-${i}"></div>
+          <span class="flyerbn-url" id="qr-flyerbn-url-${i}">comiguadiana.github.io/pastisseria</span>
+        </div>
+      </div>
+    </div>
+    `).join('')}
+  `;
+  viewport.appendChild(flyers8BnSheet);
 
   // 4. ELS 10 CARTELLS TEMÀTICS DE SASHAS (AMB QR GRAN I MAPA DE FONS)
   THEMATIC_SASHAS.forEach(item => {
@@ -611,6 +734,26 @@ function generateAllQRCodes(targetUrl) {
   const bingoSpecialUrl = document.getElementById('qr-url-bingo-special');
   if (bingoSpecialUrl) {
     bingoSpecialUrl.textContent = cleanUrl;
+  }
+
+  // 3b. QRs 10 Flyers B/N (60px, negre pur per impressió B/N)
+  for (let i = 0; i < 10; i++) {
+    const flyerContainer = document.getElementById(`qr-flyerbn-${i}`);
+    if (flyerContainer) {
+      flyerContainer.innerHTML = '';
+      new QRCode(flyerContainer, {
+        text: targetUrl,
+        width: 85,
+        height: 85,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+    const flyerUrlEl = document.getElementById(`qr-flyerbn-url-${i}`);
+    if (flyerUrlEl) {
+      flyerUrlEl.textContent = cleanUrl;
+    }
   }
 
   // 4. QRs Temàtics (140px)

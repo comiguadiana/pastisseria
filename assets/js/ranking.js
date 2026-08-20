@@ -24,8 +24,9 @@ export const GAMES = {
   SASHA_COMECOCOS:   'sasha-comecocos',
   MOTS_PASTISSERS:   'mots-pastissers',
   SASHA_GO:          'sasha-go',
-  BINGO_MUSICAL:     'bingo-musical',
-  RACO_EDURNE:       'raco-edurne',
+  BINGO_MUSICAL:          'bingo-musical',
+  TRIVIAL_PASTISSERIES:   'trivial-pastisseries',
+  RACO_EDURNE:            'raco-edurne',
 };
 
 // Evita inflar partides de Sasha GO en una mateixa sessió

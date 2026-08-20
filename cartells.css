@@ -316,7 +316,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 35%;
+  object-position: center 75%;
   image-rendering: pixelated;
 }
 
@@ -996,6 +996,9 @@
   body.print-single .poster-sheet.poster-minicards.active-print {
     display: grid !important;
   }
+  body.print-single .poster-sheet.poster-flyers8bn.active-print {
+    display: grid !important;
+  }
 
   /* Si estem imprimint tots els cartells */
   body:not(.print-single) .poster-sheet {
@@ -1004,9 +1007,240 @@
   body:not(.print-single) .poster-sheet.poster-minicards {
     display: grid !important;
   }
+  body:not(.print-single) .poster-sheet.poster-flyers8bn {
+    display: grid !important;
+    padding: 4mm 5mm !important;
+  }
+
+  /* Flyers B/N: forçar B/N a la impressió */
+  .poster-flyers8bn {
+    -webkit-print-color-adjust: economy !important;
+    print-color-adjust: economy !important;
+    color-adjust: economy !important;
+  }
+  .flyerbn-card {
+    border: 1.5px solid #000 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .flyerbn-title {
+    color: #000 !important;
+  }
+  .flyerbn-qr-box canvas,
+  .flyerbn-qr-box img {
+    width: 85px !important;
+    height: 85px !important;
+    filter: none !important;
+  }
+  .flyerbn-sasha-img {
+    height: 90px !important;
+    filter: grayscale(100%) contrast(1.1) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
   .poster-sheet:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. FEATURE-ITEM DESTACAT (Escape Sasha al cartell general)
+   ══════════════════════════════════════════════════════════ */
+.feature-item--highlight {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+
+.feature-item--highlight .feature-icon {
+  font-size: 1.6rem;
+}
+
+.feature-item--highlight h4 {
+  color: #92400e !important;
+  font-size: 0.75rem !important;
+}
+
+.feature-item--highlight p {
+  color: #78350f !important;
+}
+
+/* Ticker pill especial per a Escape Sasha */
+.ticker-pill--escape {
+  background: #f59e0b !important;
+  color: #1e1b4b !important;
+  font-weight: 900 !important;
+  border: 2px solid #d97706 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. FULL DE 10 FLYERS MINIJOCS EN B/N (2×5 A4)
+   ══════════════════════════════════════════════════════════ */
+.poster-flyers8bn {
+  background: #ffffff;
+  padding: 4mm 5mm;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 3px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.poster-flyers8bn.active-sheet {
+  display: grid;
+}
+
+/* Línies de tall: 1 vertical + 4 horitzontals per a 5 files */
+.flyerbn-cut-v {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 50%;
+  border-left: 1px dashed #aaa;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.flyerbn-cut-h {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-top: 1px dashed #aaa;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.flyerbn-cut-h--1 { top: 20%; }
+.flyerbn-cut-h--2 { top: 40%; }
+.flyerbn-cut-h--3 { top: 60%; }
+.flyerbn-cut-h--4 { top: 80%; }
+
+.flyerbn-cut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  z-index: 12;
+}
+
+/* Cada flyer individual */
+.flyerbn-card {
+  background: #ffffff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  gap: 3px;
+}
+
+/* Títol i subtítol a dalt */
+.flyerbn-top {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
+}
+
+.flyerbn-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.5rem;
+  color: #111;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.flyerbn-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.62rem;
+  color: #555;
+  margin-top: 1px;
+}
+
+/* Cos central: sasha + desc + QR, creix per omplir l'espai */
+.flyerbn-body {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+}
+
+.flyerbn-sasha-img {
+  height: 90px;
+  width: auto;
+  max-width: 80px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: grayscale(100%) contrast(1.1);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.flyerbn-desc {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.66rem;
+  color: #222;
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+}
+
+.flyerbn-tip {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.54rem;
+  color: #666;
+  margin-top: 4px;
+  line-height: 1.2;
+}
+
+/* QR a la dreta, amb URL a sota */
+.flyerbn-qr-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.flyerbn-qr-box {
+  background: #fff;
+  border: 1px solid #333;
+  padding: 1px;
+  border-radius: 2px;
+}
+
+.flyerbn-qr-box canvas,
+.flyerbn-qr-box img {
+  width: 85px !important;
+  height: 85px !important;
+  display: block;
+}
+
+.flyerbn-url {
+  font-family: monospace;
+  font-size: 0.42rem;
+  color: #555;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
 }
