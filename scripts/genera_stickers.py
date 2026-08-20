@@ -24,8 +24,8 @@ except ImportError:
     exit(1)
 
 # ── Configuració ──────────────────────────────────────────────────────────────
-SASHAS_DIR   = Path(__file__).parent / "assets/img/sashas"
-OUTPUT_DIR   = Path(__file__).parent
+SASHAS_DIR   = Path(__file__).parent.parent / "assets/img/sashas"
+OUTPUT_DIR   = Path(__file__).parent.parent
 STICKER_SIZE = 512
 TRAY_SIZE    = 96
 MAX_PER_PACK = 21

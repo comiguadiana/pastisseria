@@ -1,0 +1,16 @@
+# Credencials Firebase — MAI pujar al repositori
+serviceAccountKey.json
+scripts/serviceAccountKey.json
+*serviceAccountKey*.json
+
+# Backups locals de Firestore
+scripts/backups/
+
+# Node
+node_modules/
+scripts/node_modules/
+npm-debug.log*
+
+# Variables d'entorn
+.env
+.env.*
