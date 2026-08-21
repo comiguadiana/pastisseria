@@ -237,8 +237,7 @@ let countdown   = null;
 let timeLeft    = TIME_PER_Q;
 let answered    = false;
 
-/* ── Arrancar el joc immediatament (sense esperar Firebase) ── */
-startGame();
+/* ── Carregar rànquing i esperar botó d'inici ── */
 loadRanking();
 
 /* ── Auth en segon pla (per desar puntuació i mostrar avatar) ── */
@@ -278,6 +277,9 @@ function startGame() {
   }
 
   document.getElementById('end-overlay').classList.add('hidden');
+  const introEl = document.getElementById('intro-overlay');
+  if (introEl) introEl.classList.add('hidden');
+  
   document.getElementById('score').textContent = '0';
   showQuestion();
 }
@@ -385,12 +387,19 @@ function handleAnswer(origIdx, clickedBtn) {
 
 async function endGame() {
   const correct = quesitsWon.filter(Boolean).length;
-  const emoji   = correct === NUM_QUESTIONS ? '🏆' : correct >= 4 ? '🧀' : correct >= 2 ? '📖' : '📚';
+  const emoji   = correct === NUM_QUESTIONS ? '🏆' : correct >= 4 ? '🧀' : correct >= 2 ? '🧁' : '🍪';
   const title   = correct === NUM_QUESTIONS
     ? 'Mestre Pastisser!'
     : correct >= 4 ? 'Gran coneixedor!'
     : correct >= 2 ? 'Bon intent!'
     : 'Estudia els plafons!';
+
+  const subtitle = title === 'Estudia els plafons!' ? 'Aprenem sobre les pastisseries i forns històrics de Sants' : '';
+  const subtitleEl = document.getElementById('end-subtitle');
+  if (subtitleEl) {
+    subtitleEl.textContent = subtitle;
+    subtitleEl.style.display = subtitle ? 'block' : 'none';
+  }
 
   document.getElementById('end-emoji').textContent = emoji;
   document.getElementById('end-title').textContent  = title;
@@ -431,6 +440,13 @@ async function loadRanking() {
 }
 
 /* ── Botons ── */
+const btnStartGame = document.getElementById('btn-start-game');
+if (btnStartGame) {
+  btnStartGame.addEventListener('click', () => {
+    startGame();
+  });
+}
+
 document.getElementById('btn-restart').addEventListener('click', () => {
   clearInterval(countdown);
   startGame();

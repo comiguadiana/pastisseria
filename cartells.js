@@ -113,8 +113,8 @@ const THEMATIC_SASHAS = [
     subtitle: "Els extraterrestres més dolços han aterrat a la Festa Major de Sants 2026!",
     speech: "«Houston, no tenim cap problema! Només tenim tones de diversió i pastissos!»",
     ctaTitle: "DESPEGA CAP A LA DIVERSIÓ!",
-    ctaDesc: "14 minijocs arcade gratuïts per jugar des del teu mòbil sense instal·lar res.",
-    bullets: ["📱 Sense Apps", "🌐 100% Web", "🎮 14 Minijocs"],
+    ctaDesc: "15 minijocs arcade gratuïts per jugar des del teu mòbil sense instal·lar res.",
+    bullets: ["📱 Sense Apps", "🌐 100% Web", "🎮 15 Minijocs"],
     navLabel: "🚀 Sasha Astro"
   },
   {
@@ -158,7 +158,7 @@ const THEMATIC_SASHAS = [
     themeBg: 'linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%)',
     tag: '🔍 DETECTIU DE DOLÇOS & SECRETS',
     title: "INVESTIGA I GUANYA!",
-    subtitle: "Troba totes les pistes, encerts i rànquings amagats als 14 minijocs!",
+    subtitle: "Troba totes les pistes, encerts i rànquings amagats als 15 minijocs!",
     speech: "«Amb la meva lupa trobarem tots els punts extres i combinacions secretes de l'Obrador!»",
     ctaTitle: "RESOL EL MISTERI DOLÇ!",
     ctaDesc: "Explora el mapa del Carrer Guadiana i completa tots els reptes del dia.",
@@ -188,7 +188,7 @@ function renderNavTabs() {
   // Tab 1: General
   const btnGeneral = document.createElement('button');
   btnGeneral.className = `poster-tab-btn ${currentActiveTab === 'general' ? 'active' : ''}`;
-  btnGeneral.innerHTML = `🎂 Cartell General (14 Jocs)`;
+  btnGeneral.innerHTML = `🎂 Cartell General (15 Jocs)`;
   btnGeneral.addEventListener('click', () => switchTab('general'));
   navContainer.appendChild(btnGeneral);
 
@@ -260,7 +260,7 @@ function renderAllPosters() {
     <div class="general-header">
       <div class="poster-badge-top">★ FESTA MAJOR DE SANTS 2026 · CARRER GUADIANA ★</div>
       <h1 class="general-main-title">OBRADOR MÀGIC<br/>GUADIANA</h1>
-      <div class="general-subtitle">🏠 Escape Sasha · 🎮 14 Minijocs · 🐾 Sasha GO 🍰</div>
+      <div class="general-subtitle">🏠 Escape Sasha · 🎮 15 Minijocs · 🐾 Sasha GO 🍰</div>
     </div>
 
     <!-- Imatge Hero amb Portalada Pixelada i Sasha -->
@@ -289,7 +289,7 @@ function renderAllPosters() {
         <div class="feature-item">
           <div class="feature-icon">🎮</div>
           <div class="feature-text">
-            <h4>14 MINIJOCS ARCADE</h4>
+            <h4>15 MINIJOCS ARCADE</h4>
             <p>Bingo Musical, PasteBlock, Pastís Caigut, Mots...</p>
           </div>
         </div>

@@ -44,7 +44,7 @@
             <path class="quesit" id="q4" d="M100,100 L22,145 A90,90 0 0,1 22,55 Z" />
             <path class="quesit" id="q5" d="M100,100 L22,55 A90,90 0 0,1 100,10 Z" />
             <circle cx="100" cy="100" r="22" class="quesit-center" />
-            <text x="100" y="107" class="quesit-center-text">📖</text>
+            <text x="100" y="107" class="quesit-center-text"></text>
           </svg>
         </div>
 
@@ -64,11 +64,23 @@
         <span id="feedback-text">Correcte!</span>
       </div>
 
+      <!-- Overlay intro joc -->
+      <div class="mem-overlay" id="intro-overlay">
+        <div class="mem-overlay-content animate-bounce-in">
+          <h2 class="mem-overlay-title">Estudia els plafons!</h2>
+          <p style="font-size:1.4rem; color:var(--text-color, #333); margin-bottom:1.5rem;">Aprenem sobre les pastisseries i forns històrics de Sants</p>
+          <div style="display:flex;justify-content:center;">
+            <button class="btn btn-primary btn-lg" id="btn-start-game">Començar</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Overlay fi de joc -->
       <div class="mem-overlay hidden" id="end-overlay">
         <div class="mem-overlay-content animate-bounce-in">
           <div id="end-emoji" style="font-size:4rem">🧀</div>
           <h2 id="end-title" class="mem-overlay-title">Fi del Trivial!</h2>
+          <p id="end-subtitle" style="font-size:1.4rem; color:var(--text-color, #333); margin-bottom:1rem;"></p>
           <p id="end-score" class="mem-overlay-score">0 punts</p>
           <p id="end-detail" style="color:rgba(255,248,240,0.8);margin-bottom:1rem"></p>
           <div class="end-quesits" id="end-quesits"></div>
